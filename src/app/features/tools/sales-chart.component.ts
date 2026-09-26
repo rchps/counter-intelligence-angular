@@ -10,7 +10,8 @@ import {
   signal,
 } from '@angular/core';
 import { dayIndexAt, salesChartLayout } from '../../core/sales-chart';
-import { formatCents, formatMoney, shortDate, type SalesSeriesPoint } from '../../core/sales-math';
+import { formatDollarsAndCents, formatWholeDollars } from '../../core/money';
+import { shortDate, type SalesSeriesPoint } from '../../core/sales-math';
 
 interface Tip {
   title: string;
@@ -59,7 +60,7 @@ export class SalesChartComponent {
   protected readonly description = computed(() => {
     const goal = this.goal();
     return goal
-      ? `Running total ${formatMoney(this.sold())} against a goal pace reaching ${formatMoney(goal)} by month end. ` +
+      ? `Running total ${formatWholeDollars(this.sold())} against a goal pace reaching ${formatWholeDollars(goal)} by month end. ` +
           'Use the left and right arrow keys to read each day, or show the table.'
       : 'Set a goal to see the goal pace.';
   });
@@ -71,9 +72,9 @@ export class SalesChartComponent {
     const point = layout.points[index];
     return {
       title: shortDate(point.date),
-      thatDay: point.sales === null ? '—' : formatCents(point.sales),
-      runningTotal: point.showActual ? formatMoney(point.sold) : null,
-      goalPace: point.pace ? formatMoney(point.pace) : null,
+      thatDay: point.sales === null ? '—' : formatDollarsAndCents(point.sales),
+      runningTotal: point.showActual ? formatWholeDollars(point.sold) : null,
+      goalPace: point.pace ? formatWholeDollars(point.pace) : null,
       x: layout.xOf(index),
     };
   });

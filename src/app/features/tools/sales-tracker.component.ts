@@ -1,10 +1,12 @@
 import { Component, computed, effect, ElementRef, inject, signal, untracked } from '@angular/core';
 import { launchConfetti } from '../../core/confetti';
+import {
+  formatDollarsAndCents,
+  formatSignedWholeDollars,
+  formatWholeDollars,
+} from '../../core/money';
 import { salesHero, salesKpis, salesMeter } from '../../core/sales-display';
 import {
-  formatCents,
-  formatMoney,
-  formatSigned,
   fromCsv,
   localToday,
   mergeImportedMonths,
@@ -38,9 +40,9 @@ export class SalesTrackerComponent {
 
   protected readonly today = localToday();
   protected readonly weekdayHeads = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  protected readonly formatMoney = formatMoney;
-  protected readonly formatCents = formatCents;
-  protected readonly formatSigned = formatSigned;
+  protected readonly formatWholeDollars = formatWholeDollars;
+  protected readonly formatDollarsAndCents = formatDollarsAndCents;
+  protected readonly formatSignedWholeDollars = formatSignedWholeDollars;
 
   protected readonly month = signal(this.today.slice(0, 7));
   private readonly store = signal<SalesStore>(this.salesStore.load());
@@ -195,7 +197,9 @@ export class SalesTrackerComponent {
   protected hitText(day: DaySummary): string {
     const baseline = this.summary().baseline;
     if (day.sales === null || !day.selling || !baseline) return '';
-    return day.sales >= baseline ? '✓ at baseline' : `${formatMoney(baseline - day.sales)} under`;
+    return day.sales >= baseline
+      ? '✓ at baseline'
+      : `${formatWholeDollars(baseline - day.sales)} under`;
   }
 
   protected weekRange(start: string, end: string): string {

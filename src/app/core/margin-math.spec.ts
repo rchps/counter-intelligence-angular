@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { calculateMargin, formatMoney, formatPercent, parseMarginNumber } from './margin-math';
+import { formatDollarsAndCents } from './money';
+import { calculateMargin, formatPercent, parseMarginNumber } from './margin-math';
 
 describe('parseMarginNumber', () => {
   it('strips $, commas, %, and whitespace', () => {
@@ -22,8 +23,8 @@ describe('calculateMargin: cost & margin', () => {
     const result = calculateMargin('cost-margin', { cost: '50', price: '', margin: '18' });
     expect(result.status).toBe('ok');
     if (result.status !== 'ok') throw new Error('unreachable');
-    expect(formatMoney(result.price)).toBe('$60.98');
-    expect(formatMoney(result.profit)).toBe('$10.98');
+    expect(formatDollarsAndCents(result.price)).toBe('$60.98');
+    expect(formatDollarsAndCents(result.profit)).toBe('$10.98');
     expect(formatPercent(result.margin)).toBe('18.00%');
     expect(formatPercent(result.markup!)).toBe('21.95%');
     expect(result.belowCost).toBe(false);

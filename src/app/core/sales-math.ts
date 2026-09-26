@@ -253,23 +253,6 @@ export function shortDate(iso: string): string {
   });
 }
 
-export function formatMoney(value: number): string {
-  return value.toLocaleString('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 0,
-  });
-}
-
-export function formatCents(value: number): string {
-  return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-}
-
-// Uses the minus sign (−), not a hyphen, matching sales.html's own signed() helper.
-export function formatSigned(value: number): string {
-  return (value >= 0 ? '+' : '−') + formatMoney(Math.abs(value));
-}
-
 export function fromCsv(text: string): SalesStore {
   const store: SalesStore = { months: {} };
   const monthOf = (key: string) =>

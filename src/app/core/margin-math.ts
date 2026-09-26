@@ -123,15 +123,6 @@ export function calculateMargin(mode: MarginMode, raw: MarginRawInputs): MarginO
   };
 }
 
-export function formatMoney(amount: number): string {
-  return amount.toLocaleString('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-}
-
 export function formatPercent(value: number): string {
   return value.toFixed(2) + '%';
 }

@@ -1,4 +1,5 @@
-import { formatMoney, formatSigned, type SalesSummary } from './sales-math';
+import { formatSignedWholeDollars, formatWholeDollars } from './money';
+import type { SalesSummary } from './sales-math';
 
 // Ported from sales.html's render(): the words and numbers in the Sales Tracker's hero, progress
 // meter and KPI tiles, worked out from the month's summary. Pure, so the wording is tested directly.
@@ -30,15 +31,15 @@ export function salesHero(summary: SalesSummary, goal: number): SalesHero {
   if (summary.goalMet) {
     return {
       label: 'Needed per selling day',
-      value: formatMoney(0),
-      sub: `Goal hit with ${formatMoney(summary.sold - goal)} to spare.`,
+      value: formatWholeDollars(0),
+      sub: `Goal hit with ${formatWholeDollars(summary.sold - goal)} to spare.`,
       status: { kind: 'done', text: '✓ Goal hit. Everything else is gravy.' },
     };
   }
   if (summary.neededPerDay === null) {
     return {
       label: 'Short of goal',
-      value: formatMoney(summary.remaining),
+      value: formatWholeDollars(summary.remaining),
       sub: 'No selling days left in this month.',
       status: null,
     };
@@ -48,8 +49,8 @@ export function salesHero(summary: SalesSummary, goal: number): SalesHero {
     : '';
   return {
     label: 'Needed per selling day',
-    value: formatMoney(summary.neededPerDay),
-    sub: `${formatMoney(summary.remaining)} to go over ${plural(summary.openDays, 'selling day')}${missing}`,
+    value: formatWholeDollars(summary.neededPerDay),
+    sub: `${formatWholeDollars(summary.remaining)} to go over ${plural(summary.openDays, 'selling day')}${missing}`,
     status: paceStatus(summary),
   };
 }
@@ -58,8 +59,8 @@ export function salesHero(summary: SalesSummary, goal: number): SalesHero {
 function paceStatus(summary: SalesSummary): SalesStatus | null {
   if (summary.paceToDate <= 0 && summary.sold <= 0) return null;
   return summary.aheadBy >= 0
-    ? { kind: 'ahead', text: `▲ Ahead of pace by ${formatMoney(summary.aheadBy)}` }
-    : { kind: 'behind', text: `▼ Behind pace by ${formatMoney(-summary.aheadBy)}` };
+    ? { kind: 'ahead', text: `▲ Ahead of pace by ${formatWholeDollars(summary.aheadBy)}` }
+    : { kind: 'behind', text: `▼ Behind pace by ${formatWholeDollars(-summary.aheadBy)}` };
 }
 
 export interface SalesMeter {
@@ -84,8 +85,8 @@ export function salesMeter(summary: SalesSummary, goal: number): SalesMeter | nu
     pacePercent: Math.min(100, (summary.paceToDate / goal) * 100),
     valueNow: Math.round(soldPercent),
     valueText: `${percent}% of goal`,
-    soldText: `${percent}% of ${formatMoney(goal)}`,
-    paceText: `Pace today: ${formatMoney(summary.paceToDate)}`,
+    soldText: `${percent}% of ${formatWholeDollars(goal)}`,
+    paceText: `Pace today: ${formatWholeDollars(summary.paceToDate)}`,
   };
 }
 
@@ -100,23 +101,24 @@ export function salesKpis(summary: SalesSummary, goal: number): SalesKpi[] {
   return [
     {
       label: 'Sold so far',
-      value: formatMoney(summary.sold),
-      detail: goal ? `${formatMoney(summary.remaining)} left` : '',
+      value: formatWholeDollars(summary.sold),
+      detail: goal ? `${formatWholeDollars(summary.remaining)} left` : '',
     },
     {
       label: 'Daily baseline',
-      value: goal ? formatMoney(summary.baseline) : '—',
+      value: goal ? formatWholeDollars(summary.baseline) : '—',
       detail: `${summary.sellingDays} selling days`,
     },
     {
       label: 'Average per day',
-      value: entered ? formatMoney(summary.average) : '—',
+      value: entered ? formatWholeDollars(summary.average) : '—',
       detail: entered ? `over ${plural(entered, 'day')}` : 'no days yet',
     },
     {
       label: 'Month-end at this pace',
-      value: entered ? formatMoney(summary.projected) : '—',
-      detail: entered && goal ? `${formatSigned(summary.projected - goal)} vs goal` : '',
+      value: entered ? formatWholeDollars(summary.projected) : '—',
+      detail:
+        entered && goal ? `${formatSignedWholeDollars(summary.projected - goal)} vs goal` : '',
     },
   ];
 }

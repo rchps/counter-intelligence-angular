@@ -1,12 +1,12 @@
 import { Component, computed, ElementRef, signal, viewChild } from '@angular/core';
 import {
   calculateMargin,
-  formatMoney,
   formatPercent,
   INPUTS_FOR_MODE,
   type MarginField,
   type MarginMode,
 } from '../../core/margin-math';
+import { formatDollarsAndCents } from '../../core/money';
 
 const MODES: { value: MarginMode; label: string }[] = [
   { value: 'cost-margin', label: 'Cost & margin' },
@@ -73,9 +73,9 @@ export class MarginCalculatorComponent {
       };
     }
     return {
-      price: formatMoney(outcome.price),
-      cost: formatMoney(outcome.cost),
-      profit: formatMoney(outcome.profit),
+      price: formatDollarsAndCents(outcome.price),
+      cost: formatDollarsAndCents(outcome.cost),
+      profit: formatDollarsAndCents(outcome.profit),
       margin: formatPercent(outcome.margin),
       markup: outcome.markup !== null ? formatPercent(outcome.markup) : 'n/a',
       belowCost: outcome.belowCost,

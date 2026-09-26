@@ -1,7 +1,4 @@
 import {
-  formatCents,
-  formatMoney,
-  formatSigned,
   fromCsv,
   mergeImportedMonths,
   parseMoney,
@@ -114,21 +111,6 @@ describe('parseMoney', () => {
 describe('shortDate', () => {
   it('formats "2026-09-04" as "Fri, Sep 4"', () => {
     expect(shortDate('2026-09-04')).toBe('Fri, Sep 4');
-  });
-});
-
-describe('formatMoney / formatCents / formatSigned', () => {
-  it('formatMoney rounds to whole dollars', () => {
-    expect(formatMoney(1234.5)).toBe('$1,235');
-  });
-  it('formatCents keeps two decimal places', () => {
-    expect(formatCents(1234.5)).toBe('$1,234.50');
-  });
-  it('formatSigned prefixes a positive amount with +', () => {
-    expect(formatSigned(500)).toBe('+$500');
-  });
-  it('formatSigned prefixes a negative amount with a minus sign', () => {
-    expect(formatSigned(-500)).toBe('−$500');
   });
 });
 

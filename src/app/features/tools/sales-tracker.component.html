@@ -157,9 +157,9 @@
           @for (p of summary().series; track p.date) {
             <tr>
               <td>{{ dayFullLabel(p.date) }}</td>
-              <td>{{ p.sales === null ? '—' : formatCents(p.sales) }}</td>
-              <td>{{ p.showActual ? formatMoney(p.sold) : '—' }}</td>
-              <td>{{ summary().baseline ? formatMoney(p.pace) : '—' }}</td>
+              <td>{{ p.sales === null ? '—' : formatDollarsAndCents(p.sales) }}</td>
+              <td>{{ p.showActual ? formatWholeDollars(p.sold) : '—' }}</td>
+              <td>{{ summary().baseline ? formatWholeDollars(p.pace) : '—' }}</td>
             </tr>
           }
         </tbody>
@@ -240,13 +240,13 @@
                 Week {{ i + 1 }}<span class="sl-range">{{ weekRange(week.start, week.end) }}</span>
               </td>
               <td>{{ week.sellingDays }}</td>
-              <td>{{ goal() ? formatMoney(week.target) : '—' }}</td>
-              <td>{{ week.hasSales ? formatMoney(week.sold) : '—' }}</td>
+              <td>{{ goal() ? formatWholeDollars(week.target) : '—' }}</td>
+              <td>{{ week.hasSales ? formatWholeDollars(week.sold) : '—' }}</td>
               <td
                 [class.pos]="week.hasSales && week.difference >= 0"
                 [class.neg]="week.hasSales && week.difference < 0"
               >
-                {{ week.hasSales && goal() ? formatSigned(week.difference) : '—' }}
+                {{ week.hasSales && goal() ? formatSignedWholeDollars(week.difference) : '—' }}
               </td>
             </tr>
           }
@@ -262,7 +262,7 @@
           <dt>Best day</dt>
           <dd>
             @if (summary().best; as best) {
-              {{ formatMoney(best.sales ?? 0) }} · {{ dayFullLabel(best.date) }}
+              {{ formatWholeDollars(best.sales ?? 0) }} · {{ dayFullLabel(best.date) }}
             } @else {
               —
             }
@@ -272,7 +272,7 @@
           <dt>Slowest day</dt>
           <dd>
             @if (summary().worst; as worst) {
-              {{ formatMoney(worst.sales ?? 0) }} · {{ dayFullLabel(worst.date) }}
+              {{ formatWholeDollars(worst.sales ?? 0) }} · {{ dayFullLabel(worst.date) }}
             } @else {
               —
             }
