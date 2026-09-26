@@ -1,0 +1,108 @@
+<section class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Security Data Supply · Line Card</p>
+    <h1>Every line we carry. <span class="dim">Searchable, linked, and current.</span></h1>
+    <p class="sub">{{ subText() }}</p>
+  </div>
+</section>
+
+<div class="toolbar" role="search">
+  <div class="wrap">
+    <app-search-toolbar
+      inputLabel="Search manufacturers, brands, or product types"
+      [placeholderWide]="placeholderWide()"
+      placeholderNarrow="Search brands or products"
+      [(search)]="search"
+    >
+      <div toolbarExtras class="views" role="group" aria-label="View">
+        <button type="button" [attr.aria-pressed]="view() === 'cat'" (click)="view.set('cat')">
+          <span class="by">By </span>category
+        </button>
+        <button type="button" [attr.aria-pressed]="view() === 'az'" (click)="view.set('az')">
+          A–Z
+        </button>
+      </div>
+    </app-search-toolbar>
+
+    <app-filter-chips
+      groupLabel="Filter by category"
+      [total]="matching().length"
+      [chips]="chips()"
+      [(selected)]="filter"
+    />
+
+    <app-search-status
+      [shownCount]="shown().length"
+      [totalCount]="data.lines().length"
+      [noun]="{ one: 'manufacturer', many: 'manufacturers' }"
+      [filterLabel]="filterLabel()"
+      [search]="debounced()"
+      [correctedSearch]="correctedSearch()"
+      (clear)="clearSearch()"
+    />
+  </div>
+</div>
+
+<main class="wrap" id="results" tabindex="-1">
+  @if (shown().length === 0) {
+    <app-line-card-empty-state
+      [search]="debounced()"
+      [filterActive]="filter() !== 'all'"
+      [filterLabel]="filterLabel()"
+      [matchingCount]="matching().length"
+      [suggestion]="suggestion()"
+      [reportEmail]="data.reportEmail() || null"
+      (searchAllCategories)="showAllCategories()"
+      (useSuggestion)="useSuggestion($event)"
+      (clear)="clearSearch()"
+    />
+  } @else if (exactMatchShown()) {
+    <app-category-group
+      ariaLabel="Search results, best match first"
+      [lines]="bestMatchFirst()"
+      [searchWords]="searchWords()"
+      [logoBase]="data.logoBase()"
+      [categoryLabels]="data.categories()"
+      [showsCategories]="true"
+    />
+  } @else if (view() === 'az') {
+    @if (shown().length < 40) {
+      <app-category-group
+        ariaLabel="Manufacturers A to Z"
+        [lines]="shown()"
+        [searchWords]="searchWords()"
+        [logoBase]="data.logoBase()"
+        [categoryLabels]="data.categories()"
+        [showsCategories]="true"
+      />
+    } @else {
+      <app-az-jump-bar [letters]="letterGroupLetters()" />
+      @for (group of letterGroups(); track group.letter) {
+        <app-category-group
+          [anchorId]="azAnchorId(group.letter)"
+          [heading]="group.letter"
+          [countLabel]="'' + group.lines.length"
+          [lines]="group.lines"
+          [searchWords]="searchWords()"
+          [logoBase]="data.logoBase()"
+          [categoryLabels]="data.categories()"
+          [showsCategories]="true"
+        />
+      }
+    }
+  } @else {
+    @for (group of categoryGroups(); track group.key) {
+      <app-category-group
+        [anchorId]="'cat-' + group.key"
+        [heading]="data.categories()[group.key]"
+        [countLabel]="group.lines.length + ' manufacturer' + (group.lines.length === 1 ? '' : 's')"
+        [catKey]="group.key"
+        [lines]="group.lines"
+        [searchWords]="searchWords()"
+        [logoBase]="data.logoBase()"
+        [categoryLabels]="data.categories()"
+        [showsCategories]="false"
+      />
+    }
+  }
+</main>

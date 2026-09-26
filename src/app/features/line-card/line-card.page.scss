@@ -1,0 +1,81 @@
+// Ported from counter-intelligence/styles.css's "Hero" and "Toolbar" sections (page.js section 6).
+
+:host {
+  display: block;
+}
+
+.hero {
+  padding: 44px 0 18px;
+}
+.eyebrow {
+  margin: 0 0 14px;
+  font: 500 12px/1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.hero h1 {
+  margin: 0;
+  font: 600 clamp(30px, 4.4vw, 48px) / 1.05 var(--display);
+  letter-spacing: -0.035em;
+  max-width: 30ch;
+  text-wrap: balance;
+}
+.hero h1 .dim {
+  color: var(--ink-2);
+}
+.hero .sub {
+  margin: 14px 0 0;
+  color: var(--ink-2);
+  max-width: 64ch;
+  font-size: 15px;
+}
+
+.toolbar {
+  position: sticky;
+  top: var(--bar-h);
+  z-index: 20;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+.toolbar .wrap {
+  padding: 14px 0 10px;
+}
+
+.views {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  flex: 0 0 auto;
+}
+.views button {
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink-2);
+  font: 500 14px/1 var(--font);
+  padding: 0 14px;
+  cursor: pointer;
+}
+.views button:hover {
+  color: var(--ink);
+}
+.views button[aria-pressed='true'] {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.08),
+    0 0 0 1px var(--line);
+}
+
+main {
+  padding: 28px 0 8px;
+}
+main:focus {
+  outline: none;
+}

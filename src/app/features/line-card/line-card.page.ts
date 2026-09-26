@@ -1,14 +1,162 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject, signal, viewChild } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { debounceTime } from 'rxjs';
+import { DataService } from '../../core/data.service';
+import { normalize, searchWordsOf } from '../../core/search/normalize';
+import { searchLines, type Line } from '../../core/search/match';
+import { isExactName, sortByBestMatch } from '../../core/search/rank';
+import { didYouMean } from '../../core/search/typos';
+import { FilterChipsComponent, type FilterChip } from '../../shared/filter-chips.component';
+import { SearchStatusComponent } from '../../shared/search-status.component';
+import { SearchToolbarComponent } from '../../shared/search-toolbar.component';
+import { AzJumpBarComponent, azAnchorId } from './az-jump-bar.component';
+import { CategoryGroupComponent } from './category-group.component';
+import { EmptyStateComponent } from './empty-state.component';
 
-// Placeholder for Phase 3 (ANGULAR_CONVERSION.md): the route exists now so the shell's navigation can be
-// exercised end to end; this template is replaced wholesale when the real Line Card is built.
+type LineCardView = 'cat' | 'az';
+
+interface LetterGroup {
+  letter: string;
+  lines: Line[];
+}
+
+interface CategoryLineGroup {
+  key: string;
+  lines: Line[];
+}
+
+// Ported from page.js section 6 (Line Card page): computed() pipeline query -> corrected words ->
+// matching -> filtered -> grouped/ranked, replacing the imperative render()/renderChips()/renderStatus()
+// trio in createSearchPage(). ANGULAR_CONVERSION.md Phase 3.
 @Component({
   selector: 'app-line-card-page',
-  template: `
-    <section class="wrap">
-      <h1>Line Card</h1>
-      <p>Coming in Phase 3.</p>
-    </section>
-  `,
+  imports: [
+    SearchToolbarComponent,
+    FilterChipsComponent,
+    SearchStatusComponent,
+    CategoryGroupComponent,
+    AzJumpBarComponent,
+    EmptyStateComponent,
+  ],
+  templateUrl: './line-card.page.html',
+  styleUrl: './line-card.page.scss',
 })
-export class LineCardPage {}
+export class LineCardPage {
+  protected readonly data = inject(DataService);
+
+  protected readonly search = signal('');
+  protected readonly filter = signal('all');
+  protected readonly view = signal<LineCardView>('cat');
+
+  private readonly toolbar = viewChild.required(SearchToolbarComponent);
+
+  // Debounced ~60ms (page.js's typingDelay: 60), so a burst of keystrokes doesn't re-run the full search
+  // pipeline on every one. The search box itself stays bound to the undebounced `search` signal above.
+  private readonly debounced = toSignal(toObservable(this.search).pipe(debounceTime(60)), {
+    initialValue: '',
+  });
+
+  private readonly searchResult = computed(() =>
+    searchLines(this.data.lines(), this.data.knownWords(), this.debounced()),
+  );
+  protected readonly matching = computed(() => this.searchResult().matching);
+  protected readonly correctedSearch = computed(() => this.searchResult().correctedSearch);
+  protected readonly searchWords = computed(() => this.searchResult().searchWords);
+
+  protected readonly shown = computed(() => {
+    const key = this.filter();
+    return key === 'all'
+      ? this.matching()
+      : this.matching().filter((line) => line.cats.includes(key));
+  });
+
+  private readonly normalizedSearch = computed(() =>
+    normalize(this.correctedSearch() || this.debounced()),
+  );
+
+  protected readonly exactMatchShown = computed(() => {
+    const search = this.normalizedSearch();
+    return !!search && this.shown().some((line) => isExactName(line, search));
+  });
+  protected readonly bestMatchFirst = computed(() =>
+    sortByBestMatch(this.shown(), this.normalizedSearch()),
+  );
+
+  protected readonly categoryGroups = computed<CategoryLineGroup[]>(() => {
+    const keys = this.filter() === 'all' ? Object.keys(this.data.categories()) : [this.filter()];
+    return keys
+      .map((key) => ({ key, lines: this.shown().filter((line) => line.cats.includes(key)) }))
+      .filter((group) => group.lines.length > 0);
+  });
+
+  protected readonly letterGroups = computed<LetterGroup[]>(() => {
+    const byLetter = new Map<string, Line[]>();
+    this.shown().forEach((line) => {
+      const letter = /[a-z]/i.test(line.name[0]) ? line.name[0].toUpperCase() : '#';
+      const group = byLetter.get(letter);
+      if (group) group.push(line);
+      else byLetter.set(letter, [line]);
+    });
+    return [...byLetter.entries()]
+      .sort(([a], [b]) => (a === '#' ? -1 : b === '#' ? 1 : a.localeCompare(b)))
+      .map(([letter, lines]) => ({ letter, lines }));
+  });
+  protected readonly letterGroupLetters = computed(() =>
+    this.letterGroups().map((group) => group.letter),
+  );
+
+  protected readonly chips = computed<FilterChip[]>(() => {
+    const counts: Record<string, number> = {};
+    this.matching().forEach((line) =>
+      line.cats.forEach((cat) => (counts[cat] = (counts[cat] ?? 0) + 1)),
+    );
+    const categories = this.data.categories();
+    return Object.keys(categories).map((key) => ({
+      key,
+      label: categories[key],
+      count: counts[key] ?? 0,
+      colored: true,
+    }));
+  });
+
+  protected readonly filterLabel = computed(() =>
+    this.filter() === 'all' ? null : (this.data.categories()[this.filter()] ?? null),
+  );
+
+  protected readonly suggestion = computed(() => {
+    const typed = this.debounced();
+    const words = searchWordsOf(typed);
+    const isEasterEgg = typed.trim().toLowerCase() === 'your mom';
+    if (!words.length || isEasterEgg) return '';
+    return didYouMean(words, this.data.knownWords(), this.data.lines());
+  });
+
+  protected readonly subText = computed(() => {
+    const isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+    const shortcut = isMac ? '⌘K' : 'Ctrl K';
+    const total = this.data.lines().length;
+    const categoryCount = Object.keys(this.data.categories()).length;
+    return `${total} manufacturers across ${categoryCount} categories. Search by brand, product family, or product type. Press ${shortcut} or / from anywhere.`;
+  });
+  protected readonly placeholderWide = computed(
+    () =>
+      `Search ${this.data.lines().length} manufacturers, brands, or products (e.g. Wheelock, maglock, Cat6)`,
+  );
+
+  protected readonly azAnchorId = azAnchorId;
+
+  protected clearSearch(): void {
+    this.search.set('');
+    this.filter.set('all');
+    this.toolbar().focus();
+  }
+
+  protected showAllCategories(): void {
+    this.filter.set('all');
+  }
+
+  protected useSuggestion(text: string): void {
+    this.search.set(text);
+    this.filter.set('all');
+  }
+}

@@ -1,0 +1,16 @@
+// Ported from counter-intelligence/styles.css. Only the quip is Line Card-specific — .empty/.btn/
+// .linkbtn are shared with Branches' own empty state too, so they live in the global stylesheet.
+
+:host {
+  display: block;
+}
+
+.quip {
+  margin: -4px auto 12px;
+  text-align: center;
+  color: var(--ink-2);
+  font-style: italic;
+}
+.quip:empty {
+  display: none;
+}

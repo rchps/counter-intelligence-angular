@@ -13,10 +13,12 @@ import { buildKnownWords } from './search/typos';
 
 interface LinesJson {
   asOf: string;
+  source: string;
   reportEmail?: string;
   cats: Record<string, string>;
   lines: RawLine[];
   branches: RawBranch[];
+  logoBase: string;
 }
 
 interface TermsJson {
@@ -45,8 +47,10 @@ export class DataService {
   );
 
   readonly asOf = computed(() => this.linesJson.value()?.asOf ?? '');
+  readonly source = computed(() => this.linesJson.value()?.source ?? '');
   readonly reportEmail = computed(() => this.linesJson.value()?.reportEmail ?? '');
   readonly categories = computed(() => this.linesJson.value()?.cats ?? {});
+  readonly logoBase = computed(() => this.linesJson.value()?.logoBase ?? '');
 
   readonly lines = computed<Line[]>(() => {
     const linesJson = this.linesJson.value();

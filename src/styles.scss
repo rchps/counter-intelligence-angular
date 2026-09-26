@@ -266,6 +266,15 @@ a {
   --cat-soft: var(--gold-3);
 }
 
+/* highlightMatches() (core/search/normalize.ts) wraps matched search text in <mark>, rendered via
+   [innerHTML] so it isn't scoped by any one component's view encapsulation. */
+mark {
+  background: var(--mark);
+  color: #0a0a0b;
+  border-radius: 3px;
+  padding: 0 1px;
+}
+
 /* Chips: a row of filter pills with a live count, used by both the Line Card and Branches toolbars. */
 .chips {
   display: flex;
@@ -333,6 +342,67 @@ a {
 }
 .chip[data-cat][aria-pressed='true']::before {
   box-shadow: 0 0 0 2px var(--surface);
+}
+
+/* A plain text-style button, e.g. the status line's "Clear search & filters" and an empty state's
+   "Did you mean" suggestion. Shared by Line Card and Branches. */
+.linkbtn {
+  border: 0;
+  background: none;
+  padding: 4px 0;
+  color: var(--brand);
+  font: 500 13px/1 var(--font);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* A bold pill button, and its lower-emphasis "secondary" variant. Shared by Line Card's empty state now,
+   and by dialogs/tools later. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 0;
+  background: var(--inv);
+  color: var(--on-inv);
+  font: 500 14px/1 var(--font);
+  text-decoration: none;
+  cursor: pointer;
+  margin: 14px 4px 0;
+}
+.btn.secondary {
+  background: var(--surface-2);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+/* A dashed-border "nothing here" box. Shared by Line Card's and Branches' empty states; Line Card adds
+   its own quip on top (empty-state.component.scss). */
+.empty {
+  text-align: center;
+  padding: 56px 16px;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.empty h2 {
+  font: 600 22px/1.2 var(--display);
+  letter-spacing: -0.02em;
+  margin: 0 0 8px;
+}
+.empty p {
+  color: var(--ink-2);
+  margin: 6px auto;
+  max-width: 52ch;
+}
+.empty-report {
+  margin-top: 14px;
+  color: var(--ink-2);
+  font-size: 14px;
 }
 
 /* Segmented control: a fieldset of mutually-exclusive choices that looks like one pill-shaped control

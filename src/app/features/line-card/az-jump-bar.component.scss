@@ -1,0 +1,28 @@
+// Ported from counter-intelligence/styles.css's ".letters" rule.
+
+:host {
+  display: block;
+}
+
+.letters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0 0 22px;
+}
+.letters a {
+  display: inline-grid;
+  place-items: center;
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  text-decoration: none;
+  font: 500 13px/1 var(--mono);
+}
+.letters a:hover {
+  border-color: var(--line-strong);
+  background: var(--surface-2);
+}

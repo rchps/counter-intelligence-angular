@@ -80,7 +80,7 @@ export class SearchToolbarComponent {
       const isCtrlK = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k';
       if (!isCtrlK && !(event.key === '/' && !typingInAField)) return;
       event.preventDefault();
-      this.focusAndSelect();
+      this.focus();
     };
     document.addEventListener('keydown', onGlobalKeydown);
 
@@ -98,10 +98,12 @@ export class SearchToolbarComponent {
 
   protected clear(): void {
     this.search.set('');
-    this.focusAndSelect();
+    this.focus();
   }
 
-  private focusAndSelect(): void {
+  /** Focuses and selects the search box — called on Ctrl/Cmd K, "/", its own Clear button, and (from a
+   *  parent page, via a template ref) the status line's "Clear search & filters" button. */
+  focus(): void {
     const element = this.inputRef().nativeElement;
     element.focus();
     element.select();
