@@ -82,7 +82,7 @@
               list="report-line-names"
               autocomplete="off"
               [value]="line()"
-              (input)="line.set(valueOf($event))"
+              (input)="line.set(inputValue($event))"
             />
             <datalist id="report-line-names">
               @for (name of lineNames(); track name) {
@@ -98,7 +98,7 @@
             [maxLength]="textLimit"
             [placeholder]="detailsHint()"
             [value]="details()"
-            (input)="details.set(valueOf($event))"
+            (input)="details.set(inputValue($event))"
           ></textarea>
           <span class="dlg-count" aria-live="polite">{{ countText(details()) }}</span>
         </div>
@@ -112,7 +112,7 @@
             [maxLength]="textLimit"
             placeholder="e.g. Quote a 16-camera job and figure out which switch could power it"
             [value]="task()"
-            (input)="task.set(valueOf($event))"
+            (input)="task.set(inputValue($event))"
           ></textarea>
           <span class="dlg-count" aria-live="polite">{{ countText(task()) }}</span>
         </div>
@@ -125,7 +125,7 @@
             [maxLength]="textLimit"
             placeholder="Your idea, however rough"
             [value]="wish()"
-            (input)="wish.set(valueOf($event))"
+            (input)="wish.set(inputValue($event))"
           ></textarea>
         </div>
         <fieldset class="dlg-field">

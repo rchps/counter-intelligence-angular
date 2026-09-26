@@ -15,7 +15,7 @@
           autocomplete="off"
           placeholder="370"
           [value]="budgetText()"
-          (input)="budgetText.set($any($event.target).value)"
+          (input)="budgetText.set(inputValue($event))"
         />
         <span class="affix suf" aria-hidden="true">W</span>
       </div>
@@ -55,7 +55,7 @@
               autocomplete="off"
               placeholder="1"
               [value]="row.quantityText"
-              (input)="setQuantityText(row.id, $any($event.target).value)"
+              (input)="setQuantityText(row.id, inputValue($event))"
             />
           </div>
           <div>
@@ -63,7 +63,7 @@
             <select
               [id]="'poe-class-' + row.id"
               [value]="row.classChoice"
-              (change)="setClassChoice(row.id, $any($event.target).value)"
+              (change)="setClassChoice(row.id, inputValue($event))"
             >
               @for (option of classOptions; track option) {
                 <option [value]="option">Class {{ option }}</option>
@@ -80,7 +80,7 @@
               autocomplete="off"
               [value]="wattsDisplay(row)"
               [readOnly]="isWattsReadonly(row)"
-              (input)="setWattsText(row.id, $any($event.target).value)"
+              (input)="setWattsText(row.id, inputValue($event))"
             />
           </div>
           <button

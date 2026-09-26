@@ -21,6 +21,7 @@ import {
 } from '../../core/sales-math';
 import { SalesStoreService } from '../../core/sales-store.service';
 import { SalesChartComponent } from './sales-chart.component';
+import { inputValue } from '../../shared/input-value';
 
 const pad = (n: number): string => String(n).padStart(2, '0');
 const EMPTY_MONTH: MonthRecord = { goal: null, sales: {}, overrides: {} };
@@ -35,6 +36,7 @@ const EMPTY_MONTH: MonthRecord = { goal: null, sales: {}, overrides: {} };
   styleUrl: './sales-tracker.component.scss',
 })
 export class SalesTrackerComponent {
+  protected readonly inputValue = inputValue;
   private readonly salesStore = inject(SalesStoreService);
   private readonly elementRef: ElementRef<HTMLElement> = inject(ElementRef);
 

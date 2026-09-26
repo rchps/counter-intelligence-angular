@@ -39,7 +39,7 @@
             autocomplete="off"
             placeholder="4096"
             [value]="kbpsText()"
-            (input)="kbpsText.set($any($event.target).value)"
+            (input)="kbpsText.set(inputValue($event))"
           />
           <span class="affix suf" aria-hidden="true">Kbps</span>
         </div>
@@ -54,7 +54,7 @@
           <select
             id="nvr-res"
             [value]="resolution()"
-            (change)="resolution.set($any($event.target).value)"
+            (change)="onResolutionChange(inputValue($event))"
           >
             @for (option of resolutions; track option.key) {
               <option [value]="option.key">{{ option.label }}</option>
@@ -63,7 +63,7 @@
         </div>
         <div class="mc-field">
           <label for="nvr-fps">Frame rate</label>
-          <select id="nvr-fps" [value]="fps()" (change)="fps.set($any($event.target).value)">
+          <select id="nvr-fps" [value]="fps()" (change)="onFpsChange(inputValue($event))">
             <option value="normal">5 to 30 fps</option>
             <option value="high">60 fps</option>
           </select>
@@ -106,7 +106,7 @@
             autocomplete="off"
             placeholder="8"
             [value]="camerasText()"
-            (input)="camerasText.set($any($event.target).value)"
+            (input)="camerasText.set(inputValue($event))"
           />
         </div>
       </div>
@@ -120,7 +120,7 @@
             inputmode="numeric"
             autocomplete="off"
             [value]="daysText()"
-            (input)="daysText.set($any($event.target).value)"
+            (input)="daysText.set(inputValue($event))"
           />
           <span class="affix suf" aria-hidden="true">days</span>
         </div>
@@ -137,7 +137,7 @@
           inputmode="decimal"
           autocomplete="off"
           [value]="recordingPercentText()"
-          (input)="recordingPercentText.set($any($event.target).value)"
+          (input)="recordingPercentText.set(inputValue($event))"
         />
         <span class="affix suf" aria-hidden="true">%</span>
       </div>
@@ -158,14 +158,14 @@
             autocomplete="off"
             placeholder="8"
             [value]="driveTBText()"
-            (input)="driveTBText.set($any($event.target).value)"
+            (input)="driveTBText.set(inputValue($event))"
           />
           <span class="affix suf" aria-hidden="true">TB</span>
         </div>
       </div>
       <div class="mc-field">
         <label for="nvr-raid">Drive setup</label>
-        <select id="nvr-raid" [value]="raid()" (change)="raid.set($any($event.target).value)">
+        <select id="nvr-raid" [value]="raid()" (change)="onRaidChange(inputValue($event))">
           <option value="none">No RAID</option>
           <option value="raid5">RAID 5</option>
           <option value="raid6">RAID 6</option>

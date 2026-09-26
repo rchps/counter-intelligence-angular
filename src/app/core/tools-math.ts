@@ -266,6 +266,20 @@ export const RAID_LAYOUTS: Record<RaidType, RaidLayout> = {
   raid10: { label: 'RAID 10', mirrored: true, minDrives: 4 },
 };
 
+// Type guards for values read back from the NVR tool's dropdowns, which the browser hands over as plain
+// strings: only a value the tool knows is accepted.
+export function isResolution(value: string): value is Resolution {
+  return Object.hasOwn(BITRATE_GUIDE_H264, value);
+}
+
+export function isFpsBand(value: string): value is FpsBand {
+  return value === 'normal' || value === 'high';
+}
+
+export function isRaidType(value: string): value is RaidType {
+  return Object.hasOwn(RAID_LAYOUTS, value);
+}
+
 export interface UsableTbInput {
   drives: number;
   driveTB: number;

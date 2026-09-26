@@ -48,7 +48,7 @@
             autocomplete="off"
             placeholder="0.250"
             [value]="standbyAmpsText()"
-            (input)="standbyAmpsText.set($any($event.target).value)"
+            (input)="standbyAmpsText.set(inputValue($event))"
           />
           <span class="affix suf" aria-hidden="true">A</span>
         </div>
@@ -64,7 +64,7 @@
             autocomplete="off"
             placeholder="1.500"
             [value]="alarmAmpsText()"
-            (input)="alarmAmpsText.set($any($event.target).value)"
+            (input)="alarmAmpsText.set(inputValue($event))"
           />
           <span class="affix suf" aria-hidden="true">A</span>
         </div>
@@ -81,7 +81,7 @@
             inputmode="decimal"
             autocomplete="off"
             [value]="standbyHoursText()"
-            (input)="standbyHoursText.set($any($event.target).value); onTimingInput()"
+            (input)="standbyHoursText.set(inputValue($event)); onTimingInput()"
           />
           <span class="affix suf" aria-hidden="true">hr</span>
         </div>
@@ -96,7 +96,7 @@
             inputmode="decimal"
             autocomplete="off"
             [value]="alarmMinutesText()"
-            (input)="alarmMinutesText.set($any($event.target).value); onTimingInput()"
+            (input)="alarmMinutesText.set(inputValue($event)); onTimingInput()"
           />
           <span class="affix suf" aria-hidden="true">min</span>
         </div>

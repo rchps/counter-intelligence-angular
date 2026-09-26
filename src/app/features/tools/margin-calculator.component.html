@@ -53,7 +53,7 @@
               placeholder="50.00"
               [value]="costText()"
               [attr.aria-invalid]="invalidFields().has('cost') ? 'true' : 'false'"
-              (input)="costText.set($any($event.target).value)"
+              (input)="costText.set(inputValue($event))"
             />
           </div>
         </div>
@@ -72,7 +72,7 @@
               placeholder="100.00"
               [value]="priceText()"
               [attr.aria-invalid]="invalidFields().has('price') ? 'true' : 'false'"
-              (input)="priceText.set($any($event.target).value)"
+              (input)="priceText.set(inputValue($event))"
             />
           </div>
         </div>
@@ -91,7 +91,7 @@
               style="padding-left: 12px"
               [value]="marginText()"
               [attr.aria-invalid]="invalidFields().has('margin') ? 'true' : 'false'"
-              (input)="marginText.set($any($event.target).value)"
+              (input)="marginText.set(inputValue($event))"
             />
           </div>
         </div>

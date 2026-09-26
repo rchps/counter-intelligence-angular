@@ -7,6 +7,7 @@ import {
   type WireGauge,
 } from '../../core/tools-math';
 import { ToolResultCardComponent } from './tool-result-card.component';
+import { inputValue } from '../../shared/input-value';
 
 interface GaugeRow {
   gauge: WireGauge;
@@ -23,6 +24,7 @@ interface GaugeRow {
   templateUrl: './voltage-drop-tool.component.html',
 })
 export class VoltageDropToolComponent {
+  protected readonly inputValue = inputValue;
   protected readonly gauges = GAUGES;
 
   protected readonly supplyVoltsText = signal('24');

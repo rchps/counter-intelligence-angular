@@ -1,6 +1,7 @@
 import { Component, computed, signal } from '@angular/core';
 import { POE_CLASSES, poeBudget, readPositiveNumber, type PoeDevice } from '../../core/tools-math';
 import { ToolResultCardComponent } from './tool-result-card.component';
+import { inputValue } from '../../shared/input-value';
 
 type PoeBasis = 'pse' | 'pd';
 
@@ -24,6 +25,7 @@ interface ParsedDevices {
   templateUrl: './poe-budget-tool.component.html',
 })
 export class PoeBudgetToolComponent {
+  protected readonly inputValue = inputValue;
   protected readonly classOptions = Object.keys(POE_CLASSES);
 
   protected readonly budgetText = signal('');

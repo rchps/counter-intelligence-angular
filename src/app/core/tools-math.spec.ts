@@ -247,3 +247,19 @@ describe('readPositiveNumber', () => {
     expect(T.readPositiveNumber('-5').bad).toBe(true);
   });
 });
+
+describe('NVR dropdown type guards', () => {
+  it('accept only values the tool knows', () => {
+    expect(T.isResolution('4MP')).toBe(true);
+    expect(T.isResolution('3MP')).toBe(false);
+    expect(T.isFpsBand('high')).toBe(true);
+    expect(T.isFpsBand('low')).toBe(false);
+    expect(T.isRaidType('raid6')).toBe(true);
+    expect(T.isRaidType('raid0')).toBe(false);
+  });
+
+  it('are not fooled by names every object inherits', () => {
+    expect(T.isResolution('toString')).toBe(false);
+    expect(T.isRaidType('constructor')).toBe(false);
+  });
+});

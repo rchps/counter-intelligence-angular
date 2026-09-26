@@ -27,6 +27,7 @@ import {
   type ProblemKindKey,
 } from '../../core/feedback';
 import { FeedbackService, type FeedbackRequest } from '../../core/feedback.service';
+import { inputValue } from '../../shared/input-value';
 
 // Ported from page.js's Feedback section (buildReportDialog/showMode/refreshReport/openReport): one
 // native <dialog> with two modes. "Something's wrong" asks what first (closed choices, then optional
@@ -39,6 +40,7 @@ import { FeedbackService, type FeedbackRequest } from '../../core/feedback.servi
   styleUrl: './feedback-dialog.component.scss',
 })
 export class FeedbackDialogComponent {
+  protected readonly inputValue = inputValue;
   private readonly feedback = inject(FeedbackService);
   private readonly data = inject(DataService);
   private readonly injector = inject(Injector);
@@ -171,9 +173,5 @@ export class FeedbackDialogComponent {
 
   protected setKind(key: ProblemKindKey): void {
     this.kind.set(key);
-  }
-
-  protected valueOf(event: Event): string {
-    return (event.target as HTMLInputElement | HTMLTextAreaElement).value;
   }
 }

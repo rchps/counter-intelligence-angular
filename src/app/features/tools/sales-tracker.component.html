@@ -26,7 +26,7 @@
             type="month"
             aria-labelledby="sl-month-label"
             [value]="month()"
-            (change)="onMonthInputChange($any($event.target).value)"
+            (change)="onMonthInputChange(inputValue($event))"
           />
           <button type="button" class="sl-iconbtn" aria-label="Next month" (click)="shiftMonth(1)">
             ›
@@ -44,7 +44,7 @@
             placeholder="50,000"
             [value]="goalText()"
             [attr.aria-invalid]="goalInvalid() ? 'true' : 'false'"
-            (input)="onGoalInput($any($event.target).value)"
+            (input)="onGoalInput(inputValue($event))"
             (blur)="onGoalBlur()"
           />
         </div>
@@ -61,7 +61,7 @@
               placeholder="0.00"
               [value]="todayText()"
               [attr.aria-invalid]="todayInvalid() ? 'true' : 'false'"
-              (input)="onTodayInput($any($event.target).value)"
+              (input)="onTodayInput(inputValue($event))"
               (blur)="onTodayBlur()"
               (keydown.enter)="$event.preventDefault()"
             />
@@ -210,7 +210,7 @@
             placeholder="—"
             [value]="dayTexts()[day.date] ?? ''"
             [attr.aria-invalid]="dayInvalid()[day.date] ? 'true' : 'false'"
-            (input)="onDayInput(day.date, $any($event.target).value)"
+            (input)="onDayInput(day.date, inputValue($event))"
             (keydown.enter)="onDayEnter($event, day.date)"
           />
           <span class="sl-day-hit">{{ hitText(day) }}</span>

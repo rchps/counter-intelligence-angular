@@ -15,7 +15,7 @@
             inputmode="decimal"
             autocomplete="off"
             [value]="supplyVoltsText()"
-            (input)="supplyVoltsText.set($any($event.target).value)"
+            (input)="supplyVoltsText.set(inputValue($event))"
           />
           <span class="affix suf" aria-hidden="true">V</span>
         </div>
@@ -31,7 +31,7 @@
             autocomplete="off"
             placeholder="1.5"
             [value]="ampsText()"
-            (input)="ampsText.set($any($event.target).value)"
+            (input)="ampsText.set(inputValue($event))"
           />
           <span class="affix suf" aria-hidden="true">A</span>
         </div>
@@ -49,14 +49,14 @@
             autocomplete="off"
             placeholder="300"
             [value]="oneWayFeetText()"
-            (input)="oneWayFeetText.set($any($event.target).value)"
+            (input)="oneWayFeetText.set(inputValue($event))"
           />
           <span class="affix suf" aria-hidden="true">ft</span>
         </div>
       </div>
       <div class="mc-field">
         <label for="vd-gauge">Wire gauge</label>
-        <select id="vd-gauge" [value]="gauge()" (change)="onGaugeChange($any($event.target).value)">
+        <select id="vd-gauge" [value]="gauge()" (change)="onGaugeChange(inputValue($event))">
           @for (g of gauges; track g) {
             <option [value]="g">{{ g }} AWG</option>
           }
@@ -97,7 +97,7 @@
           autocomplete="off"
           placeholder="from the spec sheet"
           [value]="minVoltsText()"
-          (input)="minVoltsText.set($any($event.target).value)"
+          (input)="minVoltsText.set(inputValue($event))"
         />
         <span class="affix suf" aria-hidden="true">V</span>
       </div>

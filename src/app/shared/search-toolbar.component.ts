@@ -9,6 +9,7 @@ import {
   viewChild,
   input,
 } from '@angular/core';
+import { inputValue } from './input-value';
 
 let nextId = 0;
 
@@ -41,7 +42,7 @@ let nextId = 0;
         spellcheck="false"
         [placeholder]="placeholder()"
         [value]="search()"
-        (input)="search.set($any($event.target).value)"
+        (input)="search.set(inputValue($event))"
         (keydown)="onInputKeydown($event)"
       />
       <span class="kbd" aria-hidden="true">
@@ -54,6 +55,7 @@ let nextId = 0;
   `,
 })
 export class SearchToolbarComponent {
+  protected readonly inputValue = inputValue;
   readonly inputLabel = input.required<string>();
   readonly placeholderWide = input.required<string>();
   readonly placeholderNarrow = input.required<string>();

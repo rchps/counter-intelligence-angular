@@ -2,6 +2,7 @@ import { DecimalPipe } from '@angular/common';
 import { Component, computed, signal } from '@angular/core';
 import { BATTERY_PRESETS, batteryAmpHours, readPositiveNumber } from '../../core/tools-math';
 import { ToolResultCardComponent } from './tool-result-card.component';
+import { inputValue } from '../../shared/input-value';
 
 type BatteryPreset = 'fire' | 'voice' | 'custom';
 
@@ -12,6 +13,7 @@ type BatteryPreset = 'fire' | 'voice' | 'custom';
   templateUrl: './battery-tool.component.html',
 })
 export class BatteryToolComponent {
+  protected readonly inputValue = inputValue;
   protected readonly preset = signal<BatteryPreset>('fire');
   protected readonly standbyAmpsText = signal('');
   protected readonly alarmAmpsText = signal('');

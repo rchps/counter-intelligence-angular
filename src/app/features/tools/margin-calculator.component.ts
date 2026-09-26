@@ -7,6 +7,7 @@ import {
   type MarginMode,
 } from '../../core/margin-math';
 import { formatDollarsAndCents } from '../../core/money';
+import { inputValue } from '../../shared/input-value';
 
 const MODES: { value: MarginMode; label: string }[] = [
   { value: 'cost-margin', label: 'Cost & margin' },
@@ -23,6 +24,7 @@ const MODES: { value: MarginMode; label: string }[] = [
   styleUrl: './margin-calculator.component.scss',
 })
 export class MarginCalculatorComponent {
+  protected readonly inputValue = inputValue;
   protected readonly modes = MODES;
 
   protected readonly mode = signal<MarginMode>('cost-margin');

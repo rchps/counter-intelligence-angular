@@ -3,6 +3,9 @@ import {
   BITRATE_GUIDE_H264,
   drivesNeeded,
   estimatedBitrate,
+  isFpsBand,
+  isRaidType,
+  isResolution,
   nvrStorage,
   RAID_LAYOUTS,
   readPositiveNumber,
@@ -14,6 +17,7 @@ import {
   type Resolution,
 } from '../../core/tools-math';
 import { ToolResultCardComponent } from './tool-result-card.component';
+import { inputValue } from '../../shared/input-value';
 
 type NvrMode = 'known' | 'estimate';
 
@@ -27,6 +31,7 @@ const tbText = (tb: number): string =>
   templateUrl: './nvr-storage-tool.component.html',
 })
 export class NvrStorageToolComponent {
+  protected readonly inputValue = inputValue;
   protected readonly resolutions = Object.entries(BITRATE_GUIDE_H264).map(([key, info]) => ({
     key: key as Resolution,
     label: info.label,
@@ -42,6 +47,19 @@ export class NvrStorageToolComponent {
   protected readonly recordingPercentText = signal('100');
   protected readonly driveTBText = signal('');
   protected readonly raid = signal<RaidType>('none');
+
+  // The dropdowns hand back plain strings; only set a value the tool knows.
+  protected onResolutionChange(value: string): void {
+    if (isResolution(value)) this.resolution.set(value);
+  }
+
+  protected onFpsChange(value: string): void {
+    if (isFpsBand(value)) this.fps.set(value);
+  }
+
+  protected onRaidChange(value: string): void {
+    if (isRaidType(value)) this.raid.set(value);
+  }
 
   private readonly cameras = computed(() => readPositiveNumber(this.camerasText()));
   private readonly days = computed(() => readPositiveNumber(this.daysText()));
