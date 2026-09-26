@@ -1,0 +1,379 @@
+// Ported from sales.html's own <style> block. Unlike the sizing tools, this component authors all of
+// its own markup (nothing is projected in from elsewhere), so these rules can safely stay scoped here
+// instead of living in the global stylesheet.
+
+.sl {
+  width: min(1100px, 100% - 32px);
+  margin: 0 auto 48px;
+  padding-top: 44px;
+}
+.sl > p.sl-lede {
+  color: var(--ink-2);
+  margin: 10px 0 24px;
+  max-width: 64ch;
+}
+.sl-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow-lg);
+}
+.sl-top {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  overflow: hidden;
+}
+.sl-setup {
+  padding: 22px 24px;
+  border-right: 1px solid var(--line);
+}
+.sl-main {
+  padding: 22px 24px;
+  background: var(--surface-2);
+}
+.sl h3 {
+  margin: 0 0 12px;
+  font: 500 12px/1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.sl label,
+.sl .sl-label {
+  display: block;
+  margin: 0 0 6px;
+  font: 600 14px/1.3 var(--font);
+  color: var(--ink);
+}
+.sl input[type='text'],
+.sl input[type='month'] {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--input);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  font: 500 16px/1.2 var(--font);
+}
+.sl input:focus {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 18%, transparent);
+}
+.sl input[aria-invalid='true'] {
+  border-color: var(--neg);
+}
+.sl-field {
+  margin: 0 0 14px;
+}
+.sl-month {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  gap: 6px;
+}
+.sl-iconbtn {
+  min-height: 44px;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  font: 500 18px/1 var(--font);
+  cursor: pointer;
+}
+.sl-iconbtn:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+.sl-money {
+  position: relative;
+}
+.sl-money::before {
+  content: '$';
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--ink-2);
+  font-weight: 600;
+  pointer-events: none;
+}
+.sl .sl-money input[type='text'] {
+  padding-left: 26px;
+}
+.sl-today {
+  margin: 4px 0 0;
+  padding: 14px;
+  border: 1px solid color-mix(in srgb, var(--sl-accent) 45%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--grass-3) 70%, var(--surface));
+}
+.sl-today input {
+  font-size: 22px;
+  font-weight: 600;
+  min-height: 52px;
+}
+.sl-hint {
+  display: block;
+  margin-top: 6px;
+  color: var(--ink-2);
+  font-size: 12px;
+}
+.sl-saved {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 14px 0 0;
+  color: var(--ink-2);
+  font-size: 12px;
+}
+.sl-saved.warn {
+  color: var(--sl-behind-fg);
+}
+
+/* Hero: the one number */
+.sl-hero .k {
+  display: block;
+  color: var(--ink-2);
+  font: 600 12px/1.2 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.sl-hero .v {
+  display: block;
+  margin: 6px 0 4px;
+  font: 600 52px/1 var(--font);
+  letter-spacing: -0.03em;
+}
+.sl-hero .sub {
+  color: var(--ink-2);
+  font-size: 14px;
+}
+.sl-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font: 600 13px/1.3 var(--font);
+}
+.sl-status.ahead {
+  background: var(--grass-3);
+  color: var(--grass-11);
+}
+.sl-status.behind {
+  background: var(--sl-behind-bg);
+  color: var(--sl-behind-fg);
+}
+.sl-status.done {
+  background: var(--inv);
+  color: var(--on-inv);
+}
+
+/* Progress to goal with a "where pace says you should be" marker */
+.sl-meter {
+  margin: 18px 0 6px;
+}
+.sl-meter-track {
+  position: relative;
+  height: 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--sl-accent) 16%, var(--surface));
+}
+.sl-meter-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 999px;
+  background: var(--sl-accent);
+  transition: width 0.25s;
+}
+.sl-meter-mark {
+  position: absolute;
+  top: -4px;
+  width: 2px;
+  height: 20px;
+  margin-left: -1px;
+  border-radius: 1px;
+  background: var(--ink);
+}
+.sl-meter-legend {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+  color: var(--ink-2);
+  font-size: 12px;
+}
+.sl-meter-legend .pace::before {
+  content: '';
+  display: inline-block;
+  width: 2px;
+  height: 10px;
+  margin-right: 6px;
+  background: var(--ink);
+  vertical-align: -1px;
+}
+
+/* KPI row */
+.sl-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 18px;
+}
+.sl-kpi {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+}
+.sl-kpi .k {
+  display: block;
+  color: var(--ink-2);
+  font-size: 12px;
+}
+.sl-kpi .v {
+  display: block;
+  margin-top: 4px;
+  font: 600 18px/1.2 var(--font);
+}
+.sl-kpi .d {
+  display: block;
+  margin-top: 2px;
+  color: var(--ink-2);
+  font-size: 12px;
+}
+
+/* Sections below */
+.sl-section {
+  margin-top: 18px;
+  padding: 20px 24px;
+}
+.sl-section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 12px;
+}
+.sl-section-head h3 {
+  margin: 0;
+}
+
+/* Calendar */
+.sl-cal {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+.sl-dow {
+  padding: 0 4px 2px;
+  color: var(--ink-2);
+  font: 500 11px/1 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.sl-day {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+}
+.sl-day.off {
+  background: var(--surface-2);
+}
+.sl-day.off input {
+  opacity: 0.65;
+}
+.sl-day.today {
+  border-color: var(--sl-accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--sl-accent) 30%, transparent);
+}
+.sl-day-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+.sl-day-num {
+  font: 600 14px/1 var(--font);
+}
+.sl-day.today .sl-day-num::after {
+  content: ' · today';
+  color: var(--ink-2);
+  font-weight: 500;
+  font-size: 11px;
+}
+.sl-toggle {
+  padding: 3px 7px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-2);
+  font: 500 11px/1.2 var(--font);
+  cursor: pointer;
+}
+.sl-toggle:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+.sl-day.off .sl-toggle {
+  border-style: dashed;
+}
+.sl-day input[type='text'] {
+  min-height: 36px;
+  padding: 6px 8px;
+  border-radius: 9px;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.sl-day-hit {
+  min-height: 14px;
+  color: var(--ink-2);
+  font-size: 11px;
+}
+.sl-blank {
+  visibility: hidden;
+}
+
+@media (max-width: 860px) {
+  .sl-top {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .sl-setup {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .sl-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .sl-cal {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .sl-dow,
+  .sl-blank {
+    display: none;
+  }
+  .sl-day {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+    align-items: center;
+  }
+  .sl-day-hit {
+    grid-column: 1 / -1;
+  }
+  .sl-hero .v {
+    font-size: 44px;
+  }
+  .sl-section {
+    padding: 16px;
+  }
+}

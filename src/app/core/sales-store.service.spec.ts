@@ -41,4 +41,17 @@ describe('SalesStoreService', () => {
     const service = TestBed.inject(SalesStoreService);
     expect(service.save({ months: {} })).toBe(false);
   });
+
+  it('isAvailable is true when storage can be read', () => {
+    const service = TestBed.inject(SalesStoreService);
+    expect(service.isAvailable()).toBe(true);
+  });
+
+  it('isAvailable is false when storage throws on read', () => {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('blocked');
+    });
+    const service = TestBed.inject(SalesStoreService);
+    expect(service.isAvailable()).toBe(false);
+  });
 });

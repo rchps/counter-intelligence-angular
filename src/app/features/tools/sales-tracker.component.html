@@ -1,0 +1,185 @@
+<section class="sl" aria-labelledby="sl-h">
+  <p class="eyebrow">Security Data Supply · Tracking</p>
+  <h2 id="sl-h" class="page-h">
+    Sales tracker.
+    <span class="dim">Know your number every day.</span>
+  </h2>
+  <p class="sl-lede">
+    Set the month's goal, add each day's sales, and see what you need per day to get there. Weekdays
+    count as selling days; tap Off or On on any day to change that.
+  </p>
+
+  <div class="sl-card sl-top">
+    <form class="sl-setup" novalidate (submit)="$event.preventDefault()">
+      <div class="sl-field">
+        <span class="sl-label" id="sl-month-label">Month</span>
+        <div class="sl-month" role="group" aria-labelledby="sl-month-label">
+          <button
+            type="button"
+            class="sl-iconbtn"
+            aria-label="Previous month"
+            (click)="shiftMonth(-1)"
+          >
+            ‹
+          </button>
+          <input
+            type="month"
+            aria-labelledby="sl-month-label"
+            [value]="month()"
+            (change)="onMonthInputChange($any($event.target).value)"
+          />
+          <button type="button" class="sl-iconbtn" aria-label="Next month" (click)="shiftMonth(1)">
+            ›
+          </button>
+        </div>
+      </div>
+      <div class="sl-field">
+        <label for="sl-goal">Monthly goal</label>
+        <div class="sl-money">
+          <input
+            type="text"
+            id="sl-goal"
+            inputmode="decimal"
+            autocomplete="off"
+            placeholder="50,000"
+            [value]="goalText()"
+            [attr.aria-invalid]="goalInvalid() ? 'true' : 'false'"
+            (input)="onGoalInput($any($event.target).value)"
+            (blur)="onGoalBlur()"
+          />
+        </div>
+      </div>
+      @if (isThisMonth()) {
+        <div class="sl-today">
+          <label for="sl-today">{{ todayLabel() }}</label>
+          <div class="sl-money">
+            <input
+              type="text"
+              id="sl-today"
+              inputmode="decimal"
+              autocomplete="off"
+              placeholder="0.00"
+              [value]="todayText()"
+              [attr.aria-invalid]="todayInvalid() ? 'true' : 'false'"
+              (input)="onTodayInput($any($event.target).value)"
+              (blur)="onTodayBlur()"
+              (keydown.enter)="$event.preventDefault()"
+            />
+          </div>
+          <span class="sl-hint">Saves as you type. You can also fill in any day below.</span>
+        </div>
+      }
+      <p class="sl-saved" role="status" aria-live="polite" [class.warn]="savedIsWarning()">
+        {{ savedMessage() }}
+      </p>
+    </form>
+
+    <div class="sl-main" aria-live="polite">
+      <h3>This month</h3>
+      <div class="sl-hero">
+        <span class="k">{{ heroLabel() }}</span>
+        <span class="v">{{ heroValue() }}</span>
+        <span class="sub">{{ heroSub() }}</span>
+        @if (status(); as s) {
+          <div>
+            <span class="sl-status" [class]="s.kind">{{ s.text }}</span>
+          </div>
+        }
+      </div>
+      @if (showMeter()) {
+        <div class="sl-meter">
+          <div
+            class="sl-meter-track"
+            role="progressbar"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [attr.aria-valuenow]="meterValueNow()"
+            [attr.aria-valuetext]="meterValueText()"
+            aria-label="Progress to goal"
+          >
+            <div class="sl-meter-fill" [style.width.%]="meterSoldPercent()"></div>
+            <div class="sl-meter-mark" [style.left.%]="meterPacePercent()"></div>
+          </div>
+          <div class="sl-meter-legend">
+            <span>{{ meterSoldText() }}</span>
+            <span class="pace">{{ meterPaceText() }}</span>
+          </div>
+        </div>
+      }
+      <div class="sl-kpis">
+        <div class="sl-kpi">
+          <span class="k">Sold so far</span>
+          <span class="v">{{ kpiSold() }}</span>
+          <span class="d">{{ kpiSoldDetail() }}</span>
+        </div>
+        <div class="sl-kpi">
+          <span class="k">Daily baseline</span>
+          <span class="v">{{ kpiBaseline() }}</span>
+          <span class="d">{{ kpiBaselineDetail() }}</span>
+        </div>
+        <div class="sl-kpi">
+          <span class="k">Average per day</span>
+          <span class="v">{{ kpiAverage() }}</span>
+          <span class="d">{{ kpiAverageDetail() }}</span>
+        </div>
+        <div class="sl-kpi">
+          <span class="k">Month-end at this pace</span>
+          <span class="v">{{ kpiProjected() }}</span>
+          <span class="d">{{ kpiProjectedDetail() }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calendar -->
+  <div class="sl-card sl-section">
+    <div class="sl-section-head">
+      <h3>Daily sales</h3>
+      <span class="sl-hint">Enter moves to the next selling day.</span>
+    </div>
+    <div class="sl-cal">
+      @for (d of weekdayHeads; track d) {
+        <div class="sl-dow">{{ d }}</div>
+      }
+      @for (blank of blankRange(); track $index) {
+        <div class="sl-blank" aria-hidden="true"></div>
+      }
+      @for (day of summary().days; track day.date) {
+        <div class="sl-day" [class.off]="!day.selling" [class.today]="day.date === today">
+          <div class="sl-day-top">
+            <span class="sl-day-num">{{ dayLabel(day.date) }}</span>
+            <button
+              type="button"
+              class="sl-toggle"
+              [attr.aria-pressed]="day.selling"
+              [attr.aria-label]="
+                dayFullLabel(day.date) +
+                ': ' +
+                (day.selling ? 'selling day' : 'day off') +
+                '. Switch.'
+              "
+              (click)="toggleSellingDay(day.date)"
+            >
+              {{ day.selling ? 'On' : 'Off' }}
+            </button>
+          </div>
+          <label class="sr-only" [for]="'sl-day-' + day.date"
+            >Sales for {{ dayFullLabel(day.date) }}</label
+          >
+          <input
+            type="text"
+            [id]="'sl-day-' + day.date"
+            inputmode="decimal"
+            autocomplete="off"
+            placeholder="—"
+            [value]="dayTexts()[day.date] ?? ''"
+            [attr.aria-invalid]="dayInvalid()[day.date] ? 'true' : 'false'"
+            (input)="onDayInput(day.date, $any($event.target).value)"
+            (keydown.enter)="onDayEnter($event, day.date)"
+          />
+          <span class="sl-day-hit">{{ hitText(day) }}</span>
+        </div>
+      }
+    </div>
+  </div>
+</section>

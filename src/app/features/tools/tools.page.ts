@@ -5,6 +5,7 @@ import { BatteryToolComponent } from './battery-tool.component';
 import { MarginCalculatorComponent } from './margin-calculator.component';
 import { NvrStorageToolComponent } from './nvr-storage-tool.component';
 import { PoeBudgetToolComponent } from './poe-budget-tool.component';
+import { SalesTrackerComponent } from './sales-tracker.component';
 import {
   isToolId,
   SIZING_TOOL_HEADINGS,
@@ -32,6 +33,7 @@ interface ToolNavGroup {
     VoltageDropToolComponent,
     PoeBudgetToolComponent,
     NvrStorageToolComponent,
+    SalesTrackerComponent,
   ],
   templateUrl: './tools.page.html',
   styleUrl: './tools.page.scss',

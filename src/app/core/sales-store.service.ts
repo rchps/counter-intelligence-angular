@@ -24,4 +24,16 @@ export class SalesStoreService {
   save(store: SalesStore): boolean {
     return this.storage.set(STORAGE_KEY, JSON.stringify(store));
   }
+
+  // Whether storage can be read at all — sales.html's own initial canSave check, from the try/catch
+  // around its first read. A missing key is not a failure (JSON.parse(null) is valid JSON, null);
+  // this only reports false when storage itself throws (fully blocked, e.g. some private windows).
+  isAvailable(): boolean {
+    try {
+      localStorage.getItem(STORAGE_KEY);
+      return true;
+    } catch {
+      return false;
+    }
+  }
 }
