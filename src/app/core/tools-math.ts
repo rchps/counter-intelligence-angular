@@ -17,13 +17,21 @@ export interface BatteryAmpHoursInput {
   factor: number;
 }
 
+export interface BatteryAmpHoursResult {
+  standbyAh: number;
+  alarmAh: number;
+  subtotalAh: number;
+  requiredAh: number;
+  nextSize: number | null;
+}
+
 export function batteryAmpHours({
   standbyAmps,
   alarmAmps,
   standbyHours,
   alarmMinutes,
   factor,
-}: BatteryAmpHoursInput) {
+}: BatteryAmpHoursInput): BatteryAmpHoursResult {
   const standbyAh = standbyAmps * standbyHours;
   const alarmAh = alarmAmps * (alarmMinutes / 60);
   const subtotalAh = standbyAh + alarmAh;
@@ -51,6 +59,15 @@ export interface VoltageDropInput {
   minVolts: number;
 }
 
+export interface VoltageDropResult {
+  ohmsPer1000: number;
+  dropVolts: number;
+  endVolts: number;
+  dropPercent: number;
+  passes: boolean | null;
+  maxFeet: number | null;
+}
+
 export function voltageDrop({
   supplyVolts,
   amps,
@@ -58,7 +75,7 @@ export function voltageDrop({
   gauge,
   conductor,
   minVolts,
-}: VoltageDropInput) {
+}: VoltageDropInput): VoltageDropResult {
   const ohmsPer1000 = OHMS_PER_1000_FT[conductor][gauge];
   const dropVolts = (amps * 2 * oneWayFeet * ohmsPer1000) / 1000; // out and back
   const endVolts = supplyVolts - dropVolts;
@@ -106,8 +123,17 @@ export interface PoeBudgetInput {
   devices: PoeDevice[];
 }
 
+export interface PoeBudgetResult {
+  totalWatts: number;
+  leftWatts: number;
+  percentUsed: number | null;
+  fits: boolean;
+  ports: number;
+  highestPortType: string | null;
+}
+
 // devices: [{ quantity, poeClass }] or [{ quantity, watts }] for a device with known wattage.
-export function poeBudget({ budgetWatts, basis, devices }: PoeBudgetInput) {
+export function poeBudget({ budgetWatts, basis, devices }: PoeBudgetInput): PoeBudgetResult {
   let totalWatts = 0;
   let ports = 0;
   let highestType = -1;
@@ -153,15 +179,22 @@ export const BITRATE_GUIDE_H264: Record<Resolution, BitrateGuideEntry> = {
 };
 export const H265_SHARE_OF_H264 = 0.5; // "approximately 50% bitrate reduction" (same guide)
 
+export interface EstimatedBitrateInput {
+  resolution: Resolution;
+  fps: FpsBand;
+  codec: Codec;
+}
+
+export interface EstimatedBitrateResult {
+  lowKbps: number;
+  highKbps: number;
+}
+
 export function estimatedBitrate({
   resolution,
   fps,
   codec,
-}: {
-  resolution: Resolution;
-  fps: FpsBand;
-  codec: Codec;
-}) {
+}: EstimatedBitrateInput): EstimatedBitrateResult {
   const [low, high] = BITRATE_GUIDE_H264[resolution][fps];
   const share = codec === 'h265' ? H265_SHARE_OF_H264 : 1;
   return { lowKbps: low * share, highKbps: high * share };
@@ -174,8 +207,21 @@ export interface NvrStorageInput {
   recordingPercent: number;
 }
 
+export interface NvrStorageResult {
+  gbPerDay: number;
+  totalGB: number;
+  totalTB: number;
+  perCameraTB: number;
+  bandwidthMbps: number;
+}
+
 // Decimal units throughout, like drive labels: 1 Kbps = 1,000 bits/s, 1 TB = 10^12 bytes.
-export function nvrStorage({ kbps, cameras, days, recordingPercent }: NvrStorageInput) {
+export function nvrStorage({
+  kbps,
+  cameras,
+  days,
+  recordingPercent,
+}: NvrStorageInput): NvrStorageResult {
   const bytesPerSecond = (kbps * 1000) / 8;
   const share = recordingPercent / 100;
   const bytesPerDay = bytesPerSecond * SECONDS_PER_DAY * cameras * share;
@@ -205,30 +251,31 @@ export const RAID_LAYOUTS: Record<RaidType, RaidLayout> = {
   raid10: { label: 'RAID 10', mirrored: true, minDrives: 4 },
 };
 
-export function usableTB({
-  drives,
-  driveTB,
-  raid,
-}: {
+export interface UsableTbInput {
   drives: number;
   driveTB: number;
   raid: RaidType;
-}) {
+}
+
+export function usableTB({ drives, driveTB, raid }: UsableTbInput): number {
   const layout = RAID_LAYOUTS[raid];
   if (layout.mirrored) return (drives * driveTB) / 2;
   return (drives - (layout.parityDrives ?? 0)) * driveTB;
 }
 
-// Fewest drives of this size whose usable space covers what's needed.
-export function drivesNeeded({
-  neededTB,
-  driveTB,
-  raid,
-}: {
+export interface DrivesNeededInput {
   neededTB: number;
   driveTB: number;
   raid: RaidType;
-}) {
+}
+
+export interface DrivesNeededResult {
+  drives: number;
+  usableTB: number;
+}
+
+// Fewest drives of this size whose usable space covers what's needed.
+export function drivesNeeded({ neededTB, driveTB, raid }: DrivesNeededInput): DrivesNeededResult {
   const layout = RAID_LAYOUTS[raid];
   const dataDrives = Math.max(1, Math.ceil(neededTB / driveTB - 1e-9));
   let drives = layout.mirrored ? dataDrives * 2 : dataDrives + (layout.parityDrives ?? 0);
@@ -238,4 +285,4 @@ export function drivesNeeded({
 }
 
 // What the NVR or Windows will display for a drive (they count 1 TB as 2^40 bytes).
-export const shownByNvrTB = (labelTB: number) => (labelTB * 1e12) / 2 ** 40;
+export const shownByNvrTB = (labelTB: number): number => (labelTB * 1e12) / 2 ** 40;

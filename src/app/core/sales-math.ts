@@ -37,12 +37,12 @@ export interface SummarizeInput {
   today: string;
 }
 
-interface DaySummary extends MonthDay {
+export interface DaySummary extends MonthDay {
   selling: boolean;
   sales: number | null;
 }
 
-interface WeekSummary {
+export interface WeekSummary {
   days: DaySummary[];
   start: string;
   end: string;
@@ -53,6 +53,38 @@ interface WeekSummary {
   hasSales: boolean;
 }
 
+export interface SalesSeriesPoint {
+  date: string;
+  day: number;
+  sales: number | null;
+  sold: number;
+  pace: number;
+  showActual: boolean;
+}
+
+export interface SalesSummary {
+  days: DaySummary[];
+  sellingDays: number;
+  baseline: number;
+  sold: number;
+  remaining: number;
+  percent: number;
+  openDays: number;
+  missingPast: number;
+  neededPerDay: number | null;
+  paceToDate: number;
+  aheadBy: number;
+  average: number;
+  enteredSellingDays: number;
+  projected: number;
+  best: DaySummary | null;
+  worst: DaySummary | null;
+  daysAtBaseline: number;
+  weeks: WeekSummary[];
+  series: SalesSeriesPoint[];
+  goalMet: boolean;
+}
+
 // Everything the page shows, from the month, goal, entered sales, selling-day overrides and today's date.
 //   baseline      = goal ÷ selling days in the month
 //   open days     = selling days from today on with no sales entered yet
@@ -60,7 +92,13 @@ interface WeekSummary {
 //   pace to date  = baseline × selling days so far (past ones, plus today once it's entered)
 //   average       = sold on entered selling days ÷ number of entered selling days
 //   month-end     = sold + average × open days
-export function summarize({ month, goal, sales = {}, overrides = {}, today }: SummarizeInput) {
+export function summarize({
+  month,
+  goal,
+  sales = {},
+  overrides = {},
+  today,
+}: SummarizeInput): SalesSummary {
   const days: DaySummary[] = monthDays(month).map((day) => ({
     ...day,
     selling: isSellingDay(day, overrides),
