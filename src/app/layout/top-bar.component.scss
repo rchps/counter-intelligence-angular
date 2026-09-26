@@ -1,0 +1,202 @@
+// Ported from counter-intelligence/styles.css: "Top bar", "Tabs" (restyled as .nav, see top-bar.component.ts)
+// and "Theme switch". :host replaces the vanilla .topbar selector since this *is* the <header> now.
+
+:host {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  height: var(--bar-h);
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  backdrop-filter: saturate(1.6) blur(14px);
+  -webkit-backdrop-filter: saturate(1.6) blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+
+.wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 100%;
+}
+
+.brandmark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  margin-right: auto;
+}
+.brandmark .sq {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #075b99, #2b8fd6);
+  color: #fff;
+  font: 700 10px/1 var(--mono);
+  letter-spacing: 0.02em;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.brandmark .t {
+  font: 600 15px/1.1 var(--font);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.brandmark .t small {
+  display: block;
+  font: 500 11px/1.2 var(--mono);
+  color: var(--ink-2);
+  letter-spacing: 0.02em;
+}
+
+.pill-internal {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--amber-soft);
+  color: var(--amber-ink);
+  font: 600 11px/1 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.pill-internal::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--amber);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--amber) 25%, transparent);
+}
+
+// Real navigation now (was role="tablist"), styled the same as a segmented control.
+.nav {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+}
+.nav a {
+  flex: 0 0 auto;
+  display: inline-block;
+  height: 36px;
+  line-height: 36px;
+  padding: 0 14px;
+  border-radius: 9px;
+  color: var(--ink-2);
+  font: 500 14px/1 var(--font);
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+.nav a:hover {
+  color: var(--ink);
+}
+.nav a.active {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.08),
+    0 0 0 1px var(--line);
+}
+
+// Theme switch: WAI-ARIA "switch" pattern
+.theme-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink-2);
+  font: 500 13px/1 var(--font);
+  cursor: pointer;
+}
+.ts-track {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 26px;
+  border-radius: 999px;
+  border: 1px solid var(--input);
+  background: var(--surface-2);
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+.ts-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: grid;
+  place-items: center;
+  color: #0a0a0b;
+}
+.ts-knob svg {
+  width: 12px;
+  height: 12px;
+  grid-area: 1 / 1;
+}
+.ts-moon {
+  display: none;
+}
+.theme-switch[aria-checked='true'] .ts-moon {
+  display: block;
+}
+.theme-switch[aria-checked='true'] .ts-sun {
+  display: none;
+}
+.theme-switch[aria-checked='true'] .ts-track {
+  background: var(--brand);
+  border-color: var(--brand);
+}
+.theme-switch[aria-checked='true'] .ts-knob {
+  transform: translateX(20px);
+}
+.theme-switch:hover {
+  color: var(--ink);
+}
+
+@media (max-width: 900px) {
+  :host {
+    height: auto;
+  }
+  .wrap {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 10px 0;
+    gap: 10px;
+  }
+  .nav {
+    order: 3;
+    flex: 1 1 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav a {
+    flex: 1 0 auto;
+    text-align: center;
+  }
+}
+
+@media print {
+  :host {
+    display: none !important;
+  }
+}
