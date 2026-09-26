@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { TopBarComponent } from './top-bar.component';
 
 @Component({ selector: 'app-stub', template: '' })
@@ -12,6 +12,7 @@ describe('TopBarComponent', () => {
 
   beforeEach(async () => {
     localStorage.clear();
+    delete document.documentElement.dataset['theme'];
     await TestBed.configureTestingModule({
       imports: [TopBarComponent],
       providers: [
@@ -24,11 +25,6 @@ describe('TopBarComponent', () => {
     }).compileComponents();
     fixture = TestBed.createComponent(TopBarComponent);
     fixture.detectChanges();
-  });
-
-  afterEach(() => {
-    localStorage.clear();
-    delete document.documentElement.dataset['theme'];
   });
 
   it('shows the brand, the section labels, and the internal-only pill', () => {

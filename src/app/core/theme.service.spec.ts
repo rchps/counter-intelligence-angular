@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ThemeService } from './theme.service';
 
 function stubMatchMedia(matches: boolean): void {
@@ -14,11 +14,6 @@ function stubMatchMedia(matches: boolean): void {
 
 describe('ThemeService', () => {
   beforeEach(() => {
-    localStorage.clear();
-    delete document.documentElement.dataset['theme'];
-  });
-
-  afterEach(() => {
     localStorage.clear();
     delete document.documentElement.dataset['theme'];
   });

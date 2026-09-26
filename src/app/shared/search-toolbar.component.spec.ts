@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { afterEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { SearchToolbarComponent } from './search-toolbar.component';
 
 function stubMatchMedia(initialMatches: boolean) {
@@ -41,7 +41,7 @@ class HostComponent {
 }
 
 describe('SearchToolbarComponent', () => {
-  afterEach(() => {
+  beforeEach(() => {
     document.body.focus();
   });
 

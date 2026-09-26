@@ -1,9 +1,9 @@
 import { TestBed } from '@angular/core/testing';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { StorageService } from './storage.service';
 
 describe('StorageService', () => {
-  afterEach(() => {
+  beforeEach(() => {
     localStorage.clear();
     vi.restoreAllMocks();
   });
