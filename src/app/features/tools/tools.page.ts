@@ -44,6 +44,12 @@ export class ToolsPage {
     items: TOOL_NAV.filter((item) => item.group === group),
   }));
 
+  // Battery/voltage-drop/PoE/NVR share tools.html's one "Counter tools" heading; margin and sales bring
+  // their own (each was its own vanilla page, with its own eyebrow/h1/lede).
+  protected readonly showSizingHeading = computed(
+    () => TOOL_NAV.find((item) => item.id === this.currentTool())?.group === 'Sizing',
+  );
+
   constructor() {
     effect(() => this.storage.set(TOOL_STORAGE_KEY, this.currentTool()));
   }

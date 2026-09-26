@@ -547,14 +547,16 @@ mark {
   text-transform: uppercase;
   color: var(--ink-2);
 }
-.hero h1 {
+.hero h1,
+.page-h {
   margin: 0;
   font: 600 clamp(30px, 4.4vw, 48px) / 1.05 var(--display);
   letter-spacing: -0.035em;
   max-width: 30ch;
   text-wrap: balance;
 }
-.hero h1 .dim {
+.hero h1 .dim,
+.page-h .dim {
   color: var(--ink-2);
 }
 .hero .sub {
@@ -611,16 +613,6 @@ main:focus {
   width: min(920px, 100% - 32px);
   margin: 0 auto 48px;
   padding-top: 44px;
-}
-.mc h1 {
-  margin: 0;
-  font: 600 clamp(30px, 4.4vw, 48px) / 1.05 var(--display);
-  letter-spacing: -0.035em;
-  max-width: 30ch;
-  text-wrap: balance;
-}
-.mc h1 .dim {
-  color: var(--ink-2);
 }
 .mc-lede {
   color: var(--ink-2);
