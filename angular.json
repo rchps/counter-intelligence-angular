@@ -4,7 +4,7 @@
   "cli": {
     "packageManager": "npm",
     "analytics": "078d44d7-f6ee-4cd2-a454-7ee6ee6f440b",
-    "schematicCollections": ["angular-eslint"]
+    "schematicCollections": ["@cypress/schematic", "angular-eslint", "@schematics/angular"]
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -65,6 +65,10 @@
             },
             "development": {
               "buildTarget": "counter-intelligence-angular:build:development"
+            },
+            "e2e": {
+              "buildTarget": "counter-intelligence-angular:build:development",
+              "port": 4210
             }
           },
           "defaultConfiguration": "development"
@@ -78,7 +82,27 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html", "scripts/**/*.mts"]
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html",
+              "scripts/**/*.mts",
+              "cypress/**/*.ts",
+              "cypress.config.ts"
+            ]
+          }
+        },
+        "cypress-run": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "devServerTarget": "counter-intelligence-angular:serve:e2e"
+          }
+        },
+        "e2e": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "devServerTarget": "counter-intelligence-angular:serve:e2e",
+            "watch": true,
+            "headless": false
           }
         }
       }

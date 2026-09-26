@@ -8,10 +8,12 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "format": "prettier --write \"src/**/*.{ts,html,scss}\" \"scripts/**/*.mts\"",
-    "format:check": "prettier --check \"src/**/*.{ts,html,scss}\" \"scripts/**/*.mts\"",
+    "format": "prettier --write \"src/**/*.{ts,html,scss}\" \"scripts/**/*.mts\" \"cypress/**/*.ts\" cypress.config.ts",
+    "format:check": "prettier --check \"src/**/*.{ts,html,scss}\" \"scripts/**/*.mts\" \"cypress/**/*.ts\" cypress.config.ts",
     "validate-data": "node scripts/validate-data.mts",
-    "test:scripts": "vitest run scripts"
+    "test:scripts": "vitest run scripts",
+    "e2e": "ng run counter-intelligence-angular:cypress-run",
+    "e2e:open": "ng e2e"
   },
   "private": true,
   "packageManager": "npm@11.19.0",
@@ -29,6 +31,7 @@
     "@angular/build": "^22.2.0",
     "@angular/cli": "^22.2.0",
     "@angular/compiler-cli": "^22.2.0",
+    "@cypress/schematic": "^6.0.0",
     "@eslint/js": "^10.0.1",
     "@types/node": "^26.6.3",
     "angular-eslint": "22.5.0",
@@ -37,6 +40,7 @@
     "prettier": "^3.8.1",
     "typescript": "~6.0.2",
     "typescript-eslint": "8.69.0",
-    "vitest": "^5.0.0"
+    "vitest": "^5.0.0",
+    "cypress": "16.1.0"
   }
 }
