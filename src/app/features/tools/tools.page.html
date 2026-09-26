@@ -15,12 +15,12 @@
     }
   </nav>
   <div class="tk-body">
-    @if (showSizingHeading()) {
+    @if (sizingHeading(); as heading) {
       <div class="tk-heading">
         <p class="eyebrow">Security Data Supply · Sizing</p>
         <h2 id="tl-h" class="page-h">
-          Counter tools.
-          <span class="dim">Quick sizing for quotes.</span>
+          {{ heading.title }}
+          <span class="dim">{{ heading.tagline }}</span>
         </h2>
         <p class="mc-lede">
           Estimates for quoting. Final designs follow the panel or device manufacturer's

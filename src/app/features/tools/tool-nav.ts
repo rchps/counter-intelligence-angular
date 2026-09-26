@@ -24,3 +24,19 @@ export const TOOL_NAV: ToolNavItem[] = [
 export function isToolId(value: string | null | undefined): value is ToolId {
   return !!value && TOOL_NAV.some((tool) => tool.id === value);
 }
+
+export interface SizingToolHeading {
+  title: string;
+  tagline: string;
+}
+
+// tools.html's TOOL_TITLES: the "Counter tools" heading swaps to one of these the moment a sizing
+// tool is picked (its own showTool() runs on load, so the plain "Counter tools." heading in the
+// static markup never actually shows).
+export const SIZING_TOOL_HEADINGS: Record<'battery' | 'vdrop' | 'poe' | 'nvr', SizingToolHeading> =
+  {
+    battery: { title: 'Battery standby.', tagline: 'Amp-hours for fire and security panels.' },
+    vdrop: { title: 'Voltage drop.', tagline: 'Will the wire run make it?' },
+    poe: { title: 'PoE budget.', tagline: 'Can the switch power it all?' },
+    nvr: { title: 'NVR storage.', tagline: 'How much drive for the retention?' },
+  };
