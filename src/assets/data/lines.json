@@ -1,0 +1,2940 @@
+{
+  "asOf": "2026-09-25",
+  "source": "https://securitydatasupply.com/suppliers/",
+  "reportEmail": "reports@example.com",
+  "cats": {
+    "access": "Access Control",
+    "intrusion": "Intrusion",
+    "video": "Video Surveillance",
+    "fire": "Fire",
+    "wire": "Wire & Cable",
+    "av": "Audio Visual",
+    "network": "Data Networking",
+    "power": "Power",
+    "tools": "Tools",
+    "accessories": "Accessories",
+    "metal": "Metal"
+  },
+  "lines": [
+    {
+      "name": "2GIG",
+      "url": "https://www.2gig.com/",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "nice",
+        "gc3",
+        "edge"
+      ],
+      "logo": "2026/05/sds-intrusion-2gig.png"
+    },
+    {
+      "name": "3millID",
+      "url": "https://www.3millid.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "3mill",
+        "prox cards"
+      ],
+      "logo": "2026/05/sds-access-control-3millid.png"
+    },
+    {
+      "name": "3xLOGIC",
+      "url": "https://www.3xlogic.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "infinias",
+        "vigil"
+      ],
+      "logo": "2026/05/sds-access-control-3xlogic.png"
+    },
+    {
+      "name": "777ALARM.com",
+      "url": "https://www.777alarm.com/",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "777 alarm"
+      ],
+      "logo": "2026/05/sds-intrusion-777-alarm-com.png"
+    },
+    {
+      "name": "ABB",
+      "url": "https://new.abb.com/",
+      "cats": [
+        "network"
+      ],
+      "aka": [],
+      "logo": "2026/05/sds-data-networking-abb.png"
+    },
+    {
+      "name": "Acme Staple",
+      "url": "https://www.acmestaple.com/",
+      "cats": [
+        "tools"
+      ],
+      "aka": [
+        "acme",
+        "staples",
+        "staple gun"
+      ],
+      "logo": "2026/05/sds-tools-acme.png"
+    },
+    {
+      "name": "Adalet",
+      "url": "https://www.adalet.com/",
+      "cats": [
+        "metal"
+      ],
+      "aka": [
+        "enclosures"
+      ],
+      "logo": "2026/05/sds-metal-adalet.png"
+    },
+    {
+      "name": "ADC (Advanced Digital Cable)",
+      "url": "https://adcable.com/",
+      "cats": [
+        "wire"
+      ],
+      "aka": [
+        "advanced digital cable"
+      ],
+      "logo": "2026/05/sds-wire-cable-adc.png"
+    },
+    {
+      "name": "AEM",
+      "url": "https://aemnetworks.com/",
+      "cats": [
+        "network"
+      ],
+      "aka": [
+        "cable certifier",
+        "tester"
+      ],
+      "logo": "2026/06/sds-data-networking-aem.png"
+    },
+    {
+      "name": "AES Corporation",
+      "url": "https://www.aes-corp.com/",
+      "cats": [
+        "network"
+      ],
+      "aka": [
+        "aes",
+        "intellinet mesh",
+        "mesh radio"
+      ],
+      "logo": "2026/05/sds-data-networking-aes-corporation.png"
+    },
+    {
+      "name": "Aetek",
+      "url": "https://www.aetektec.com/",
+      "cats": [
+        "network"
+      ],
+      "aka": [],
+      "logo": "2026/05/sds-data-networking-aeiek.png"
+    },
+    {
+      "name": "AFL",
+      "url": "https://www.aflglobal.com/",
+      "cats": [
+        "wire",
+        "network"
+      ],
+      "aka": [
+        "fiber"
+      ],
+      "logo": "2026/05/sds-wire-cable-afl.png"
+    },
+    {
+      "name": "Aiphone",
+      "url": "https://www.aiphone.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "intercom",
+        "video intercom"
+      ],
+      "logo": "2026/06/sds-access-control-aiphone.png"
+    },
+    {
+      "name": "Ajax",
+      "url": "https://ajax.systems/",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "ajax systems",
+        "wireless"
+      ],
+      "logo": "2026/05/sds-intrusion-ajax.png"
+    },
+    {
+      "name": "Alarm Controls",
+      "url": "https://www.alarmcontrols.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "request to exit",
+        "rex"
+      ],
+      "logo": "2026/06/sds-access-control-alarm-controls.png"
+    },
+    {
+      "name": "Alarm Lock",
+      "url": "https://www.alarmlock.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "trilogy",
+        "networx",
+        "napco"
+      ],
+      "logo": "2026/06/sds-access-control-alarm-lock.jpg"
+    },
+    {
+      "name": "Alarm.com",
+      "url": "https://www.alarm.com/",
+      "cats": [
+        "access",
+        "intrusion",
+        "video"
+      ],
+      "aka": [
+        "adc"
+      ],
+      "logo": "2026/05/sds-access-control-alarm-com.png"
+    },
+    {
+      "name": "Alba Urmet",
+      "url": "https://www.albaurmet.com/",
+      "cats": [
+        "wire",
+        "network"
+      ],
+      "aka": [
+        "al&b",
+        "alb",
+        "urmet"
+      ],
+      "logo": "2026/05/sds-wire-cable-alba-urmet.png"
+    },
+    {
+      "name": "Aleph",
+      "url": "https://www.aleph-usa.com/",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "sensors",
+        "contacts"
+      ],
+      "logo": "2026/05/sds-intrusion-aleph.png"
+    },
+    {
+      "name": "Alta Labs",
+      "url": "https://alta.inc/",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "alta"
+      ],
+      "logo": "2026/05/sds-av-alta-labs.png"
+    },
+    {
+      "name": "Altronix",
+      "url": "https://www.altronix.com/",
+      "cats": [
+        "access",
+        "video",
+        "fire",
+        "power"
+      ],
+      "aka": [
+        "power supply",
+        "netway",
+        "poe"
+      ],
+      "logo": "2026/05/sds-access-control-altronix.png"
+    },
+    {
+      "name": "Alula",
+      "url": "https://www.alula.com/",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "communicator",
+        "connect+"
+      ],
+      "logo": "2026/05/sds-intrusion-alula.png"
+    },
+    {
+      "name": "American Dynamics",
+      "url": "https://www.americandynamics.net/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "victor",
+        "johnson controls",
+        "jci"
+      ],
+      "logo": "2026/05/sds-video-surveillance-american-dynamics.png"
+    },
+    {
+      "name": "ASSA ABLOY",
+      "url": "https://www.assaabloy.com/us/en",
+      "cats": [
+        "access",
+        "video"
+      ],
+      "aka": [
+        "sargent",
+        "corbin russwin",
+        "hes",
+        "securitron"
+      ],
+      "logo": "2026/05/sds-access-control-assa-abloy.png"
+    },
+    {
+      "name": "Atlas IED",
+      "url": "https://www.atlasied.com/",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "atlas",
+        "speakers",
+        "paging"
+      ],
+      "logo": "2026/05/sds-av-atlas-ied.png"
+    },
+    {
+      "name": "ATW",
+      "url": "https://www.atwsecurity.com/",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [],
+      "logo": "2026/05/sds-intrusion-atw.png"
+    },
+    {
+      "name": "Avycon",
+      "url": "https://www.avycon.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [],
+      "logo": "2026/05/sds-video-surveillance-avycon.png"
+    },
+    {
+      "name": "AWID",
+      "url": "https://www.awid.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "prox"
+      ],
+      "logo": "2026/05/sds-access-control-awid.png"
+    },
+    {
+      "name": "Azco Technologies",
+      "url": "http://www.azcotechnologies.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "azco"
+      ],
+      "logo": "2026/05/sds-video-surveillance-azco.png"
+    },
+    {
+      "name": "BCD",
+      "url": "https://www.bcdvideo.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "bcd video",
+        "nvr",
+        "servers"
+      ],
+      "logo": "2026/05/sds-video-surveillance-bcd.png"
+    },
+    {
+      "name": "Beacon",
+      "url": null,
+      "cats": [
+        "accessories"
+      ],
+      "aka": [],
+      "logo": "2026/05/sds-accessories-beacon.png"
+    },
+    {
+      "name": "Big Dog Power",
+      "url": "https://bigdogpower.com/",
+      "cats": [
+        "power"
+      ],
+      "aka": [
+        "big dog",
+        "pdu"
+      ],
+      "logo": "2026/06/sds-power-big-dog.jpg"
+    },
+    {
+      "name": "Blustream",
+      "url": "https://www.blustream-us.com/",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "hdmi",
+        "hdbaset"
+      ],
+      "logo": "2026/05/sds-av-blustream.png"
+    },
+    {
+      "name": "Bogen",
+      "url": "https://www.bogen.com/",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "paging",
+        "amplifier"
+      ],
+      "logo": "2026/05/sds-av-bogen.png"
+    },
+    {
+      "name": "Bolide Technology Group",
+      "url": "https://www.bolideco.com/",
+      "cats": [
+        "video",
+        "wire"
+      ],
+      "aka": [
+        "bolide"
+      ],
+      "logo": "2026/05/sds-video-surveillance-bolide.png"
+    },
+    {
+      "name": "Bosch Security",
+      "url": "https://www.boschsecurity.com/us/en/",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "bosch",
+        "b series",
+        "g series"
+      ],
+      "logo": "2026/06/sds-intrusion-bosch-security.jpg"
+    },
+    {
+      "name": "Bright Way Group",
+      "url": "https://www.continentalbattery.com/batteries-by-brand/bright-way-group",
+      "cats": [
+        "power"
+      ],
+      "aka": [
+        "bwg",
+        "batteries",
+        "continental battery"
+      ],
+      "logo": "2026/05/sds-power-bright-way-group.png"
+    },
+    {
+      "name": "Brilliance LED",
+      "url": "https://www.brillianceled.com/",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "brilliance"
+      ],
+      "logo": "2026/05/sds-av-brilliance-led.png"
+    },
+    {
+      "name": "Brilliant",
+      "url": "https://www.brilliant.tech/",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "smart home control"
+      ],
+      "logo": "2026/05/sds-av-brilliant.png"
+    },
+    {
+      "name": "Brother",
+      "url": "https://www.brother-usa.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "label printer",
+        "p-touch",
+        "badge printer"
+      ],
+      "logo": "2026/05/sds-access-control-brother.png"
+    },
+    {
+      "name": "Cablecom Inc.",
+      "url": "https://cablecominc.com/",
+      "cats": [
+        "wire"
+      ],
+      "aka": [
+        "cablecom"
+      ],
+      "logo": "2026/06/sds-wire-cable-cablecom-inc.png"
+    },
+    {
+      "name": "CAIG Laboratories",
+      "url": "https://www.caig.com/",
+      "cats": [
+        "accessories"
+      ],
+      "aka": [
+        "caig",
+        "deoxit"
+      ],
+      "logo": "2026/05/sds-accessories-caig.png"
+    },
+    {
+      "name": "Calrad Electronics",
+      "url": "https://www.calrad.com/",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "calrad"
+      ],
+      "logo": "2026/05/sds-av-calrad.png"
+    },
+    {
+      "name": "Camden Door Controls",
+      "url": "https://www.camdencontrols.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "camden",
+        "push button",
+        "door operator"
+      ],
+      "logo": "2026/05/sds-access-control-camden-door-controls.png"
+    },
+    {
+      "name": "Canadian Flexi Drills",
+      "url": "http://flexidrills.com/",
+      "cats": [
+        "tools"
+      ],
+      "aka": [
+        "flexi drill",
+        "flex bit"
+      ],
+      "logo": "2026/05/sds-tools-canadian-flexi-drills.png"
+    },
+    {
+      "name": "Cap America",
+      "url": "https://www.capamerica.com/",
+      "cats": [
+        "accessories"
+      ],
+      "aka": [
+        "hats",
+        "caps"
+      ],
+      "logo": "2026/06/sds-accessories-cap-america.png"
+    },
+    {
+      "name": "CDVI",
+      "url": "https://www.cdvi.ca/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "atrium",
+        "maglock"
+      ],
+      "logo": "2026/06/sds-access-control-cdvi.png"
+    },
+    {
+      "name": "Cisco",
+      "url": "https://www.cisco.com/",
+      "cats": [
+        "network"
+      ],
+      "aka": [
+        "meraki",
+        "switch"
+      ],
+      "logo": "2026/05/sds-data-networking-cisco.png"
+    },
+    {
+      "name": "Cleerline",
+      "url": "https://www.cleerline.com/",
+      "cats": [
+        "wire"
+      ],
+      "aka": [
+        "fiber",
+        "ssf"
+      ],
+      "logo": "2026/05/sds-wire-cable-cleerline.png"
+    },
+    {
+      "name": "Clinton Electronics",
+      "url": "https://www.clintonelectronics.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "clinton",
+        "public view monitor",
+        "pvm"
+      ],
+      "logo": "2026/05/sds-video-surveillance-clintonelectronics.png"
+    },
+    {
+      "name": "Comelit",
+      "url": "https://comelitgroupusa.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "intercom"
+      ],
+      "logo": "2026/05/sds-access-control-comelit.png"
+    },
+    {
+      "name": "Command Access Technologies",
+      "url": "https://www.commandaccess.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "command access",
+        "electrified hardware"
+      ],
+      "logo": "2026/05/sds-access-control-command-access-technologies.png"
+    },
+    {
+      "name": "Commodity Cables",
+      "url": "https://www.commoditycables.com/",
+      "cats": [
+        "wire"
+      ],
+      "aka": [],
+      "logo": "2026/05/sds-wire-cable-commodity-cables-inc.png"
+    },
+    {
+      "name": "Comtran Cable",
+      "url": "https://www.comtrancorp.com/",
+      "cats": [
+        "wire"
+      ],
+      "aka": [
+        "comtran"
+      ],
+      "logo": "2026/05/sds-wire-cable-comtran-cable.png"
+    },
+    {
+      "name": "Condumex",
+      "url": "https://www.condumex.com.mx/",
+      "cats": [
+        "wire"
+      ],
+      "aka": [],
+      "logo": "2026/05/sds-wire-cable-condumex.png"
+    },
+    {
+      "name": "Cooper Wheelock",
+      "url": "https://www.eaton.com/us/en-us/products/life-safety-mass-notification/fire-alarm-notification.html",
+      "cats": [
+        "fire"
+      ],
+      "aka": [
+        "wheelock",
+        "eaton",
+        "horn strobe"
+      ],
+      "logo": "2026/06/sds-fire-cooper-wheelock.png"
+    },
+    {
+      "name": "CRKT",
+      "url": "https://www.crkt.com/",
+      "cats": [
+        "tools"
+      ],
+      "aka": [
+        "knives",
+        "columbia river"
+      ],
+      "logo": "2026/05/sds-tools-crkt.png"
+    },
+    {
+      "name": "Current Audio",
+      "url": "https://www.currentaudio.com/",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "speakers"
+      ],
+      "logo": "2026/05/sds-av-current-audio.png"
+    },
+    {
+      "name": "CyberPower",
+      "url": "https://www.cyberpowersystems.com/",
+      "cats": [
+        "power"
+      ],
+      "aka": [
+        "ups",
+        "cyber power",
+        "battery backup",
+        "pdu"
+      ],
+      "logo": "2026/07/cyber-power-vector-logo.png"
+    },
+    {
+      "name": "D-Line",
+      "url": "https://d-line-it.com/us/",
+      "cats": [
+        "accessories"
+      ],
+      "aka": [
+        "raceway",
+        "cable management"
+      ],
+      "logo": "2026/05/sds-accessories-d-line.png"
+    },
+    {
+      "name": "DataComm Electronics",
+      "url": "https://www.datacommelectronics.com/",
+      "cats": [
+        "network"
+      ],
+      "aka": [
+        "datacomm",
+        "data comm",
+        "recessed tv box"
+      ],
+      "logo": "2026/05/sds-data-networking-data-comm-electronics.png"
+    },
+    {
+      "name": "Digifort",
+      "url": "https://www.digifort.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "vms"
+      ],
+      "logo": "2026/05/sds-video-surveillance-digifort.png"
+    },
+    {
+      "name": "Digital Watchdog (DW)",
+      "url": "https://digital-watchdog.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "dw",
+        "spectrum",
+        "mega pix"
+      ],
+      "logo": "2026/05/sds-video-surveillance-digital-watchdog.png"
+    },
+    {
+      "name": "DITEK",
+      "url": "https://www.diteksurgeprotection.com/",
+      "cats": [
+        "power"
+      ],
+      "aka": [
+        "surge protection"
+      ],
+      "logo": "2026/05/sds-power-ditek.png"
+    },
+    {
+      "name": "DMSI",
+      "url": "https://www.dmsimfg.com/",
+      "cats": [
+        "wire",
+        "network"
+      ],
+      "aka": [],
+      "logo": "2026/05/sds-wire-cable-dmsi.png"
+    },
+    {
+      "name": "Dolphin Components",
+      "url": "https://www.dolphincomponents.com/",
+      "cats": [
+        "accessories"
+      ],
+      "aka": [
+        "dolphin",
+        "sound camouflage"
+      ],
+      "logo": "2026/05/sds-accessories-dolphin.png"
+    },
+    {
+      "name": "DoorKing (DKS)",
+      "url": "https://www.doorking.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "dks",
+        "gate operator",
+        "telephone entry"
+      ],
+      "logo": "2026/05/sds-access-control-doorking.png"
+    },
+    {
+      "name": "DSC",
+      "url": "https://www.dsc.com/",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "johnson controls",
+        "powerseries",
+        "neo",
+        "tyco"
+      ],
+      "logo": "2026/05/sds-intrusion-dsc.png"
+    },
+    {
+      "name": "DYMO",
+      "url": "https://www.dymo.com/",
+      "cats": [
+        "tools"
+      ],
+      "aka": [
+        "label maker"
+      ],
+      "logo": "2026/05/sds-tools-dymo.png"
+    },
+    {
+      "name": "Dynacom",
+      "url": "https://www.dynacomcorp.com/",
+      "cats": [
+        "network"
+      ],
+      "aka": [],
+      "logo": "2026/05/sds-data-networking-dynacom.png"
+    },
+    {
+      "name": "DynaLock",
+      "url": "https://www.dynalock.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "maglock"
+      ],
+      "logo": "2026/05/sds-access-control-dynalock.png"
+    },
+    {
+      "name": "e-LINE",
+      "url": "https://www.elinetechnology.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "eline",
+        "e line"
+      ],
+      "logo": "2026/05/sds-video-surveillance-e-line.png"
+    },
+    {
+      "name": "Earthquake Sound",
+      "url": "https://www.earthquakesound.com/",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "earthquake"
+      ],
+      "logo": "2026/05/sds-av-earthquake-sound.png"
+    },
+    {
+      "name": "Eaton",
+      "url": "https://www.eaton.com/",
+      "cats": [
+        "fire"
+      ],
+      "aka": [
+        "cooper",
+        "wheelock"
+      ],
+      "logo": "2026/05/sds-fire-eaton.png"
+    },
+    {
+      "name": "Ecolink",
+      "url": "https://discoverecolink.com/",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "universal electronics"
+      ],
+      "logo": "2026/05/sds-intrusion-ecolink.png"
+    },
+    {
+      "name": "Edwards",
+      "url": "https://www.edwardsfiresafety.com/",
+      "cats": [
+        "fire"
+      ],
+      "aka": [
+        "est",
+        "edwards fire"
+      ],
+      "logo": "2026/05/sds-fire-edwards.png"
+    },
+    {
+      "name": "eero",
+      "url": "https://eero.com/",
+      "cats": [
+        "network"
+      ],
+      "aka": [
+        "wifi",
+        "mesh",
+        "amazon"
+      ],
+      "logo": "2026/05/sds-data-networking-eero.png"
+    },
+    {
+      "name": "ELK Products",
+      "url": "https://www.elkproducts.com/",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "elk",
+        "nice"
+      ],
+      "logo": "2026/05/sds-intrusion-elk-products.png"
+    },
+    {
+      "name": "Encore Wire",
+      "url": "https://www.encorewire.com/",
+      "cats": [
+        "wire"
+      ],
+      "aka": [
+        "encore",
+        "prysmian"
+      ],
+      "logo": "2026/05/sds-wire-cable-encore-wire.png"
+    },
+    {
+      "name": "ErgoAV",
+      "url": "https://www.ergoav.com/",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "mounts"
+      ],
+      "logo": "2026/05/sds-av-ergoav.png"
+    },
+    {
+      "name": "Ethereal",
+      "url": "https://www.etherealpro.com/",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "mccsi",
+        "cables"
+      ],
+      "logo": "2026/05/sds-av-ethereal.png"
+    },
+    {
+      "name": "ETS",
+      "url": "https://www.etslan.com/",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "ets-lan",
+        "baluns"
+      ],
+      "logo": "2026/05/sds-av-ets.png"
+    },
+    {
+      "name": "EverFocus",
+      "url": "https://www.everfocus.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [],
+      "logo": "2026/05/sds-video-surveillance-everfocus.png"
+    },
+    {
+      "name": "Exacq",
+      "url": "https://www.exacq.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "exacqvision",
+        "johnson controls",
+        "vms"
+      ],
+      "logo": "2026/05/sds-video-surveillance-exacq.png"
+    },
+    {
+      "name": "Fire-Lite Alarms",
+      "url": "https://www.firelite.com/",
+      "cats": [
+        "fire"
+      ],
+      "aka": [
+        "firelite",
+        "honeywell"
+      ],
+      "logo": "2026/05/sds-fire-fire-lite-alarms.png"
+    },
+    {
+      "name": "Flair Electronics",
+      "url": "https://www.flairsecurity.com/",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "flair"
+      ],
+      "logo": "2026/06/sds-intrusion-flair.jpg"
+    },
+    {
+      "name": "Freeform",
+      "url": "https://freeformrd.com/",
+      "cats": [
+        "tools"
+      ],
+      "aka": [],
+      "logo": "2026/05/sds-tools-freeform.png"
+    },
+    {
+      "name": "G.R.I. (George Risk)",
+      "url": "https://www.grisk.com/",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "gri",
+        "george risk",
+        "contacts",
+        "overhead door"
+      ],
+      "logo": "2026/05/sds-intrusion-g-r-i.png"
+    },
+    {
+      "name": "Genesis",
+      "url": "https://www.southwire.com/wire-cable/genesis-cable/c/c-genesis-cable",
+      "cats": [
+        "wire"
+      ],
+      "aka": [
+        "resideo",
+        "honeywell genesis"
+      ],
+      "logo": "2026/05/sds-wire-cable-genesis.png"
+    },
+    {
+      "name": "Gentex Corporation",
+      "url": "https://www.gentex.com/",
+      "cats": [
+        "fire"
+      ],
+      "aka": [
+        "gentex",
+        "horn strobe"
+      ],
+      "logo": "2026/05/sds-fire-gentex-corporation.png"
+    },
+    {
+      "name": "GeoVision",
+      "url": "https://www.geovision.com.tw/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "geo vision"
+      ],
+      "logo": "2026/06/sds-video-surveillance-geovision.png"
+    },
+    {
+      "name": "Golden State Instrument",
+      "url": null,
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "gsi"
+      ],
+      "logo": "2026/05/sds-intrusion-golden-state-instrument-co.png"
+    },
+    {
+      "name": "Gopher Galaxy",
+      "url": "https://thegophergalaxy.com/",
+      "cats": [
+        "fire"
+      ],
+      "aka": [
+        "gopher",
+        "galaxy"
+      ],
+      "logo": "2026/06/sds-fire-gopher-galaxy.png"
+    },
+    {
+      "name": "GS Yuasa",
+      "url": "https://www.gsyuasa-lp.com/",
+      "cats": [
+        "power"
+      ],
+      "aka": [
+        "yuasa",
+        "batteries"
+      ],
+      "logo": "2026/05/sds-power-gs-yuasa.png"
+    },
+    {
+      "name": "Hammond Manufacturing",
+      "url": "https://www.hammfg.com/",
+      "cats": [
+        "metal"
+      ],
+      "aka": [
+        "hammond",
+        "enclosures"
+      ],
+      "logo": "2026/06/sds-metal-hammond.jpg"
+    },
+    {
+      "name": "Hanwha Vision",
+      "url": "https://www.hanwhavisionamerica.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "hanwha",
+        "wisenet",
+        "samsung techwin"
+      ],
+      "logo": "2026/06/sds-video-surveillance-hanwha-vision.png"
+    },
+    {
+      "name": "HellermannTyton",
+      "url": "https://www.hellermanntyton.us/",
+      "cats": [
+        "network",
+        "accessories"
+      ],
+      "aka": [
+        "hellermann",
+        "cable ties",
+        "zip ties"
+      ],
+      "logo": "2026/05/sds-data-networking-hellermanntyton.png"
+    },
+    {
+      "name": "HES",
+      "url": "https://www.hesinnovations.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "electric strike",
+        "assa abloy"
+      ],
+      "logo": "2026/05/sds-access-control-hes.png"
+    },
+    {
+      "name": "HID",
+      "url": "https://www.hidglobal.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "prox",
+        "iclass",
+        "seos",
+        "readers",
+        "credentials"
+      ],
+      "logo": "2026/05/sds-access-control-hid.png"
+    },
+    {
+      "name": "Homaxi",
+      "url": "https://www.homaxi.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [],
+      "logo": "2026/05/sds-video-surveillance-homaxi.png"
+    },
+    {
+      "name": "Home8",
+      "url": "https://www.home8alarm.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "home 8"
+      ],
+      "logo": "2026/05/sds-access-control-home8.png"
+    },
+    {
+      "name": "Honeywell",
+      "url": "https://buildings.honeywell.com/us/en/brands/our-brands",
+      "cats": [
+        "video",
+        "fire"
+      ],
+      "aka": [
+        "notifier",
+        "gamewell",
+        "maxpro",
+        "honeywell fire",
+        "honeywell video"
+      ],
+      "logo": "2026/05/sds-video-surveillance-honeywell.png"
+    },
+    {
+      "name": "Honeywell StreetSmart Security",
+      "url": "https://buildings.honeywell.com/us/en/solutions/security",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "honeywell",
+        "streetsmart",
+        "street smart",
+        "remote",
+        "key fob"
+      ],
+      "logo": "2026/06/sds-intrusion-honeywell-streetsmart-security.png"
+    },
+    {
+      "name": "HSI Fire & Safety Group",
+      "url": "https://hsifiresafety.com/",
+      "cats": [
+        "fire"
+      ],
+      "aka": [
+        "hsi"
+      ],
+      "logo": "2026/05/sds-fire-hsi-fire-safety-group-llc.png"
+    },
+    {
+      "name": "ICC",
+      "url": "https://www.icc.com/",
+      "cats": [
+        "network"
+      ],
+      "aka": [
+        "jacks",
+        "patch panel"
+      ],
+      "logo": "2026/05/sds-data-networking-icc.png"
+    },
+    {
+      "name": "IDIS",
+      "url": "https://www.idisglobal.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "directip"
+      ],
+      "logo": "2026/05/sds-video-surveillance-idis.png"
+    },
+    {
+      "name": "ifp (IFP Connect)",
+      "url": "https://ifpconnect.com/",
+      "cats": [
+        "network"
+      ],
+      "aka": [
+        "ifp connect",
+        "fiber"
+      ],
+      "logo": "2026/05/sds-data-networking-ifp.png"
+    },
+    {
+      "name": "Iluminar",
+      "url": "https://www.iluminarinc.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "ir illuminator",
+        "lighting"
+      ],
+      "logo": "2026/05/sds-video-surveillance-iluminar.png"
+    },
+    {
+      "name": "Inovonics",
+      "url": "https://www.inovonics.com/",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "wireless",
+        "echostream"
+      ],
+      "logo": "2026/05/sds-intrusion-inovonics.png"
+    },
+    {
+      "name": "Intellinet",
+      "url": "https://www.intellinet-network.com/",
+      "cats": [
+        "network"
+      ],
+      "aka": [
+        "ic intracom"
+      ],
+      "logo": "2026/05/sds-data-networking-intellinet.png"
+    },
+    {
+      "name": "Interstate Batteries",
+      "url": "https://www.interstatebatteries.com/",
+      "cats": [
+        "power"
+      ],
+      "aka": [
+        "interstate"
+      ],
+      "logo": "2026/05/sds-power-interstate-batteries.png"
+    },
+    {
+      "name": "InVid Tech",
+      "url": "https://invidtech.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "invid"
+      ],
+      "logo": "2026/05/sds-video-surveillance-invid-tech.png"
+    },
+    {
+      "name": "Island",
+      "url": "https://www.islandrouter.com/",
+      "cats": [
+        "network"
+      ],
+      "aka": [
+        "island router",
+        "router",
+        "perftech",
+        "business router"
+      ],
+      "logo": "https://images.squarespace-cdn.com/content/v1/65f1c20dc218c27620473d0f/1710342705560-XGKXHNC050FNSQUBGYJS/ISLAND_SEP+2022_%C2%AE__RGB_rev.png?format=500w"
+    },
+    {
+      "name": "Jewell Instruments",
+      "url": "https://www.jewellinstruments.com/",
+      "cats": [
+        "tools"
+      ],
+      "aka": [
+        "jewell",
+        "triplett"
+      ],
+      "logo": "2026/05/sds-tools-jewell-instruments.png"
+    },
+    {
+      "name": "Jonard Tools",
+      "url": "https://www.jonard.com/",
+      "cats": [
+        "tools"
+      ],
+      "aka": [
+        "jonard"
+      ],
+      "logo": "2026/06/sds-tools-jonard-tools.jpg"
+    },
+    {
+      "name": "Juke Audio",
+      "url": "https://www.jukeaudio.com/",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "juke"
+      ],
+      "logo": "2026/05/sds-av-juke-audio.png"
+    },
+    {
+      "name": "Kantech",
+      "url": "https://www.kantech.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "entrapass",
+        "johnson controls",
+        "jci"
+      ],
+      "logo": "2026/05/sds-access-control-kantech.png"
+    },
+    {
+      "name": "Keri Systems",
+      "url": "https://www.kerisys.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "keri"
+      ],
+      "logo": "2026/06/sds-access-control-keri-systems.png"
+    },
+    {
+      "name": "Keyscan",
+      "url": "https://www.keyscan.ca/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "dormakaba"
+      ],
+      "logo": "2026/05/sds-access-control-keyscan.png"
+    },
+    {
+      "name": "Kidde",
+      "url": "https://www.kidde-esfire.com/",
+      "cats": [
+        "fire"
+      ],
+      "aka": [
+        "kidde commercial",
+        "fenwal"
+      ],
+      "logo": "2026/05/sds-fire-kidde.png"
+    },
+    {
+      "name": "Klein Tools",
+      "url": "https://www.kleintools.com/",
+      "cats": [
+        "tools"
+      ],
+      "aka": [
+        "klein"
+      ],
+      "logo": "2026/05/sds-tools-klein-tools.png"
+    },
+    {
+      "name": "KwikMounts",
+      "url": "https://www.kwikmounts.com/",
+      "cats": [
+        "metal"
+      ],
+      "aka": [
+        "kwik mounts",
+        "mounts"
+      ],
+      "logo": "2026/05/sds-metal-kwikmounts.png"
+    },
+    {
+      "name": "Kwikset",
+      "url": "https://www.kwikset.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "locks",
+        "smart lock"
+      ],
+      "logo": "2026/05/sds-access-control-kwikset.png"
+    },
+    {
+      "name": "L.E.D. (Light Engineered Displays)",
+      "url": "https://ledinc.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "led",
+        "monitor",
+        "display",
+        "light engineered displays",
+        "led inc",
+        "message display",
+        "mass notification display"
+      ],
+      "logo": "2026/05/sds-video-surveillance-l-e-d.png"
+    },
+    {
+      "name": "L.H. Dottie",
+      "url": "https://www.lhdottie.com/",
+      "cats": [
+        "metal"
+      ],
+      "aka": [
+        "dottie",
+        "anchors",
+        "fasteners"
+      ],
+      "logo": "2026/05/sds-metal-l-h-dottie.png"
+    },
+    {
+      "name": "LEA Professional",
+      "url": "https://www.leaprofessional.com/",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "lea",
+        "amplifier"
+      ],
+      "logo": "2026/06/sds-av-lea-professional.png"
+    },
+    {
+      "name": "Legrand",
+      "url": "https://www.legrand.us/",
+      "cats": [
+        "accessories"
+      ],
+      "aka": [
+        "wiremold",
+        "ortronics",
+        "on-q"
+      ],
+      "logo": "2026/06/sds-accessories-legrand.png"
+    },
+    {
+      "name": "Legrand AV",
+      "url": "https://www.legrandav.com/",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "legrand",
+        "chief",
+        "vaddio",
+        "da-lite"
+      ],
+      "logo": "2026/06/sds-av-legrand-av.png"
+    },
+    {
+      "name": "Leviton",
+      "url": "https://www.leviton.com/",
+      "cats": [
+        "network"
+      ],
+      "aka": [
+        "jacks",
+        "patch panel",
+        "structured media"
+      ],
+      "logo": "2026/05/sds-data-networking-leviton.png"
+    },
+    {
+      "name": "LiftMaster",
+      "url": "https://www.liftmaster.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "gate operator",
+        "chamberlain",
+        "garage"
+      ],
+      "logo": "2026/05/sds-access-control-liftmaster.png"
+    },
+    {
+      "name": "Linear",
+      "url": "https://www.linear-solutions.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "nice",
+        "gate operator",
+        "telephone entry"
+      ],
+      "logo": "2026/05/sds-access-control-linear.png"
+    },
+    {
+      "name": "Lockly Pro",
+      "url": "https://www.locklypro.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "lockly",
+        "smart lock"
+      ],
+      "logo": "2026/05/sds-access-control-lockly-pro.png"
+    },
+    {
+      "name": "Louroe Electronics",
+      "url": "https://www.louroe.com/",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "louroe",
+        "audio monitoring",
+        "microphone"
+      ],
+      "logo": "2026/05/sds-intrusion-louroe-electronics.png"
+    },
+    {
+      "name": "LSD (Labor Saving Devices)",
+      "url": "https://lsdinc.com/",
+      "cats": [
+        "tools"
+      ],
+      "aka": [
+        "lsd",
+        "labor saving devices",
+        "fish tape",
+        "wet noodle"
+      ],
+      "logo": "2026/06/sds-tools-lsd.jpg"
+    },
+    {
+      "name": "Luminys",
+      "url": "https://www.luminyscorp.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [],
+      "logo": "2026/05/sds-video-surveillance-luminys.png"
+    },
+    {
+      "name": "Lynn",
+      "url": "https://nsiindustries.com/lynn/",
+      "cats": [
+        "wire",
+        "network"
+      ],
+      "aka": [
+        "lynn electronics"
+      ],
+      "logo": "2026/05/sds-wire-cable-lynn.png"
+    },
+    {
+      "name": "M2M Services",
+      "url": "https://www.m2mservices.com/",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "m2m",
+        "communicator"
+      ],
+      "logo": "2026/06/sds-intrusion-m2m.png"
+    },
+    {
+      "name": "Macurco",
+      "url": "https://www.macurco.com/",
+      "cats": [
+        "fire"
+      ],
+      "aka": [
+        "gas detection",
+        "co detector"
+      ],
+      "logo": "2026/05/sds-fire-macurco.png"
+    },
+    {
+      "name": "Mag Daddy",
+      "url": "https://www.magdaddyusa.com/",
+      "cats": [
+        "accessories"
+      ],
+      "aka": [
+        "magdaddy"
+      ],
+      "logo": "2026/05/sds-accessories-mag-daddy.png"
+    },
+    {
+      "name": "Magnepull",
+      "url": "https://www.magnepull.com/",
+      "cats": [
+        "tools"
+      ],
+      "aka": [
+        "wire fishing"
+      ],
+      "logo": "2026/06/sds-tools-magnepull.png"
+    },
+    {
+      "name": "Manhattan",
+      "url": "https://www.manhattanproducts.us/",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "ic intracom"
+      ],
+      "logo": "2026/05/sds-av-manhattan.png"
+    },
+    {
+      "name": "MaxOut",
+      "url": "https://www.maxouttech.com/",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [],
+      "logo": "2026/05/sds-intrusion-maxout.png"
+    },
+    {
+      "name": "MG Electronics",
+      "url": "https://www.mgelectronics.com/",
+      "cats": [
+        "power"
+      ],
+      "aka": [
+        "mg"
+      ],
+      "logo": "2026/05/sds-power-mg-electronics.png"
+    },
+    {
+      "name": "Middle Atlantic Products",
+      "url": "https://www.middleatlantic.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "middle atlantic",
+        "rack",
+        "legrand"
+      ],
+      "logo": "2026/05/sds-video-surveillance-middle-atlantic-products.png"
+    },
+    {
+      "name": "Mier Products",
+      "url": "https://www.mierproducts.com/",
+      "cats": [
+        "metal"
+      ],
+      "aka": [
+        "mier",
+        "enclosures"
+      ],
+      "logo": "2026/05/sds-metal-mier.png"
+    },
+    {
+      "name": "Milesight",
+      "url": "https://www.milesight.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "lpr"
+      ],
+      "logo": "2026/05/sds-video-surveillance-milesight.png"
+    },
+    {
+      "name": "Minuteman Power",
+      "url": "https://www.minutemanups.com/",
+      "cats": [
+        "power"
+      ],
+      "aka": [
+        "minuteman",
+        "ups",
+        "para systems"
+      ],
+      "logo": "2026/05/sds-power-minuteman.png"
+    },
+    {
+      "name": "Mircom",
+      "url": "https://www.mircom.com/",
+      "cats": [
+        "metal"
+      ],
+      "aka": [
+        "enclosures"
+      ],
+      "logo": "2026/05/sds-metal-mircom.png"
+    },
+    {
+      "name": "Mongotel",
+      "url": "https://www.mongotel.com/",
+      "cats": [
+        "accessories"
+      ],
+      "aka": [],
+      "logo": "2026/05/sds-accessories-mongotel.png"
+    },
+    {
+      "name": "NAPCO",
+      "url": "https://www.napcosecurity.com/",
+      "cats": [
+        "access",
+        "intrusion"
+      ],
+      "aka": [
+        "napco security",
+        "gemini",
+        "starlink",
+        "marks usa",
+        "continental"
+      ],
+      "logo": "2026/05/sds-access-control-napco.png"
+    },
+    {
+      "name": "Nedap",
+      "url": "https://www.nedapsecurity.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "aeos"
+      ],
+      "logo": "2026/05/sds-access-control-nedap.png"
+    },
+    {
+      "name": "NetworkIntegrity Systems",
+      "url": "https://www.networkintegritysystems.com/",
+      "cats": [
+        "network"
+      ],
+      "aka": [
+        "network integrity",
+        "interceptor"
+      ],
+      "logo": "2026/05/sds-data-networking-networkintegrity-systems.png"
+    },
+    {
+      "name": "Nuuo",
+      "url": "https://www.nuuo.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "nvr"
+      ],
+      "logo": "2026/05/sds-video-surveillance-nuuo.png"
+    },
+    {
+      "name": "nVent CADDY",
+      "url": "https://www.nvent.com/en-us/caddy",
+      "cats": [
+        "metal"
+      ],
+      "aka": [
+        "caddy",
+        "j-hook",
+        "erico"
+      ],
+      "logo": "2026/06/sds-metal-nvent-caddy.png"
+    },
+    {
+      "name": "OCC (Optical Cable Corp)",
+      "url": "https://www.occfiber.com/",
+      "cats": [
+        "wire",
+        "network"
+      ],
+      "aka": [
+        "occ",
+        "optical cable",
+        "fiber"
+      ],
+      "logo": "2026/05/sds-wire-cable-occ.png"
+    },
+    {
+      "name": "Omada by TP-Link",
+      "url": "https://www.omadanetworks.com/us/",
+      "cats": [
+        "network"
+      ],
+      "aka": [
+        "omada",
+        "tp-link",
+        "tplink",
+        "sdn"
+      ],
+      "logo": "2026/07/tp-link_omada_logo_rgb_black-scaled.png"
+    },
+    {
+      "name": "OmniCable",
+      "url": "https://www.omnicable.com/",
+      "cats": [
+        "wire"
+      ],
+      "aka": [
+        "omni cable"
+      ],
+      "logo": "2026/05/sds-wire-cable-omnicable.png"
+    },
+    {
+      "name": "OmniMount",
+      "url": "https://www.omnimount.com/",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "omni mount",
+        "mounts",
+        "legrand"
+      ],
+      "logo": "2026/05/sds-av-omni-mount.png"
+    },
+    {
+      "name": "Onkyo",
+      "url": "https://www.onkyousa.com/",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "receiver"
+      ],
+      "logo": "2026/05/sds-av-onkyo.png"
+    },
+    {
+      "name": "Optex",
+      "url": "https://www.optexamerica.com/",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "pir",
+        "redscan",
+        "beam"
+      ],
+      "logo": "2026/06/sds-intrusion-optex.png"
+    },
+    {
+      "name": "Ortronics",
+      "url": "https://www.legrand.us/ortronics",
+      "cats": [
+        "network"
+      ],
+      "aka": [
+        "legrand"
+      ],
+      "logo": "2026/05/sds-data-networking-ortronics.png"
+    },
+    {
+      "name": "OSD Audio",
+      "url": "https://www.osdaudio.com/",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "osd",
+        "speakers"
+      ],
+      "logo": "2026/05/sds-av-osd-audio.png"
+    },
+    {
+      "name": "pdk (ProdataKey)",
+      "url": "https://www.prodatakey.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "pdk",
+        "prodatakey",
+        "cloud access"
+      ],
+      "logo": "2026/05/sds-access-control-pdk.png"
+    },
+    {
+      "name": "Petroflex",
+      "url": "https://www.petroflexna.com/",
+      "cats": [
+        "accessories"
+      ],
+      "aka": [
+        "innerduct",
+        "conduit"
+      ],
+      "logo": "2026/05/sds-accessories-petroflex.png"
+    },
+    {
+      "name": "Platinum Tools",
+      "url": "https://www.platinumtools.com/",
+      "cats": [
+        "tools"
+      ],
+      "aka": [
+        "ez-rj45",
+        "crimper"
+      ],
+      "logo": "2026/05/sds-tools-platinum-tools.png"
+    },
+    {
+      "name": "Potter",
+      "url": "https://www.pottersignal.com/",
+      "cats": [
+        "fire"
+      ],
+      "aka": [
+        "potter signal"
+      ],
+      "logo": "2026/05/sds-fire-potter.png"
+    },
+    {
+      "name": "Power-Sonic",
+      "url": "https://www.power-sonic.com/",
+      "cats": [
+        "power"
+      ],
+      "aka": [
+        "powersonic",
+        "batteries"
+      ],
+      "logo": "2026/06/sds-power-power-sonic.png"
+    },
+    {
+      "name": "PPG",
+      "url": "https://www.ppg.com/",
+      "cats": [
+        "accessories"
+      ],
+      "aka": [],
+      "logo": "2026/07/PPG_Logo.svg_.webp"
+    },
+    {
+      "name": "Proficient Audio",
+      "url": "https://www.proficientaudio.com/",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "proficient",
+        "speakers"
+      ],
+      "logo": "2026/05/sds-av-proficient-audio.png"
+    },
+    {
+      "name": "Proterial",
+      "url": "https://usa.proterial.com/",
+      "cats": [
+        "wire"
+      ],
+      "aka": [
+        "hitachi cable",
+        "hitachi"
+      ],
+      "logo": "2026/05/sds-wire-cable-proterial.png"
+    },
+    {
+      "name": "PureNet",
+      "url": "https://www.purenetcable.com/",
+      "cats": [
+        "wire"
+      ],
+      "aka": [
+        "pure net"
+      ],
+      "logo": "2026/05/sds-wire-cable-purenet.png"
+    },
+    {
+      "name": "Qolsys",
+      "url": "https://www.qolsys.com/",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "iq panel",
+        "johnson controls"
+      ],
+      "logo": "2026/05/sds-intrusion-qolsys.png"
+    },
+    {
+      "name": "Rack-A-Tiers",
+      "url": "https://www.rack-a-tiers.com/",
+      "cats": [
+        "tools"
+      ],
+      "aka": [
+        "rackatiers",
+        "wire spool"
+      ],
+      "logo": "2026/05/sds-tools-rack-a-tiers.png"
+    },
+    {
+      "name": "Rapid Video Mounts",
+      "url": "https://rapidav.net/",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "rapid",
+        "mounts"
+      ],
+      "logo": "2026/05/sds-av-rapid-video-mounts.png"
+    },
+    {
+      "name": "Ring",
+      "url": "https://ring.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "doorbell",
+        "amazon"
+      ],
+      "logo": "2026/06/sds-video-surveillance-ring.png"
+    },
+    {
+      "name": "Rosslare Security Products",
+      "url": "https://www.rosslaresecurity.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "rosslare"
+      ],
+      "logo": "2026/09/Rosslare-Logo.png"
+    },
+    {
+      "name": "Russound",
+      "url": "https://www.russound.com/",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "whole home audio"
+      ],
+      "logo": "2026/05/sds-av-russound.png"
+    },
+    {
+      "name": "Rutherford Controls (RCI)",
+      "url": "https://www.dormakaba.com/us-en/offering/products/door-hardware/electronic-access-control-components/electromagnetic-locks--do_2115",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "rci",
+        "dormakaba",
+        "maglock"
+      ],
+      "logo": "2026/05/sds-access-control-rutherford-controls.png"
+    },
+    {
+      "name": "SDi",
+      "url": "https://www.sdifire.com/",
+      "cats": [
+        "fire"
+      ],
+      "aka": [
+        "solo",
+        "testifire",
+        "detector testers"
+      ],
+      "logo": "2026/05/sds-fire-sdi.png"
+    },
+    {
+      "name": "SECO-LARM / Enforcer",
+      "url": "https://www.seco-larm.com/",
+      "cats": [
+        "access",
+        "intrusion"
+      ],
+      "aka": [
+        "seco larm",
+        "enforcer",
+        "secolarm"
+      ],
+      "logo": "2026/05/sds-intrusion-seco-larm-enforcer.png"
+    },
+    {
+      "name": "SecureCom Wireless",
+      "url": "https://securecomwireless.com/",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "secure wireless",
+        "securecom",
+        "dmp cellular",
+        "cellular communicator"
+      ],
+      "logo": "2026/06/sds-intrusion-secure-wireless.jpg"
+    },
+    {
+      "name": "Selecta",
+      "url": "https://www.selectainc.com/",
+      "cats": [
+        "accessories"
+      ],
+      "aka": [
+        "selecta products",
+        "switches"
+      ],
+      "logo": "2026/06/sds-accessories-selecta.jpg"
+    },
+    {
+      "name": "Shaxon",
+      "url": "https://www.shaxon.com/",
+      "cats": [
+        "network"
+      ],
+      "aka": [],
+      "logo": "2026/05/sds-data-networking-shaxon.png"
+    },
+    {
+      "name": "Sigcom",
+      "url": "https://sigcom.com/",
+      "cats": [
+        "fire"
+      ],
+      "aka": [],
+      "logo": "2026/06/sds-fire-sigcom.png"
+    },
+    {
+      "name": "Signamax",
+      "url": "https://www.signamax.com/",
+      "cats": [
+        "network"
+      ],
+      "aka": [],
+      "logo": "2026/05/sds-data-networking-signamax.png"
+    },
+    {
+      "name": "Silent Knight",
+      "url": "https://www.silentknight.com/",
+      "cats": [
+        "fire"
+      ],
+      "aka": [
+        "farenhyt",
+        "honeywell"
+      ],
+      "logo": "2026/05/sds-fire-silent-knight.png"
+    },
+    {
+      "name": "Simply45",
+      "url": "https://www.simply45.com/",
+      "cats": [
+        "tools"
+      ],
+      "aka": [
+        "simply 45",
+        "rj45"
+      ],
+      "logo": "2026/05/sds-tools-simply45.png"
+    },
+    {
+      "name": "Snake Tray",
+      "url": "https://www.snaketray.com/",
+      "cats": [
+        "metal"
+      ],
+      "aka": [
+        "snaketray",
+        "cable tray"
+      ],
+      "logo": "2026/05/sds-metal-snaketray.png"
+    },
+    {
+      "name": "Southwire",
+      "url": "https://www.southwire.com/",
+      "cats": [
+        "wire",
+        "metal"
+      ],
+      "aka": [],
+      "logo": "2026/06/sds-wire-cable-southwire.png"
+    },
+    {
+      "name": "Speco Technologies",
+      "url": "https://www.specotech.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "speco"
+      ],
+      "logo": "2026/05/sds-video-surveillance-speco-technologies.png"
+    },
+    {
+      "name": "STI (Safety Technology International)",
+      "url": "https://www.sti-usa.com/",
+      "cats": [
+        "fire"
+      ],
+      "aka": [
+        "sti",
+        "stopper",
+        "pull station cover",
+        "safety technology"
+      ],
+      "logo": "2026/06/sds-fire-sti.png"
+    },
+    {
+      "name": "STI (Specified Technologies Inc.)",
+      "url": "https://www.stifirestop.com/",
+      "cats": [
+        "fire"
+      ],
+      "aka": [
+        "sti",
+        "firestop",
+        "specseal",
+        "ez path"
+      ],
+      "logo": "2026/06/sds-fire-sti-1.png"
+    },
+    {
+      "name": "Structured Cable Products (SCP)",
+      "url": "https://www.scpcat5e.com/",
+      "cats": [
+        "wire"
+      ],
+      "aka": [
+        "scp"
+      ],
+      "logo": "2026/05/sds-wire-cable-structured-cable-products.png"
+    },
+    {
+      "name": "SwiftFusion",
+      "url": null,
+      "cats": [
+        "tools"
+      ],
+      "aka": [
+        "swift fusion",
+        "fiber splicer"
+      ],
+      "logo": "2026/06/sds-tools-swift-fusion.png"
+    },
+    {
+      "name": "System Sensor",
+      "url": "https://www.systemsensor.com/",
+      "cats": [
+        "fire"
+      ],
+      "aka": [
+        "honeywell",
+        "smoke detector",
+        "horn strobe"
+      ],
+      "logo": "2026/06/sds-fire-system-sensor.jpg"
+    },
+    {
+      "name": "Takex",
+      "url": "https://takex.com/us",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "beam",
+        "photoelectric"
+      ],
+      "logo": "2026/05/sds-intrusion-takex.png"
+    },
+    {
+      "name": "Tane Alarm Products",
+      "url": "https://www.tanealarm.com/",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "tane"
+      ],
+      "logo": "2026/05/sds-intrusion-tane-alarm-products.png"
+    },
+    {
+      "name": "TCL",
+      "url": "https://www.tcl.com/us/en",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "tv",
+        "display"
+      ],
+      "logo": "2026/05/sds-av-tcl.png"
+    },
+    {
+      "name": "TDG Audio",
+      "url": "https://www.tdgaudio.com/",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "tdg",
+        "speakers"
+      ],
+      "logo": "2026/05/sds-av-tdg-audio.png"
+    },
+    {
+      "name": "Telular",
+      "url": "https://www.telular.com/",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "telguard",
+        "communicator"
+      ],
+      "logo": "2026/06/sds-intrusion-telular.png"
+    },
+    {
+      "name": "ToughDog Security",
+      "url": "https://www.tdsecuritysystems.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "tough dog",
+        "td security systems"
+      ],
+      "logo": "2026/05/sds-video-surveillance-tough-dog-security.png"
+    },
+    {
+      "name": "TP-Link",
+      "url": "https://www.tp-link.com/us/",
+      "cats": [
+        "network"
+      ],
+      "aka": [
+        "tplink",
+        "switch",
+        "wifi"
+      ],
+      "logo": "2026/06/sds-data-networking-tp-link.png"
+    },
+    {
+      "name": "Trans Cable",
+      "url": "https://transcableusa.com/",
+      "cats": [
+        "wire"
+      ],
+      "aka": [
+        "transcable"
+      ],
+      "logo": "2026/06/sds-wire-cable-trans-cable.png"
+    },
+    {
+      "name": "Trend Networks",
+      "url": "https://www.trend-networks.com/",
+      "cats": [
+        "network",
+        "tools"
+      ],
+      "aka": [
+        "ideal networks",
+        "tester",
+        "certifier"
+      ],
+      "logo": "2026/06/sds-data-networking-trend-networks.png"
+    },
+    {
+      "name": "TRENDnet",
+      "url": "https://www.trendnet.com/",
+      "cats": [
+        "network",
+        "tools"
+      ],
+      "aka": [
+        "trend net"
+      ],
+      "logo": "2026/05/sds-data-networking-trendnet.png"
+    },
+    {
+      "name": "Trine",
+      "url": "https://www.trineonline.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "electric strike"
+      ],
+      "logo": "2026/05/sds-access-control-trine.png"
+    },
+    {
+      "name": "Triplett",
+      "url": "https://www.triplett.com/",
+      "cats": [
+        "tools"
+      ],
+      "aka": [
+        "jewell",
+        "tester",
+        "cctv tester"
+      ],
+      "logo": "2026/05/sds-tools-triplett.png"
+    },
+    {
+      "name": "United Security Products",
+      "url": "https://www.unitedsecurity.com/",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "usp",
+        "holdup",
+        "panic button"
+      ],
+      "logo": "2026/05/sds-intrusion-united-security-products-inc.png"
+    },
+    {
+      "name": "UNV (Uniview)",
+      "url": "https://www.uniview.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "uniview",
+        "unv"
+      ],
+      "logo": "2026/06/sds-video-surveillance-unv.png"
+    },
+    {
+      "name": "UPG (Universal Power Group)",
+      "url": "https://www.upgi.com/",
+      "cats": [
+        "power"
+      ],
+      "aka": [
+        "upg",
+        "universal power",
+        "batteries"
+      ],
+      "logo": "2026/06/sds-power-upg.png"
+    },
+    {
+      "name": "Uplink",
+      "url": "https://www.uplink.com/",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "communicator",
+        "cellular"
+      ],
+      "logo": "2026/05/sds-intrusion-uplink.png"
+    },
+    {
+      "name": "Vanco",
+      "url": "https://www.vanco1.com/",
+      "cats": [
+        "network"
+      ],
+      "aka": [
+        "hdmi"
+      ],
+      "logo": "2026/06/sds-data-networking-vanco.png"
+    },
+    {
+      "name": "Vertical Cable",
+      "url": "https://www.verticalcable.com/",
+      "cats": [
+        "wire"
+      ],
+      "aka": [],
+      "logo": "2026/05/sds-wire-cable-vertical-cable.png"
+    },
+    {
+      "name": "Veto Pro Pac",
+      "url": "https://www.vetopropac.com/",
+      "cats": [
+        "tools"
+      ],
+      "aka": [
+        "veto",
+        "tool bag"
+      ],
+      "logo": "2026/05/sds-tools-veto-pro-pac.png"
+    },
+    {
+      "name": "Videofied",
+      "url": "https://www.resideo.com/emea/en/products/security/security-systems/videofied/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "rsi",
+        "motionviewer",
+        "resideo"
+      ],
+      "logo": "2026/05/sds-video-surveillance-videofied.png"
+    },
+    {
+      "name": "VIGI by TP-Link",
+      "url": "https://www.vigi.com/us/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "vigi",
+        "tp-link",
+        "tplink"
+      ],
+      "logo": "2026/07/VIGI-by-tp-link-Logo_black-scaled.png"
+    },
+    {
+      "name": "Vitek",
+      "url": "https://www.vitekcctv.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [],
+      "logo": "2026/05/sds-video-surveillance-vitek.png"
+    },
+    {
+      "name": "Vivotek",
+      "url": "https://www.vivotek.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [],
+      "logo": "2026/05/sds-video-surveillance-vivotek.png"
+    },
+    {
+      "name": "VMP (Video Mount Products)",
+      "url": "https://www.videomount.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "vmp",
+        "video mount",
+        "mounts"
+      ],
+      "logo": "2026/05/sds-video-surveillance-vmp.png"
+    },
+    {
+      "name": "Vosker",
+      "url": "https://www.vosker.com/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "cellular camera",
+        "solar camera"
+      ],
+      "logo": "2026/06/sds-video-surveillance-vosker.png"
+    },
+    {
+      "name": "Wavenet",
+      "url": "https://www.wavenetcable.com/",
+      "cats": [
+        "wire"
+      ],
+      "aka": [],
+      "logo": "2026/05/sds-wire-cable-wavenet.png"
+    },
+    {
+      "name": "weBoost",
+      "url": "https://www.weboost.com/",
+      "cats": [
+        "network"
+      ],
+      "aka": [
+        "cell booster",
+        "wilson"
+      ],
+      "logo": "2026/06/sds-data-networking-weboost.png"
+    },
+    {
+      "name": "West Penn Wire",
+      "url": "https://www.westpennwire.com/",
+      "cats": [
+        "wire"
+      ],
+      "aka": [
+        "west penn",
+        "wpw"
+      ],
+      "logo": "2026/05/sds-wire-cable-west-penn-wire.png"
+    },
+    {
+      "name": "WiiM",
+      "url": "https://www.wiimhome.com/",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "streamer"
+      ],
+      "logo": "2026/06/sds-av-wiim.png"
+    },
+    {
+      "name": "Wilson Electronics",
+      "url": "https://www.wilsonconnectivity.com/",
+      "cats": [
+        "accessories"
+      ],
+      "aka": [
+        "wilson",
+        "cell booster",
+        "weboost"
+      ],
+      "logo": "2026/06/sds-accessories-wilson.png"
+    },
+    {
+      "name": "Winland Electronics",
+      "url": "https://www.winland.com/",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "winland",
+        "environmental",
+        "water sensor",
+        "temperature"
+      ],
+      "logo": "2026/05/sds-intrusion-winland-electronics-inc.png"
+    },
+    {
+      "name": "Wiremold",
+      "url": "https://www.legrand.us/wiremold",
+      "cats": [
+        "accessories"
+      ],
+      "aka": [
+        "legrand",
+        "raceway"
+      ],
+      "logo": "2026/05/sds-accessories-wiremold.png"
+    },
+    {
+      "name": "WyreStorm",
+      "url": "https://www.wyrestorm.com/",
+      "cats": [
+        "av"
+      ],
+      "aka": [
+        "hdmi",
+        "hdbaset"
+      ],
+      "logo": "2026/05/sds-av-wyrestorm.png"
+    },
+    {
+      "name": "Yale",
+      "url": "https://www.yalehome.com/",
+      "cats": [
+        "access",
+        "intrusion"
+      ],
+      "aka": [
+        "smart lock"
+      ],
+      "logo": "2026/05/sds-access-control-yale.png"
+    },
+    {
+      "name": "Z-Wave",
+      "url": "https://z-wavealliance.org/",
+      "cats": [
+        "intrusion"
+      ],
+      "aka": [
+        "zwave",
+        "home automation"
+      ],
+      "logo": "2026/05/sds-intrusion-z-wave.png"
+    },
+    {
+      "name": "Zebra Technologies",
+      "url": "https://www.zebra.com/",
+      "cats": [
+        "tools"
+      ],
+      "aka": [
+        "zebra",
+        "label printer",
+        "badge printer"
+      ],
+      "logo": "2026/06/sds-tools-zebra-technologies.png"
+    },
+    {
+      "name": "ZKTeco",
+      "url": "https://www.zkteco.com/",
+      "cats": [
+        "access"
+      ],
+      "aka": [
+        "zk",
+        "biometric"
+      ],
+      "logo": "2026/05/sds-access-control-zkteco.png"
+    },
+    {
+      "name": "Zuum",
+      "url": "https://www.zuummedia.com/",
+      "cats": [
+        "video",
+        "av"
+      ],
+      "aka": [
+        "zuum media"
+      ],
+      "logo": "2026/05/sds-video-surveillance-zuum.png"
+    },
+    {
+      "name": "Zyxel",
+      "url": "https://www.zyxel.com/us/en-us",
+      "cats": [
+        "network"
+      ],
+      "aka": [
+        "switch",
+        "firewall"
+      ],
+      "logo": "2026/06/sds-data-networking-zyxel.png"
+    }
+  ],
+  "branches": [
+    {
+      "st": "AL",
+      "city": "Mobile",
+      "addr": "7870 Schillinger Park Rd, Mobile, AL 36608",
+      "phone": "(251) 415-3425"
+    },
+    {
+      "st": "AZ",
+      "city": "Phoenix",
+      "addr": "3323 West Catalina Drive, Phoenix, AZ 85017",
+      "phone": "(602) 900-1969"
+    },
+    {
+      "st": "FL",
+      "city": "Melbourne",
+      "addr": "185 West Drive Suite 1, Melbourne, FL 32904",
+      "phone": null
+    },
+    {
+      "st": "ID",
+      "city": "Boise",
+      "addr": "134 N Cloverdale, Boise, ID 83713",
+      "phone": "(208) 323-1177"
+    },
+    {
+      "st": "LA",
+      "city": "Baton Rouge",
+      "addr": "10652 Alco Ave, Baton Rouge, LA 70816",
+      "phone": "(225) 293-7890"
+    },
+    {
+      "st": "LA",
+      "city": "Bossier City",
+      "addr": "4004 Shed Road, Bossier City, LA 71111",
+      "phone": "(318) 742-8232"
+    },
+    {
+      "st": "LA",
+      "city": "Mandeville",
+      "addr": "530 Asbury Drive Suite B, Mandeville, LA 70471",
+      "phone": "(985) 674-9890"
+    },
+    {
+      "st": "LA",
+      "city": "New Orleans",
+      "addr": "3204 48th Street, Metairie, LA 70001",
+      "phone": "(504) 836-2040"
+    },
+    {
+      "st": "MO",
+      "city": "Kansas City",
+      "addr": "4104 NW Riverside St, Riverside, MO 64150",
+      "phone": "(816) 834-9111"
+    },
+    {
+      "st": "NC",
+      "city": "Raleigh",
+      "addr": "2728 Capital Blvd Suite 164, Raleigh, NC 27604",
+      "phone": "(984) 375-3737"
+    },
+    {
+      "st": "NM",
+      "city": "Albuquerque",
+      "addr": "2520 Jefferson St NE Suite A, Albuquerque, NM 87110",
+      "phone": "(505) 888-4000"
+    },
+    {
+      "st": "NV",
+      "city": "Las Vegas",
+      "addr": "6455 Dean Martin Drive Suite F, Las Vegas, NV 89118",
+      "phone": "(702) 357-5892"
+    },
+    {
+      "st": "OH",
+      "city": "Cincinnati",
+      "addr": "11260 Cornell Park Drive Suite 706, Cincinnati, OH 45242",
+      "phone": "(513) 823-9737"
+    },
+    {
+      "st": "OR",
+      "city": "Portland",
+      "addr": "16655 SW 72nd Ave Suite 500, Tigard, OR 97224",
+      "phone": "(503) 431-2025"
+    },
+    {
+      "st": "TN",
+      "city": "Nashville",
+      "addr": "2929 Elm Hill Pike, Nashville, TN",
+      "phone": "(615) 312-9030"
+    },
+    {
+      "st": "TX",
+      "city": "Dallas",
+      "addr": "1000 W Crosby Rd Suite 144, Carrollton, TX 75006",
+      "phone": "(972) 416-5020"
+    },
+    {
+      "st": "TX",
+      "city": "Fort Worth",
+      "addr": "7336-C Dogwood Park Drive, Richland Hills, TX 76118",
+      "phone": "(972) 416-5020"
+    },
+    {
+      "st": "TX",
+      "city": "Houston",
+      "addr": "9777 W Gulf Bank Rd Suite 15, Houston, TX 77040",
+      "phone": "(713) 782-5100"
+    },
+    {
+      "st": "TX",
+      "city": "Lubbock",
+      "addr": "12415 University Avenue Suite 4, Lubbock, TX 79423",
+      "phone": "(806) 310-7371"
+    },
+    {
+      "st": "UT",
+      "city": "Salt Lake City",
+      "addr": "4318 South 500 West, Murray, UT 84123",
+      "phone": "(801) 207-1959"
+    },
+    {
+      "st": "VA",
+      "city": "Norfolk",
+      "addr": "2740 Ellsmere Ave Suite A, Norfolk, VA 23513",
+      "phone": "(757) 260-9040"
+    },
+    {
+      "st": "WA",
+      "city": "Spokane",
+      "addr": "204 South Koren Suite 500, Spokane, WA 99212",
+      "phone": "(509) 624-5943"
+    }
+  ],
+  "logoBase": "https://securitydatasupply.com/wp-content/uploads/"
+}
