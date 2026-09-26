@@ -134,26 +134,32 @@
       <dt>Longest run that works</dt>
       <dd>{{ maxFeetDisplay() }}</dd>
     </dl>
-    <table class="tl-table" aria-label="Same run in every gauge">
-      <thead>
-        <tr>
-          <th scope="col">Gauge</th>
-          <th scope="col">At device</th>
-          <th scope="col">Drop</th>
-          <th scope="col">OK?</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (row of table(); track row.gauge) {
-          <tr [class.current]="row.current">
-            <td>{{ row.gauge }} AWG</td>
-            <td>{{ row.endVolts.toFixed(2) }} V</td>
-            <td>{{ row.dropPercent.toFixed(1) }}%</td>
-            <td>{{ row.passes === null ? '—' : row.passes ? 'Yes' : 'No' }}</td>
+    @if (table().length) {
+      <table class="tl-table" aria-label="Same run in every gauge">
+        <thead>
+          <tr>
+            <th scope="col">Gauge</th>
+            <th scope="col">At device</th>
+            <th scope="col">Drop</th>
+            <th scope="col">OK?</th>
           </tr>
-        }
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          @for (row of table(); track row.gauge) {
+            <tr [class.current]="row.current">
+              <td>{{ row.gauge }} AWG</td>
+              <td>{{ row.endVolts.toFixed(2) }} V</td>
+              <td>{{ row.dropPercent.toFixed(1) }}%</td>
+              <td>{{ row.passes === null ? '—' : row.passes ? 'Yes' : 'No' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else {
+      <p class="tl-hint">
+        Enter supply voltage, load current, and run length to compare every gauge.
+      </p>
+    }
   </ng-container>
 
   <ng-container sources>
