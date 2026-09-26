@@ -602,3 +602,375 @@ main:focus {
     display: none;
   }
 }
+
+/* Quoting-tool shell: the "mc" (Margin Calculator) card pattern, shared by the Margin calculator and all
+   four sizing tools (tools.html reuses .mc-* wholesale rather than its own names, per its own comment:
+   "Reuses the margin calculator's card, input and results styles"). Ported from calculator.html's inline
+   <style>; each tool's own stylesheet keeps only what's actually specific to it. */
+.mc {
+  width: min(920px, 100% - 32px);
+  margin: 0 auto 48px;
+  padding-top: 44px;
+}
+.mc h1 {
+  margin: 0;
+  font: 600 clamp(30px, 4.4vw, 48px) / 1.05 var(--display);
+  letter-spacing: -0.035em;
+  max-width: 30ch;
+  text-wrap: balance;
+}
+.mc h1 .dim {
+  color: var(--ink-2);
+}
+.mc-lede {
+  color: var(--ink-2);
+  margin: 10px 0 24px;
+  max-width: 64ch;
+}
+.mc-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+.mc-in {
+  padding: 26px;
+}
+.mc-out {
+  padding: 26px;
+  background: var(--surface-2);
+  border-left: 1px solid var(--line);
+}
+.mc fieldset {
+  border: 0;
+  margin: 0 0 18px;
+  padding: 0;
+}
+.mc legend,
+.mc label {
+  display: block;
+  font: 600 14px/1.3 var(--font);
+  color: var(--ink);
+  margin: 0 0 8px;
+  padding: 0;
+}
+.mc-field {
+  margin: 0 0 16px;
+}
+.mc-inputwrap {
+  position: relative;
+}
+.mc-inputwrap .affix {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--ink-2);
+  font-weight: 600;
+  pointer-events: none;
+}
+.mc-inputwrap .pre {
+  left: 12px;
+}
+.mc-inputwrap .suf {
+  right: 12px;
+}
+.mc input[type='text'] {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 32px 10px 28px;
+  border: 1px solid var(--input);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  font: 500 18px/1.2 var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+.mc input[type='text']:focus {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 18%, transparent);
+}
+.mc input[aria-invalid='true'] {
+  border-color: #b42318;
+}
+.mc-msg {
+  min-height: 0;
+  margin: 0 0 14px;
+  font-size: 14px;
+  border-radius: 8px;
+}
+.mc-msg:not(:empty) {
+  padding: 10px 12px;
+}
+.mc-msg.err {
+  background: #fdecea;
+  color: #8a1c12;
+  border: 1px solid #f5c2bd;
+}
+.mc-msg.warn {
+  background: #fff4d6;
+  color: #6b4a00;
+  border: 1px solid #f1d58a;
+}
+.mc-reset {
+  padding: 6px 0;
+  font: 600 14px/1 var(--font);
+}
+.mc-out h3 {
+  margin: 0 0 12px;
+  font: 500 12px/1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.mc-quote {
+  margin: 0 0 18px;
+  padding: 18px 20px;
+  border: 1px solid color-mix(in srgb, var(--brand) 55%, transparent);
+  border-radius: 16px;
+  background: var(--brand-soft);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 10%, transparent);
+}
+.mc-quote .k {
+  display: block;
+  font: 600 12px/1.2 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.mc-quote .v {
+  display: block;
+  margin: 6px 0 12px;
+  font: 600 46px/1.05 var(--display);
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.mc dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px 16px;
+}
+.mc dt {
+  color: var(--ink-2);
+  align-self: center;
+}
+.mc dd {
+  margin: 0;
+  text-align: right;
+  font: 500 15px/1.4 var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+.mc .pos {
+  color: var(--grass-11);
+}
+.mc .neg {
+  color: var(--neg);
+}
+.mc-note {
+  margin: 14px 0 0;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+@media (max-width: 700px) {
+  .mc-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .mc-out {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+}
+
+/* Sizing tools: shared by battery/voltage-drop/PoE/NVR (and the shell they're all wrapped in,
+   ToolResultCardComponent). Global rather than scoped to one component because Angular's emulated view
+   encapsulation can't reliably style *inside* content a component projects in from elsewhere — every
+   result hero/details/sources block here is authored by each tool's own template, not by
+   ToolResultCardComponent, so these rules can't live in its stylesheet. Ported from tools.html. */
+.tl-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0 12px;
+}
+.mc select {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: 1px solid var(--input);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  font: 500 16px/1.2 var(--font);
+}
+.mc select:focus {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 18%, transparent);
+}
+.mc input[type='text'].tl-plain {
+  padding-left: 12px;
+}
+.tl-hint {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--ink-2);
+}
+.tl-result .v {
+  font-size: 40px;
+}
+.tl-result.fail {
+  border-color: #b42318;
+}
+.tl-result {
+  border-color: color-mix(in srgb, var(--tool) 60%, transparent);
+  background: color-mix(in srgb, var(--tool-soft) 65%, var(--surface));
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--tool) 12%, transparent);
+}
+.tl-sources h4::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--tool);
+  vertical-align: 1px;
+}
+/* "Estimate for quoting" line right under each result, where the eye already is. Neutral, not a warning. */
+.tl-estimate {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin: -6px 0 16px;
+  color: var(--ink-2);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.tl-estimate::before {
+  content: 'i';
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  font: 700 10px/1 var(--font);
+}
+.tl-quip:empty {
+  display: none;
+}
+.tl-quip {
+  margin-top: 6px;
+  color: var(--ink-2);
+  font-style: italic;
+}
+.tl-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font: 700 12px/1.4 var(--font);
+  letter-spacing: 0.03em;
+}
+.tl-badge.ok {
+  background: #e7f6ec;
+  color: #0f5a2a;
+  border: 1px solid #b7e1c4;
+}
+.tl-badge.bad {
+  background: #fdecea;
+  color: #8a1c12;
+  border: 1px solid #f5c2bd;
+}
+.tl-table {
+  width: 100%;
+  margin: 16px 0 0;
+  border-collapse: collapse;
+  font: 500 14px/1.4 var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+.tl-table th,
+.tl-table td {
+  padding: 6px 4px;
+  border-bottom: 1px solid var(--line);
+  text-align: right;
+}
+.tl-table th:first-child,
+.tl-table td:first-child {
+  text-align: left;
+}
+.tl-table th {
+  font: 500 11px/1.2 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.tl-table tr.current td {
+  font-weight: 700;
+}
+.tl-devices {
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+.tl-device {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr) 96px 40px;
+  gap: 8px;
+  align-items: end;
+  margin: 0 0 10px;
+}
+.tl-device label {
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+.tl-device input[type='text'] {
+  min-height: 44px;
+  font-size: 16px;
+  padding-left: 12px;
+  padding-right: 8px;
+}
+.tl-device select {
+  min-height: 44px;
+  font-size: 14px;
+}
+.tl-remove {
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink-2);
+  font: 600 18px/1 var(--font);
+  cursor: pointer;
+}
+.tl-sources {
+  margin: 18px 0 0;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.tl-sources h4 {
+  margin: 0 0 6px;
+  font: 600 13px/1.3 var(--font);
+  color: var(--ink);
+}
+.tl-sources p {
+  margin: 0 0 6px;
+}
+.tl-sources a {
+  color: inherit;
+}
+@media (max-width: 700px) {
+  .tl-device {
+    grid-template-columns: 64px minmax(0, 1fr) 84px 40px;
+  }
+}

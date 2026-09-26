@@ -1,0 +1,25 @@
+// Only the host-level color mapping lives here. Everything else this component's template renders
+// (.tl-result, .tl-estimate, .tl-sources) shares content projected in from each tool's own template, and
+// Angular's emulated encapsulation can't reliably style *inside* projected content from the component
+// doing the projecting — so those rules live in the global stylesheet instead (see its "Sizing tools"
+// section), where they aren't scoped to either side and work regardless of which template authored what.
+
+:host {
+  display: contents;
+}
+:host([data-tool='battery']) {
+  --tool: var(--amber-9);
+  --tool-soft: var(--amber-3);
+}
+:host([data-tool='vdrop']) {
+  --tool: var(--bronze-9);
+  --tool-soft: var(--bronze-3);
+}
+:host([data-tool='poe']) {
+  --tool: var(--teal-9);
+  --tool-soft: var(--teal-3);
+}
+:host([data-tool='nvr']) {
+  --tool: var(--cyan-9);
+  --tool-soft: var(--cyan-3);
+}
