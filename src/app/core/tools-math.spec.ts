@@ -103,8 +103,16 @@ const MATH_CASES = [
     name: 'PoE budget: 8 x Class 3 cameras on a 120 W switch',
     source: 'class table above: 8 x 15.4 = 123.2 W reserved (over); 8 x 13 = 104 W max draw (fits)',
     run: () => ({
-      reserved: T.poeBudget({ budgetWatts: 120, basis: 'pse', devices: [{ quantity: 8, poeClass: 3 }] }),
-      drawn: T.poeBudget({ budgetWatts: 120, basis: 'pd', devices: [{ quantity: 8, poeClass: 3 }] }),
+      reserved: T.poeBudget({
+        budgetWatts: 120,
+        basis: 'pse',
+        devices: [{ quantity: 8, poeClass: 3 }],
+      }),
+      drawn: T.poeBudget({
+        budgetWatts: 120,
+        basis: 'pd',
+        devices: [{ quantity: 8, poeClass: 3 }],
+      }),
     }),
     expect: {
       reserved: { totalWatts: 123.2, fits: false, ports: 8, highestPortType: '802.3af' },
@@ -114,14 +122,16 @@ const MATH_CASES = [
   },
   {
     name: 'NVR storage: Genetec worked example',
-    source: 'techdocs.genetec.com Stratocast NAS storage calculator: 500 Kbps average for 7 days = 37.8 GB',
+    source:
+      'techdocs.genetec.com Stratocast NAS storage calculator: 500 Kbps average for 7 days = 37.8 GB',
     run: () => T.nvrStorage({ kbps: 500, cameras: 1, days: 7, recordingPercent: 100 }),
     expect: { totalGB: 37.8, gbPerDay: 5.4 },
     tolerance: 1e-9,
   },
   {
     name: 'NVR storage: scales with cameras and share of the day',
-    source: 'same formula: 16 cameras x 4096 Kbps x 30 days = 21.23 TB; at 50% recording = 10.62 TB',
+    source:
+      'same formula: 16 cameras x 4096 Kbps x 30 days = 21.23 TB; at 50% recording = 10.62 TB',
     run: () => ({
       full: T.nvrStorage({ kbps: 4096, cameras: 16, days: 30, recordingPercent: 100 }),
       half: T.nvrStorage({ kbps: 4096, cameras: 16, days: 30, recordingPercent: 50 }),

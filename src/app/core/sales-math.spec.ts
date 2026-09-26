@@ -29,7 +29,13 @@ const EXPECTED: Record<string, number> = {
 };
 
 describe('sales-math (September 2026 hand-worked example)', () => {
-  const summary = summarize({ month: '2026-09', goal: 44000, sales: SALES, overrides: {}, today: '2026-09-10' });
+  const summary = summarize({
+    month: '2026-09',
+    goal: 44000,
+    sales: SALES,
+    overrides: {},
+    today: '2026-09-10',
+  });
 
   for (const [key, value] of Object.entries(EXPECTED)) {
     it(`summary.${key} === ${value}`, () => {
@@ -99,7 +105,11 @@ describe('CSV round trip', () => {
   it('toCsv -> fromCsv reproduces the same month data', () => {
     const store = {
       months: {
-        '2026-09': { goal: 44000, sales: SALES, overrides: { '2026-09-07': false, '2026-09-12': true } },
+        '2026-09': {
+          goal: 44000,
+          sales: SALES,
+          overrides: { '2026-09-07': false, '2026-09-12': true },
+        },
       },
     };
     const back = fromCsv(toCsv(store));

@@ -15,7 +15,11 @@ export function monthDays(month: string): MonthDay[] {
   const count = new Date(year, monthNumber, 0).getDate();
   return Array.from({ length: count }, (_, i) => {
     const day = i + 1;
-    return { date: `${month}-${pad(day)}`, day, weekday: new Date(year, monthNumber - 1, day).getDay() };
+    return {
+      date: `${month}-${pad(day)}`,
+      day,
+      weekday: new Date(year, monthNumber - 1, day).getDay(),
+    };
   });
 }
 
@@ -71,7 +75,9 @@ export function summarize({ month, goal, sales = {}, overrides = {}, today }: Su
 
   const openDays = selling.filter((day) => !entered(day) && !isPast(day)).length;
   const missingPast = selling.filter((day) => !entered(day) && isPast(day)).length;
-  const elapsedSelling = selling.filter((day) => isPast(day) || (day.date === today && entered(day))).length;
+  const elapsedSelling = selling.filter(
+    (day) => isPast(day) || (day.date === today && entered(day)),
+  ).length;
   const enteredSelling = selling.filter(entered);
   const soldOnSelling = enteredSelling.reduce((sum, day) => sum + (day.sales as number), 0);
   const average = enteredSelling.length ? soldOnSelling / enteredSelling.length : 0;
@@ -80,8 +86,16 @@ export function summarize({ month, goal, sales = {}, overrides = {}, today }: Su
   const paceToDate = baseline * elapsedSelling;
   const projected = sold + average * openDays;
   const withSales = days.filter((day) => entered(day) && day.selling);
-  const best = withSales.reduce((top: DaySummary | null, day) => (!top || (day.sales as number) > (top.sales as number) ? day : top), null);
-  const worst = withSales.reduce((low: DaySummary | null, day) => (!low || (day.sales as number) < (low.sales as number) ? day : low), null);
+  const best = withSales.reduce(
+    (top: DaySummary | null, day) =>
+      !top || (day.sales as number) > (top.sales as number) ? day : top,
+    null,
+  );
+  const worst = withSales.reduce(
+    (low: DaySummary | null, day) =>
+      !low || (day.sales as number) < (low.sales as number) ? day : low,
+    null,
+  );
   const daysAtBaseline = withSales.filter((day) => (day.sales as number) >= baseline - 1e-9).length;
 
   // Weeks run Monday to Sunday; a week is cut at the month's edges.

@@ -17,7 +17,13 @@ export interface BatteryAmpHoursInput {
   factor: number;
 }
 
-export function batteryAmpHours({ standbyAmps, alarmAmps, standbyHours, alarmMinutes, factor }: BatteryAmpHoursInput) {
+export function batteryAmpHours({
+  standbyAmps,
+  alarmAmps,
+  standbyHours,
+  alarmMinutes,
+  factor,
+}: BatteryAmpHoursInput) {
   const standbyAh = standbyAmps * standbyHours;
   const alarmAh = alarmAmps * (alarmMinutes / 60);
   const subtotalAh = standbyAh + alarmAh;
@@ -45,7 +51,14 @@ export interface VoltageDropInput {
   minVolts: number;
 }
 
-export function voltageDrop({ supplyVolts, amps, oneWayFeet, gauge, conductor, minVolts }: VoltageDropInput) {
+export function voltageDrop({
+  supplyVolts,
+  amps,
+  oneWayFeet,
+  gauge,
+  conductor,
+  minVolts,
+}: VoltageDropInput) {
   const ohmsPer1000 = OHMS_PER_1000_FT[conductor][gauge];
   const dropVolts = (amps * 2 * oneWayFeet * ohmsPer1000) / 1000; // out and back
   const endVolts = supplyVolts - dropVolts;
@@ -192,7 +205,15 @@ export const RAID_LAYOUTS: Record<RaidType, RaidLayout> = {
   raid10: { label: 'RAID 10', mirrored: true, minDrives: 4 },
 };
 
-export function usableTB({ drives, driveTB, raid }: { drives: number; driveTB: number; raid: RaidType }) {
+export function usableTB({
+  drives,
+  driveTB,
+  raid,
+}: {
+  drives: number;
+  driveTB: number;
+  raid: RaidType;
+}) {
   const layout = RAID_LAYOUTS[raid];
   if (layout.mirrored) return (drives * driveTB) / 2;
   return (drives - (layout.parityDrives ?? 0)) * driveTB;
