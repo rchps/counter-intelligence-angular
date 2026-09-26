@@ -173,6 +173,44 @@
   color: var(--ink);
 }
 
+.topbar-report {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: none;
+  color: var(--ink-2);
+  font: 500 13px/1 var(--font);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.topbar-report:hover {
+  border-color: var(--line);
+  background: var(--surface);
+  color: var(--ink);
+}
+.topbar-report:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+.topbar-report svg {
+  width: 16px;
+  height: 16px;
+}
+// Phones: "Counter Intelligence" needs the room, so the button shows just its icon (it keeps
+// "Feedback" as its accessible name; the labeled card at the end of every page is the main way in).
+@media (max-width: 640px) {
+  .topbar-report span {
+    display: none;
+  }
+  .topbar-report {
+    padding: 0 8px;
+  }
+}
+
 @media (max-width: 900px) {
   :host {
     height: auto;

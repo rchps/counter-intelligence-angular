@@ -3,3 +3,8 @@
 <main id="main-content" #mainContent tabindex="-1">
   <router-outlet />
 </main>
+@if (feedback.available()) {
+  <app-feedback-card />
+  <app-feedback-dialog />
+}
+<app-footer />

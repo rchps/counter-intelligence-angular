@@ -1,0 +1,95 @@
+// Ported from styles.css's "Feedback: two modes in one dialog" and "Report dialog extras". A thin accent
+// bar and the title icon shift from SDS blue ("Something's wrong") to warm amber ("I have an idea"); the
+// fields crossfade. The generic dialog parts (.dlg-*) are global, shared with future dialogs.
+
+.fb-accent {
+  flex: 0 0 auto;
+  height: 3px;
+  border-radius: 18px 18px 0 0;
+  background: linear-gradient(
+    90deg,
+    var(--brand),
+    color-mix(in srgb, var(--brand) 40%, var(--surface))
+  );
+  transition: background 0.3s;
+}
+.report-dialog[data-mode='idea'] .fb-accent {
+  background: linear-gradient(
+    90deg,
+    var(--amber-9),
+    color-mix(in srgb, var(--amber-9) 35%, var(--surface))
+  );
+}
+.fb-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  color: var(--brand);
+  transition: color 0.3s;
+}
+.fb-icon svg {
+  width: 20px;
+  height: 20px;
+  color: inherit;
+}
+.report-dialog[data-mode='idea'] .fb-icon,
+.fb-mode input[value='idea'] + span svg {
+  color: var(--amber-ink);
+}
+.fb-mode {
+  margin: 14px 0 0;
+}
+.fb-mode .segmented span {
+  gap: 8px;
+  min-height: 42px;
+  font-size: 14px;
+}
+.fb-mode .segmented svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+}
+.fb-pane {
+  animation: fb-in 0.2s ease-out;
+}
+@keyframes fb-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fb-pane {
+    animation: none;
+  }
+  .fb-accent,
+  .fb-icon {
+    transition: none;
+  }
+}
+
+.report-context {
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.report-context summary {
+  padding: 10px 12px;
+  color: var(--ink-2);
+  font-size: 13px;
+  cursor: pointer;
+}
+.report-context pre {
+  margin: 0;
+  padding: 10px 12px;
+  border-top: 1px solid var(--line);
+  background: var(--surface-2);
+  font: 400 12px/1.5 var(--mono);
+  white-space: pre-wrap;
+  word-break: break-word;
+}

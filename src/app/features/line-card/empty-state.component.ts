@@ -1,9 +1,10 @@
-import { Component, computed, input, output } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
+import { FeedbackService } from '../../core/feedback.service';
 import { emptySearchQuip } from '../../core/search/quips';
 
 // Ported from page.js section 6's lineCardEmptyHtml (module boxes, a Phase 5 concern, are left out).
-// "Report a missing line" is a plain mailto link for now instead of opening the feedback dialog, which
-// doesn't exist until Phase 5 — this keeps the affordance real rather than a dead button in the meantime.
+// "Report a missing line" opens the feedback dialog on that problem with the search filled in as the
+// manufacturer (page.js's data-report="missing" data-report-line).
 @Component({
   selector: 'app-line-card-empty-state',
   styleUrl: './empty-state.component.scss',
@@ -32,15 +33,26 @@ import { emptySearchQuip } from '../../core/search/quips';
         <p>Check the spelling, or try a product type like "maglock", "Cat6", or "horn strobe".</p>
       }
       <button type="button" class="btn secondary" (click)="clear.emit()">Clear search</button>
-      @if (reportMailto(); as href) {
+      @if (feedback.available()) {
         <p class="empty-report">
-          Think we carry it? <a class="linkbtn" [href]="href">Report a missing line</a>
+          Think we carry it?
+          <button
+            type="button"
+            class="linkbtn"
+            (click)="
+              feedback.open({ kind: 'missing', line: search().trim() }, $event.currentTarget)
+            "
+          >
+            Report a missing line
+          </button>
         </p>
       }
     </div>
   `,
 })
 export class EmptyStateComponent {
+  protected readonly feedback = inject(FeedbackService);
+
   readonly search = input.required<string>();
   readonly filterActive = input.required<boolean>();
   readonly filterLabel = input<string | null>(null);
@@ -48,7 +60,6 @@ export class EmptyStateComponent {
    *  (elsewhere called "shown") is empty, which can happen even while this is > 0. */
   readonly matchingCount = input.required<number>();
   readonly suggestion = input('');
-  readonly reportEmail = input<string | null>(null);
 
   readonly searchAllCategories = output<void>();
   readonly useSuggestion = output<string>();
@@ -59,12 +70,4 @@ export class EmptyStateComponent {
     this.filterActive() && this.filterLabel() ? ` in ${this.filterLabel()}` : '',
   );
   protected readonly quip = computed(() => emptySearchQuip(this.search()));
-
-  protected readonly reportMailto = computed(() => {
-    const email = this.reportEmail();
-    if (!email) return null;
-    const subject = encodeURIComponent('Counter Intelligence: missing line');
-    const body = encodeURIComponent(`Line: ${this.search().trim()}`);
-    return `mailto:${email}?subject=${subject}&body=${body}`;
-  });
 }

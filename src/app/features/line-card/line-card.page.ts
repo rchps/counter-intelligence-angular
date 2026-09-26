@@ -3,6 +3,8 @@ import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { debounceTime } from 'rxjs';
 import { DataService } from '../../core/data.service';
+import { searchStatusText } from '../../core/feedback';
+import { FeedbackService } from '../../core/feedback.service';
 import { normalize, searchWordsOf } from '../../core/search/normalize';
 import { searchLines, type Line } from '../../core/search/match';
 import { isExactName, sortByBestMatch } from '../../core/search/rank';
@@ -65,6 +67,25 @@ export class LineCardPage {
   });
 
   constructor() {
+    inject(FeedbackService).registerPage(
+      computed(() => ({
+        tabName: 'Line Card',
+        defaultKind: null,
+        search: {
+          search: this.debounced(),
+          filterLabel: this.filterLabel(),
+          status: searchStatusText({
+            shownCount: this.shown().length,
+            totalCount: this.data.lines().length,
+            noun: this.shown().length === 1 ? 'manufacturer' : 'manufacturers',
+            filterLabel: this.filterLabel(),
+            search: this.debounced(),
+            correctedSearch: this.correctedSearch(),
+          }),
+        },
+      })),
+    );
+
     // Replaces the current history entry rather than pushing a new one on every keystroke or filter
     // click — matches page.js's history.replaceState in writeAddressBar.
     effect(() => {

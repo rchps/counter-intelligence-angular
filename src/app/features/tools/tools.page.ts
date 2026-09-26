@@ -1,5 +1,6 @@
 import { Component, computed, effect, inject, input } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { FeedbackService } from '../../core/feedback.service';
 import { StorageService } from '../../core/storage.service';
 import { BatteryToolComponent } from './battery-tool.component';
 import { MarginCalculatorComponent } from './margin-calculator.component';
@@ -64,5 +65,20 @@ export class ToolsPage {
 
   constructor() {
     effect(() => this.storage.set(TOOL_STORAGE_KEY, this.currentTool()));
+
+    // page.js: the Tools tab is "Tools · <tool>", and a problem report from it starts on "A calculator
+    // looks off" — except from the sales tracker, which isn't a calculator (and whose numbers are never
+    // put in an email: there's deliberately no search/page state here to include).
+    inject(FeedbackService).registerPage(
+      computed(() => {
+        const tool = this.currentTool();
+        const label = TOOL_NAV.find((item) => item.id === tool)?.label ?? '';
+        return {
+          tabName: `Tools · ${label}`,
+          defaultKind: tool === 'sales' ? null : 'tool',
+          search: null,
+        };
+      }),
+    );
   }
 }

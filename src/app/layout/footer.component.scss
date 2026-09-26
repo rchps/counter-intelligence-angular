@@ -1,0 +1,35 @@
+// Ported from styles.css's footer and .footer-report.
+
+:host {
+  display: block;
+  position: relative;
+  padding: 28px 0 44px;
+  color: var(--ink-2);
+  font: 400 12px/1.6 var(--mono);
+}
+.wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  justify-content: space-between;
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+}
+a {
+  color: inherit;
+}
+.footer-report {
+  margin-left: 12px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.footer-report:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}

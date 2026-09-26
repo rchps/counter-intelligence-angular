@@ -1,5 +1,7 @@
 import { Component, computed, inject, signal, viewChild } from '@angular/core';
 import { DataService } from '../../core/data.service';
+import { searchStatusText } from '../../core/feedback';
+import { FeedbackService } from '../../core/feedback.service';
 import { searchBranches, STATE_NAMES } from '../../core/search/match';
 import { FilterChipsComponent, type FilterChip } from '../../shared/filter-chips.component';
 import { SearchStatusComponent } from '../../shared/search-status.component';
@@ -56,6 +58,29 @@ export class BranchesPage {
     const key = this.filter();
     return key === 'all' ? null : (STATE_NAMES[key] ?? key);
   });
+
+  protected readonly feedback = inject(FeedbackService);
+
+  constructor() {
+    this.feedback.registerPage(
+      computed(() => ({
+        tabName: 'Branches',
+        defaultKind: 'branch',
+        search: {
+          search: this.search(),
+          filterLabel: this.filterLabel(),
+          status: searchStatusText({
+            shownCount: this.shown().length,
+            totalCount: this.data.branches().length,
+            noun: this.shown().length === 1 ? 'branch' : 'branches',
+            filterLabel: this.filterLabel(),
+            search: this.search(),
+            correctedSearch: '',
+          }),
+        },
+      })),
+    );
+  }
 
   protected clearSearch(): void {
     this.search.set('');

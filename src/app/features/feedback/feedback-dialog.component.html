@@ -1,0 +1,198 @@
+<!-- The click handler only catches clicks on the backdrop (a mouse shortcut for closing). Its keyboard
+     equivalent is Esc, which a native modal <dialog> already handles, so these two rules don't apply. -->
+<!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+<dialog
+  #dialog
+  class="dlg report-dialog"
+  aria-labelledby="report-title"
+  [attr.data-mode]="mode()"
+  (click)="onDialogClick($event)"
+  (close)="onClose()"
+>
+  <div class="fb-accent" aria-hidden="true"></div>
+  <div class="dlg-body">
+    <div class="dlg-head">
+      <h2 class="dlg-title" id="report-title">
+        <span class="fb-icon">
+          @if (mode() === 'idea') {
+            <ng-container *ngTemplateOutlet="ideaIcon" />
+          } @else {
+            <ng-container *ngTemplateOutlet="flagIcon" />
+          }
+        </span>
+        <span id="report-heading">{{ copy().title }}</span>
+      </h2>
+      <button type="button" class="dlg-close" aria-label="Close" (click)="close()">×</button>
+    </div>
+
+    <fieldset class="dlg-field fb-mode">
+      <legend class="sr-only">What kind of feedback?</legend>
+      <div class="segmented">
+        <label>
+          <input
+            type="radio"
+            name="report-mode"
+            value="problem"
+            [checked]="mode() === 'problem'"
+            (change)="setMode('problem')"
+          />
+          <span><ng-container *ngTemplateOutlet="flagIcon" />Something's wrong</span>
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="report-mode"
+            value="idea"
+            [checked]="mode() === 'idea'"
+            (change)="setMode('idea')"
+          />
+          <span><ng-container *ngTemplateOutlet="ideaIcon" />I have an idea</span>
+        </label>
+      </div>
+    </fieldset>
+    <p class="dlg-lede">{{ copy().lede }}</p>
+
+    @if (mode() === 'problem') {
+      <div class="fb-pane">
+        <fieldset class="dlg-field">
+          <legend>What's wrong?</legend>
+          <div class="dlg-options">
+            @for (option of kinds; track option.key) {
+              <label>
+                <input
+                  type="radio"
+                  name="report-kind"
+                  [value]="option.key"
+                  [checked]="kind() === option.key"
+                  (change)="setKind(option.key)"
+                />
+                <span>{{ option.label }}</span>
+              </label>
+            }
+          </div>
+        </fieldset>
+        @if (kindInfo()?.line) {
+          <div class="dlg-field" id="report-line-field">
+            <label class="dlg-label" for="report-line"
+              >Which manufacturer? <small>(optional)</small></label
+            >
+            <input
+              type="text"
+              id="report-line"
+              list="report-line-names"
+              autocomplete="off"
+              [value]="line()"
+              (input)="line.set(valueOf($event))"
+            />
+            <datalist id="report-line-names">
+              @for (name of lineNames(); track name) {
+                <option [value]="name"></option>
+              }
+            </datalist>
+          </div>
+        }
+        <div class="dlg-field">
+          <label class="dlg-label" for="report-details">Details <small>(optional)</small></label>
+          <textarea
+            id="report-details"
+            [maxLength]="textLimit"
+            [placeholder]="detailsHint()"
+            [value]="details()"
+            (input)="details.set(valueOf($event))"
+          ></textarea>
+          <span class="dlg-count" aria-live="polite">{{ countText(details()) }}</span>
+        </div>
+      </div>
+    } @else {
+      <div class="fb-pane">
+        <div class="dlg-field">
+          <label class="dlg-label" for="idea-task">What were you trying to do?</label>
+          <textarea
+            id="idea-task"
+            [maxLength]="textLimit"
+            placeholder="e.g. Quote a 16-camera job and figure out which switch could power it"
+            [value]="task()"
+            (input)="task.set(valueOf($event))"
+          ></textarea>
+          <span class="dlg-count" aria-live="polite">{{ countText(task()) }}</span>
+        </div>
+        <div class="dlg-field">
+          <label class="dlg-label" for="idea-wish"
+            >What would have made it easier? <small>(optional)</small></label
+          >
+          <textarea
+            id="idea-wish"
+            [maxLength]="textLimit"
+            placeholder="Your idea, however rough"
+            [value]="wish()"
+            (input)="wish.set(valueOf($event))"
+          ></textarea>
+        </div>
+        <fieldset class="dlg-field">
+          <legend>How often does this come up? <small>(optional)</small></legend>
+          <div class="segmented">
+            @for (label of howOften; track label) {
+              <label>
+                <input
+                  type="radio"
+                  name="idea-often"
+                  [value]="label"
+                  [checked]="often() === label"
+                  (change)="often.set(label)"
+                />
+                <span>{{ label }}</span>
+              </label>
+            }
+          </div>
+        </fieldset>
+      </div>
+    }
+
+    <details class="report-context">
+      <summary>Also included, so it can be checked</summary>
+      <pre>{{ pageText() }}</pre>
+    </details>
+  </div>
+  <div class="dlg-foot">
+    <a
+      class="dlg-primary"
+      id="report-send"
+      [href]="href()"
+      [attr.aria-disabled]="!ready()"
+      (click)="onSend($event)"
+      >Open email to send</a
+    >
+    <p class="dlg-done" role="status" aria-live="polite">{{ done() }}</p>
+    <button type="button" class="dlg-cancel" (click)="close()">Close</button>
+  </div>
+</dialog>
+
+<ng-template #flagIcon>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.8"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M5 21V4" />
+    <path d="M5 4h11l-2 4 2 4H5" />
+  </svg>
+</ng-template>
+<ng-template #ideaIcon>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.8"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M9 18h6" />
+    <path d="M10 21h4" />
+    <path d="M12 3a6 6 0 0 0-3.5 10.9c.6.4 1 1.1 1 1.8V16h5v-.3c0-.7.4-1.4 1-1.8A6 6 0 0 0 12 3z" />
+  </svg>
+</ng-template>

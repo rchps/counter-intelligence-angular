@@ -44,14 +44,16 @@
       <div class="empty">
         <h2>No branches match "{{ search().trim() }}"</h2>
         <p>Try a city, a state name or abbreviation, a ZIP code, or part of a phone number.</p>
-        @if (data.reportEmail(); as email) {
+        @if (feedback.available()) {
           <p class="empty-report">
             Branch missing or wrong?
-            <a
+            <button
+              type="button"
               class="linkbtn"
-              [href]="'mailto:' + email + '?subject=' + 'Counter Intelligence: branch info'"
-              >Report it</a
+              (click)="feedback.open({ kind: 'branch' }, $event.currentTarget)"
             >
+              Report it
+            </button>
           </p>
         }
       </div>

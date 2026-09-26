@@ -529,6 +529,137 @@ mark {
   font: 500 18px/1 var(--font);
   cursor: pointer;
 }
+.dlg-lede {
+  margin: 10px 0 18px;
+  color: var(--ink-2);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.dlg-field {
+  margin: 0 0 14px;
+  padding: 0;
+  border: 0;
+}
+.dlg-field legend,
+.dlg-label {
+  display: block;
+  margin: 0 0 8px;
+  padding: 0;
+  font: 600 14px/1.3 var(--font);
+}
+.dlg-label small,
+.dlg-field legend small {
+  color: var(--ink-2);
+  font-weight: 400;
+}
+/* A grid of choices that look like chips (one pick). */
+.dlg-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.dlg-options label {
+  position: relative;
+}
+.dlg-options input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.dlg-options span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: var(--surface);
+  font: 500 14px/1.25 var(--font);
+}
+.dlg-options span::before {
+  content: '';
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  border: 1.5px solid var(--input);
+  border-radius: 50%;
+}
+.dlg-options input:checked + span {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 1px var(--ink);
+}
+.dlg-options input:checked + span::before {
+  border: 4.5px solid var(--ink);
+}
+.dlg textarea,
+.dlg input[type='text'] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--input);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  font: 400 15px/1.45 var(--font);
+}
+.dlg textarea {
+  min-height: 92px;
+  resize: vertical;
+}
+.dlg-count {
+  display: block;
+  margin-top: 4px;
+  color: var(--ink-2);
+  font-size: 12px;
+  text-align: right;
+}
+.dlg-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  padding: 14px 24px;
+  border-top: 1px solid var(--line);
+  border-radius: 0 0 18px 18px;
+  background: var(--surface-2);
+}
+.dlg-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--inv);
+  color: var(--on-inv);
+  font: 600 15px/1 var(--font);
+  text-decoration: none;
+  cursor: pointer;
+}
+.dlg-primary[aria-disabled='true'] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.dlg-done {
+  flex: 1 1 200px;
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink);
+}
+.dlg-cancel {
+  margin-left: auto;
+  padding: 8px 4px;
+  border: 0;
+  background: none;
+  color: var(--ink-2);
+  font: 500 14px/1 var(--font);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
 @media (max-width: 640px) {
   .dlg {
     width: 100%;
@@ -539,6 +670,12 @@ mark {
   }
   .dlg-foot {
     border-radius: 0;
+  }
+  .dlg-primary {
+    flex: 1 1 100%;
+  }
+  .dlg-options {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 @media print {
