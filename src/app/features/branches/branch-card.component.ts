@@ -9,10 +9,10 @@ import { highlightMatches } from '../../core/search/normalize';
   styleUrl: './branch-card.component.scss',
   template: `
     <div class="branch">
-      <h3>
+      <h2>
         <span [innerHTML]="highlightedCity()"></span>
         <span class="st">{{ branch().st }}</span>
-      </h3>
+      </h2>
       <address>
         <a [href]="mapLink()" target="_blank" rel="noopener">{{ branch().addr }}</a>
       </address>

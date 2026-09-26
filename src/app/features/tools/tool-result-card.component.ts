@@ -17,7 +17,7 @@ export type SizingToolId = 'battery' | 'vdrop' | 'poe' | 'nvr';
         <ng-content select="[form]" />
       </form>
       <div class="mc-out" aria-live="polite" aria-atomic="true">
-        <h3>Results</h3>
+        <h2>Results</h2>
         <div class="mc-quote tl-result" [class.fail]="fail()">
           <ng-content select="[resultHero]" />
         </div>
@@ -29,7 +29,7 @@ export type SizingToolId = 'battery' | 'vdrop' | 'poe' | 'nvr';
       </div>
     </div>
     <div class="tl-sources">
-      <h4>How this is calculated</h4>
+      <h3>How this is calculated</h3>
       <ng-content select="[sources]" />
     </div>
   `,

@@ -1,9 +1,9 @@
 <section class="sl" aria-labelledby="sl-h">
   <p class="eyebrow">Security Data Supply · Tracking</p>
-  <h2 id="sl-h" class="page-h">
+  <h1 id="sl-h" class="page-h">
     Sales tracker.
     <span class="dim">Know your number every day.</span>
-  </h2>
+  </h1>
   <p class="sl-lede">
     Set the month's goal, add each day's sales, and see what you need per day to get there. Weekdays
     count as selling days; tap Off or On on any day to change that.
@@ -75,7 +75,7 @@
     </form>
 
     <div class="sl-main" aria-live="polite">
-      <h3>This month</h3>
+      <h2>This month</h2>
       <div class="sl-hero">
         <span class="k">{{ heroLabel() }}</span>
         <span class="v">{{ heroValue() }}</span>
@@ -134,7 +134,7 @@
   <!-- Chart: cumulative sales vs goal pace -->
   <div class="sl-card sl-section">
     <div class="sl-section-head">
-      <h3 id="sl-chart-h">Sales vs goal pace</h3>
+      <h2 id="sl-chart-h">Sales vs goal pace</h2>
       <div class="sl-legend" aria-hidden="true">
         <span>Your sales</span>
         <span class="pace">Goal pace</span>
@@ -267,7 +267,7 @@
   <!-- Calendar -->
   <div class="sl-card sl-section">
     <div class="sl-section-head">
-      <h3>Daily sales</h3>
+      <h2>Daily sales</h2>
       <span class="sl-hint">Enter moves to the next selling day.</span>
     </div>
     <div class="sl-cal">
@@ -318,7 +318,7 @@
 
   <!-- Weekly breakdown + stats -->
   <div class="sl-card sl-section">
-    <div class="sl-section-head"><h3>Weekly breakdown</h3></div>
+    <div class="sl-section-head"><h2>Weekly breakdown</h2></div>
     <div class="sl-scroll">
       <table class="sl-table">
         <thead>
@@ -352,7 +352,7 @@
     </div>
   </div>
   <div class="sl-card sl-section">
-    <div class="sl-section-head"><h3>Month stats</h3></div>
+    <div class="sl-section-head"><h2>Month stats</h2></div>
     @if (summary().enteredSellingDays) {
       <dl class="sl-stats">
         <div>
