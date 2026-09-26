@@ -8,6 +8,7 @@ import { NvrStorageToolComponent } from './nvr-storage-tool.component';
 import { PoeBudgetToolComponent } from './poe-budget-tool.component';
 import { SalesTrackerComponent } from './sales-tracker.component';
 import {
+  isSizingTool,
   isToolId,
   SIZING_TOOL_HEADINGS,
   TOOL_NAV,
@@ -58,9 +59,7 @@ export class ToolsPage {
   // Margin and sales bring their own heading entirely (each was its own vanilla page).
   protected readonly sizingHeading = computed(() => {
     const tool = this.currentTool();
-    return tool === 'battery' || tool === 'vdrop' || tool === 'poe' || tool === 'nvr'
-      ? SIZING_TOOL_HEADINGS[tool]
-      : null;
+    return isSizingTool(tool) ? SIZING_TOOL_HEADINGS[tool] : null;
   });
 
   constructor() {

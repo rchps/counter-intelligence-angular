@@ -4,8 +4,8 @@
 // only types were added, and everything that read `DATA`/`LINES`/`MODULES` off `window` now takes those
 // as parameters, so this stays a pure, DataService-agnostic module.
 
-import { domainOf, normalize, searchWordsOf } from './normalize';
-import { correctTypos, type SearchableText } from './typos';
+import { domainOf, normalize, removeSpaces, searchWordsOf } from './normalize';
+import { containsWord, correctTypos, type SearchableText } from './typos';
 
 // ---- Manufacturer ("line") data prep ----
 
@@ -59,7 +59,7 @@ export function prepareLine(
   const productTerms = line.productTerms.map((term) => ({
     ...term,
     searchText: normalize(term.keywords),
-    searchTextNoSpaces: normalize(term.keywords).replace(/ /g, ''),
+    searchTextNoSpaces: removeSpaces(term.keywords),
   }));
 
   const everythingSearchable = [
@@ -76,7 +76,7 @@ export function prepareLine(
     otherNames,
     productTerms,
     searchText: normalize(everythingSearchable),
-    searchTextNoSpaces: normalize(everythingSearchable).replace(/ /g, ''),
+    searchTextNoSpaces: removeSpaces(everythingSearchable),
     normalizedName: normalize(line.name),
     // Name without a trailing "(...)": "Digital Watchdog (DW)" -> "digital watchdog"
     normalizedShortName: normalize(line.name.replace(/\s*\(.*\)\s*$/, '')),
@@ -93,10 +93,7 @@ export function prepareLines(
 
 // Every search word must appear somewhere in the manufacturer's text.
 export function lineMatches(line: Line, searchWords: string[]): boolean {
-  return searchWords.every(
-    (word) =>
-      line.searchText.includes(word) || line.searchTextNoSpaces.includes(word.replace(/ /g, '')),
-  );
+  return searchWords.every((word) => containsWord(line, word));
 }
 
 // Why did this card show up? Product term first ("Makes: Maglocks"), then brand alias ("Includes: Wheelock").
@@ -105,10 +102,7 @@ export function matchReason(line: Line, searchWords: string[]): string {
   if (!searchWords.length || matchedByName) return '';
 
   const productTerm = line.productTerms.find((term) =>
-    searchWords.every(
-      (word) =>
-        term.searchText.includes(word) || term.searchTextNoSpaces.includes(word.replace(/ /g, '')),
-    ),
+    searchWords.every((word) => containsWord(term, word)),
   );
   if (productTerm) return 'Makes: ' + productTerm.label;
 

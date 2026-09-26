@@ -2,7 +2,8 @@ import { Component, computed, inject, input, output } from '@angular/core';
 import { FeedbackService } from '../../core/feedback.service';
 import { emptySearchQuip } from '../../core/search/quips';
 
-// Ported from page.js section 6's lineCardEmptyHtml (module boxes, a Phase 5 concern, are left out).
+// Ported from page.js section 6's lineCardEmptyHtml. (When a "Not an SDS line" box applies, the Line Card
+// shows that instead of this, as page.js does.)
 // "Report a missing line" opens the feedback dialog on that problem with the search filled in as the
 // manufacturer (page.js's data-report="missing" data-report-line).
 @Component({

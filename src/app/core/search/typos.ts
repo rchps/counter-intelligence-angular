@@ -104,11 +104,15 @@ export function closestKnownWord(
   return bestDistance <= maxEdits ? bestWord : null;
 }
 
+// True if `word` appears in one item's searchable text, either as is or with the text's spaces
+// ignored, so "cat6" still finds "Cat 6".
+export function containsWord(text: SearchableText, word: string): boolean {
+  return text.searchText.includes(word) || text.searchTextNoSpaces.includes(word.replace(/ /g, ''));
+}
+
 // True if the word appears anywhere in any item's searchable text, as typed.
 export function appearsExactly(word: string, texts: SearchableText[]): boolean {
-  return texts.some(
-    (text) => text.searchText.includes(word) || text.searchTextNoSpaces.includes(word),
-  );
+  return texts.some((text) => containsWord(text, word));
 }
 
 export interface TypoCorrection {

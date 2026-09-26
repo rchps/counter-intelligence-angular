@@ -88,7 +88,7 @@
               inputmode="decimal"
               autocomplete="off"
               placeholder="18"
-              style="padding-left: 12px"
+              class="tl-plain"
               [value]="marginText()"
               [attr.aria-invalid]="invalidFields().has('margin') ? 'true' : 'false'"
               (input)="marginText.set(inputValue($event))"

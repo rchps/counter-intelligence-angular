@@ -2,12 +2,35 @@ import { Component, computed, ElementRef, signal, viewChild } from '@angular/cor
 import {
   calculateMargin,
   formatPercent,
-  INPUTS_FOR_MODE,
   type MarginField,
   type MarginMode,
 } from '../../core/margin-math';
 import { formatDollarsAndCents } from '../../core/money';
 import { inputValue } from '../../shared/input-value';
+
+/** What the results panel shows. rawPrice is the unformatted price for the Copy button; null when there's
+ *  no price to copy yet. */
+interface MarginDisplay {
+  price: string;
+  cost: string;
+  profit: string;
+  margin: string;
+  markup: string;
+  belowCost: boolean;
+  canCopy: boolean;
+  rawPrice: number | null;
+}
+
+const EMPTY_DISPLAY: MarginDisplay = {
+  price: '—',
+  cost: '—',
+  profit: '—',
+  margin: '—',
+  markup: '—',
+  belowCost: false,
+  canCopy: false,
+  rawPrice: null,
+};
 
 const MODES: { value: MarginMode; label: string }[] = [
   { value: 'cost-margin', label: 'Cost & margin' },
@@ -16,7 +39,7 @@ const MODES: { value: MarginMode; label: string }[] = [
 ];
 
 // Ported from counter-intelligence/calculator.html. The math and every validation message live in
-// core/margin-math.ts (Phase 4 (1/N)) — this component only renders calculateMargin()'s outcome and
+// core/margin-math.ts — this component only renders calculateMargin()'s outcome and
 // manages the small bits of local UI state (which mode, the copy button's temporary label).
 @Component({
   selector: 'app-margin-calculator',
@@ -61,19 +84,9 @@ export class MarginCalculatorComponent {
   });
   protected readonly messageIsError = computed(() => this.outcome().status === 'invalid');
 
-  protected readonly display = computed(() => {
+  protected readonly display = computed<MarginDisplay>(() => {
     const outcome = this.outcome();
-    if (outcome.status !== 'ok') {
-      return {
-        price: '—',
-        cost: '—',
-        profit: '—',
-        margin: '—',
-        markup: '—',
-        belowCost: false,
-        canCopy: false,
-      };
-    }
+    if (outcome.status !== 'ok') return EMPTY_DISPLAY;
     return {
       price: formatDollarsAndCents(outcome.price),
       cost: formatDollarsAndCents(outcome.cost),
@@ -85,10 +98,6 @@ export class MarginCalculatorComponent {
       rawPrice: outcome.price,
     };
   });
-
-  protected fieldNeeded(field: MarginField): boolean {
-    return INPUTS_FOR_MODE[this.mode()].includes(field);
-  }
 
   protected onModeChange(mode: MarginMode): void {
     this.mode.set(mode);
@@ -103,9 +112,9 @@ export class MarginCalculatorComponent {
   }
 
   protected async copyPrice(): Promise<void> {
-    const display = this.display();
-    if (!display.canCopy || display.rawPrice === undefined) return;
-    const plainNumber = display.rawPrice.toFixed(2);
+    const price = this.display().rawPrice;
+    if (price === null) return;
+    const plainNumber = price.toFixed(2);
 
     let copied = false;
     try {

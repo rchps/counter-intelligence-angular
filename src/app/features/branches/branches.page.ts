@@ -10,7 +10,7 @@ import { BranchCardComponent } from './branch-card.component';
 
 // Ported from page.js section 7 (Branches page): the same toolbar/chips/status pattern as Line Card, but
 // simpler — no typo correction (searchBranches never returns a correctedSearch) and no debounce (branch
-// search is cheap: 22 rows). ANGULAR_CONVERSION.md Phase 3.
+// search is cheap: 22 rows).
 @Component({
   selector: 'app-branches-page',
   imports: [

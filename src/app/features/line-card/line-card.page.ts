@@ -34,7 +34,7 @@ interface CategoryLineGroup {
 
 // Ported from page.js section 6 (Line Card page): computed() pipeline query -> corrected words ->
 // matching -> filtered -> grouped/ranked, replacing the imperative render()/renderChips()/renderStatus()
-// trio in createSearchPage(). ANGULAR_CONVERSION.md Phase 3.
+// trio in createSearchPage().
 @Component({
   selector: 'app-line-card-page',
   imports: [

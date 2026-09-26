@@ -1,6 +1,5 @@
 import { Component, input } from '@angular/core';
-
-export type SizingToolId = 'battery' | 'vdrop' | 'poe' | 'nvr';
+import type { SizingToolId } from './tool-nav';
 
 // Ported from tools.html: the .mc-card + .tl-sources shell every sizing tool wraps its own form fields and
 // result cells in. Each tool projects its own <form> fields, result hero, result <dl>, and sources

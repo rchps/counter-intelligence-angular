@@ -34,7 +34,7 @@ interface AlternativesJson {
 // The one place that turns the static JSON fixtures into the search-ready shape the rest of the app
 // needs: fetches lines.json/terms.json/alternatives.json and calls the already-ported, already-tested
 // core/search functions (prepareLines, prepareBranches, buildKnownWords) to prepare them. No matching or
-// typo-correction logic lives here — this is a thin fetch-and-expose layer over Phase 1's pure functions.
+// typo-correction logic lives here — this is a thin fetch-and-expose layer over core/search's pure functions.
 @Service()
 export class DataService {
   private readonly linesJson = httpResource<LinesJson>(() => 'data/lines.json');
