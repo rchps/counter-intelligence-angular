@@ -4,6 +4,7 @@ import { StorageService } from '../../core/storage.service';
 import { BatteryToolComponent } from './battery-tool.component';
 import { MarginCalculatorComponent } from './margin-calculator.component';
 import { isToolId, TOOL_NAV, TOOL_STORAGE_KEY, type ToolId } from './tool-nav';
+import { VoltageDropToolComponent } from './voltage-drop-tool.component';
 
 interface ToolNavGroup {
   group: string;
@@ -15,7 +16,13 @@ interface ToolNavGroup {
 // vanilla's own picker buttons + hidden/shown views, since each tool is its own route.
 @Component({
   selector: 'app-tools-page',
-  imports: [RouterLink, RouterLinkActive, MarginCalculatorComponent, BatteryToolComponent],
+  imports: [
+    RouterLink,
+    RouterLinkActive,
+    MarginCalculatorComponent,
+    BatteryToolComponent,
+    VoltageDropToolComponent,
+  ],
   templateUrl: './tools.page.html',
   styleUrl: './tools.page.scss',
 })
