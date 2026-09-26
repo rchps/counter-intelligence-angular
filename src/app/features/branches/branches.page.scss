@@ -17,3 +17,6 @@
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 12px;
 }
+.bgrid > li {
+  display: flex; // lets each card stretch to its grid row's height
+}

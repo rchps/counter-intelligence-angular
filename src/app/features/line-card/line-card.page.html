@@ -56,7 +56,7 @@
   </div>
 </div>
 
-<main class="wrap" id="results" tabindex="-1">
+<div class="wrap results" id="results">
   @if (alternatives().length) {
     <app-alternatives-box [brands]="alternatives()" (pick)="pickAlternative($event)" />
   }
@@ -123,4 +123,4 @@
       />
     }
   }
-</main>
+</div>

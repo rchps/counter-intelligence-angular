@@ -38,8 +38,8 @@
   </div>
 </div>
 
-<section class="branches">
-  <main class="wrap" id="bgrid" tabindex="-1">
+<section class="branches" aria-label="Branch list">
+  <div class="wrap">
     @if (shown().length === 0) {
       <div class="empty">
         <h2>No branches match "{{ search().trim() }}"</h2>
@@ -58,11 +58,13 @@
         }
       </div>
     } @else {
-      <ul class="bgrid">
+      <ul class="bgrid" id="bgrid">
         @for (branch of shown(); track branch.city + branch.st) {
-          <app-branch-card [branch]="branch" [searchWords]="searchWords()" />
+          <li>
+            <app-branch-card [branch]="branch" [searchWords]="searchWords()" />
+          </li>
         }
       </ul>
     }
-  </main>
+  </div>
 </section>

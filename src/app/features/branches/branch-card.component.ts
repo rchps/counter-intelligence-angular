@@ -2,12 +2,13 @@ import { Component, computed, input } from '@angular/core';
 import type { Branch } from '../../core/search/match';
 import { highlightMatches } from '../../core/search/normalize';
 
-// Ported from page.js section 7's branchCardHtml.
+// Ported from page.js section 7's branchCardHtml. The list item itself belongs to the page's <ul>, so the
+// list stays a real list (a <ul> may only contain <li>s, and this component's own element sits between).
 @Component({
   selector: 'app-branch-card',
   styleUrl: './branch-card.component.scss',
   template: `
-    <li class="branch">
+    <div class="branch">
       <h3>
         <span [innerHTML]="highlightedCity()"></span>
         <span class="st">{{ branch().st }}</span>
@@ -20,7 +21,7 @@ import { highlightMatches } from '../../core/search/normalize';
       } @else {
         <span class="soon">Coming soon</span>
       }
-    </li>
+    </div>
   `,
 })
 export class BranchCardComponent {

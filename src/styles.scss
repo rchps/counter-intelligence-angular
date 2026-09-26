@@ -766,13 +766,6 @@ mark {
   padding: 14px 0 10px;
 }
 
-main {
-  padding: 28px 0 8px;
-}
-main:focus {
-  outline: none;
-}
-
 /* Print: base rules every page shares (chrome that never belongs on paper). Feature-specific print
    rules, like the Line Card's, move with their component in a later phase. */
 @media print {

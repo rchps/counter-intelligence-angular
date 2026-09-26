@@ -1,0 +1,10 @@
+// The page's one <main>. It fills at least the screen below the top bar, so the feedback card and footer
+// start below the fold instead of painting near the top while a page's code loads and then jumping down
+// (Lighthouse measured that jump as a 0.18-0.40 layout shift; web.dev's "good" is 0.1 or less).
+main {
+  min-height: calc(100vh - var(--bar-h));
+}
+// Focused in code after each navigation (see app.ts), not by the user, so no focus ring.
+main:focus {
+  outline: none;
+}
