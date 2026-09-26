@@ -1,0 +1,146 @@
+<app-tool-result-card
+  tool="poe"
+  estimateNote="Estimate for quoting. Confirm the switch's real PoE budget and per-port limits on its datasheet."
+  [fail]="fails()"
+>
+  <ng-container form>
+    <div class="mc-field">
+      <label for="poe-budget">Switch PoE budget</label>
+      <div class="mc-inputwrap">
+        <input
+          type="text"
+          id="poe-budget"
+          class="tl-plain"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="370"
+          [value]="budgetText()"
+          (input)="budgetText.set($any($event.target).value)"
+        />
+        <span class="affix suf" aria-hidden="true">W</span>
+      </div>
+    </div>
+    <fieldset>
+      <legend>Count each device at</legend>
+      <div class="segmented">
+        <label>
+          <input
+            type="radio"
+            name="poe-basis"
+            [checked]="basis() === 'pse'"
+            (change)="basis.set('pse')"
+          />
+          <span>What the switch reserves</span>
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="poe-basis"
+            [checked]="basis() === 'pd'"
+            (change)="basis.set('pd')"
+          />
+          <span>Device's max draw</span>
+        </label>
+      </div>
+    </fieldset>
+    <ul class="tl-devices">
+      @for (row of devices(); track row.id) {
+        <li class="tl-device">
+          <div>
+            <label [for]="'poe-qty-' + row.id">Qty</label>
+            <input
+              type="text"
+              [id]="'poe-qty-' + row.id"
+              inputmode="numeric"
+              autocomplete="off"
+              placeholder="1"
+              [value]="row.quantityText"
+              (input)="setQuantityText(row.id, $any($event.target).value)"
+            />
+          </div>
+          <div>
+            <label [for]="'poe-class-' + row.id">PoE class</label>
+            <select
+              [id]="'poe-class-' + row.id"
+              [value]="row.classChoice"
+              (change)="setClassChoice(row.id, $any($event.target).value)"
+            >
+              @for (option of classOptions; track option) {
+                <option [value]="option">Class {{ option }}</option>
+              }
+              <option value="watts">Known watts</option>
+            </select>
+          </div>
+          <div>
+            <label [for]="'poe-watts-' + row.id">Watts each</label>
+            <input
+              type="text"
+              [id]="'poe-watts-' + row.id"
+              inputmode="decimal"
+              autocomplete="off"
+              [value]="wattsDisplay(row)"
+              [readOnly]="isWattsReadonly(row)"
+              (input)="setWattsText(row.id, $any($event.target).value)"
+            />
+          </div>
+          <button
+            type="button"
+            class="tl-remove"
+            aria-label="Remove this device"
+            (click)="removeDevice(row.id)"
+          >
+            ×
+          </button>
+        </li>
+      }
+    </ul>
+    <button type="button" class="mc-reset linkbtn" (click)="addDevice()">+ Add device</button>
+    <div class="mc-msg" role="status" aria-live="polite" [class.err]="message()">
+      {{ message() }}
+    </div>
+  </ng-container>
+
+  <ng-container resultHero>
+    <span class="k">Estimated power needed</span>
+    <span class="v">{{ totalWattsDisplay() }}</span>
+    <span class="sub">
+      @if (!hasBudget()) {
+        Enter the switch's PoE budget to check it.
+      } @else if (result(); as result) {
+        <span class="tl-badge" [class.ok]="result.fits" [class.bad]="!result.fits">{{
+          result.fits ? 'Fits' : 'Over budget'
+        }}</span>
+      }
+    </span>
+  </ng-container>
+
+  <ng-container resultDetails>
+    <dl>
+      <dt>Switch budget</dt>
+      <dd>{{ budgetDisplay() }}</dd>
+      <dt>Left over</dt>
+      <dd [class.neg]="fails()">{{ leftDisplay() }}</dd>
+      <dt>Budget used</dt>
+      <dd>{{ percentDisplay() }}</dd>
+      <dt>Ports needed</dt>
+      <dd>{{ portsDisplay() }}</dd>
+      <dt>Highest port type needed</dt>
+      <dd>{{ highestTypeDisplay() }}</dd>
+    </dl>
+  </ng-container>
+
+  <ng-container sources>
+    <p>
+      Adds up each device's power by PoE class (or watts you enter) and compares it with the
+      switch's total PoE budget. "What the switch reserves" is the power the switch must supply per
+      port (covers cable loss) and is the safer number for switches that reserve by class. "Device's
+      max draw" is what the device itself can use, for switches that allocate by actual draw.
+    </p>
+    <p>
+      IEEE 802.3af / at / bt class limits (switch / device): Class 0 15.4 / 13 W, 1 4 / 3.84 W, 2 7
+      / 6.49 W, 3 15.4 / 13 W (802.3af); 4 30 / 25.5 W (802.3at); 5 45 / 40 W, 6 60 / 51 W (802.3bt
+      Type 3); 7 75 / 62 W, 8 90 / 71.3 W (802.3bt Type 4). Some 802.3bt switches reserve slightly
+      less for classes 2 and 3. Check the switch's per-port limit too.
+    </p>
+  </ng-container>
+</app-tool-result-card>
