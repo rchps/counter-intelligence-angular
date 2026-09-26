@@ -1,5 +1,6 @@
-import { Component, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router } from '@angular/router';
 import { debounceTime } from 'rxjs';
 import { DataService } from '../../core/data.service';
 import { normalize, searchWordsOf } from '../../core/search/normalize';
@@ -43,10 +44,17 @@ interface CategoryLineGroup {
 })
 export class LineCardPage {
   protected readonly data = inject(DataService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
-  protected readonly search = signal('');
-  protected readonly filter = signal('all');
-  protected readonly view = signal<LineCardView>('cat');
+  // Initial state comes from the address bar (?q=&cat=&view=az), matching page.js section 9's
+  // readAddressBar; the effect below writes back to it as state changes (that half's writeAddressBar).
+  private readonly initialParams = this.route.snapshot.queryParamMap;
+  protected readonly search = signal(this.initialParams.get('q') ?? '');
+  protected readonly filter = signal(this.initialParams.get('cat') ?? 'all');
+  protected readonly view = signal<LineCardView>(
+    this.initialParams.get('view') === 'az' ? 'az' : 'cat',
+  );
 
   private readonly toolbar = viewChild.required(SearchToolbarComponent);
 
@@ -55,6 +63,22 @@ export class LineCardPage {
   private readonly debounced = toSignal(toObservable(this.search).pipe(debounceTime(60)), {
     initialValue: '',
   });
+
+  constructor() {
+    // Replaces the current history entry rather than pushing a new one on every keystroke or filter
+    // click — matches page.js's history.replaceState in writeAddressBar.
+    effect(() => {
+      void this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: {
+          q: this.debounced() || null,
+          cat: this.filter() === 'all' ? null : this.filter(),
+          view: this.view() === 'az' ? 'az' : null,
+        },
+        replaceUrl: true,
+      });
+    });
+  }
 
   private readonly searchResult = computed(() =>
     searchLines(this.data.lines(), this.data.knownWords(), this.debounced()),
