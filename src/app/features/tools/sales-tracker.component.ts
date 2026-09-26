@@ -1,12 +1,26 @@
-import { Component, computed, effect, ElementRef, inject, signal, untracked } from '@angular/core';
 import {
+  afterNextRender,
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  inject,
+  Injector,
+  signal,
+  untracked,
+} from '@angular/core';
+import {
+  formatCents,
   formatMoney,
   formatSigned,
+  fromCsv,
   localToday,
   parseMoney,
   shortDate,
   summarize,
+  toCsv,
   type MonthRecord,
+  type SalesSeriesPoint,
   type SalesStore,
   type SalesSummary,
 } from '../../core/sales-math';
@@ -17,8 +31,56 @@ interface StatusInfo {
   text: string;
 }
 
+interface ChartTick {
+  y: number;
+  label: string;
+}
+
+interface ChartXLabel {
+  x: number;
+  label: string;
+}
+
+interface ChartPoint {
+  x: number;
+  y: number;
+  text: string;
+}
+
+interface ChartLayout {
+  width: number;
+  height: number;
+  plotTop: number;
+  ticks: ChartTick[];
+  xLabels: ChartXLabel[];
+  pacePath: string;
+  actualPath: string;
+  areaPath: string;
+  goalLabel: ChartPoint | null;
+  endDot: { x: number; y: number } | null;
+  endLabel: ChartPoint | null;
+  points: SalesSeriesPoint[];
+  x: (index: number) => number;
+  y: (value: number) => number;
+}
+
+interface TipData {
+  title: string;
+  thatDay: string;
+  runningTotal: string | null;
+  goalPace: string | null;
+  crossX: number;
+}
+
 const pad = (n: number): string => String(n).padStart(2, '0');
 const EMPTY_MONTH: MonthRecord = { goal: null, sales: {}, overrides: {} };
+const CHART_HEIGHT = 240;
+const CHART_PAD = { left: 56, right: 76, top: 12, bottom: 26 };
+
+const compactMoney = (value: number): string =>
+  value >= 1000
+    ? '$' + (value / 1000).toLocaleString('en-US', { maximumFractionDigits: 1 }) + 'k'
+    : '$' + value;
 
 // Ported from sales.html. Pure math (monthDays/isSellingDay/summarize/parseMoney/toCsv/fromCsv) lives in
 // core/sales-math.ts; this component owns only the page's own state (which month, raw input text,
@@ -31,6 +93,7 @@ const EMPTY_MONTH: MonthRecord = { goal: null, sales: {}, overrides: {} };
 export class SalesTrackerComponent {
   private readonly salesStore = inject(SalesStoreService);
   private readonly elementRef: ElementRef<HTMLElement> = inject(ElementRef);
+  private readonly injector = inject(Injector);
 
   protected readonly today = localToday();
   protected readonly weekdayHeads = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -58,7 +121,7 @@ export class SalesTrackerComponent {
   private readonly monthData = computed<MonthRecord>(
     () => this.store().months[this.month()] ?? EMPTY_MONTH,
   );
-  private readonly goal = computed(() => this.monthData().goal || 0);
+  protected readonly goal = computed(() => this.monthData().goal || 0);
 
   protected readonly summary = computed<SalesSummary>(() => {
     const data = this.monthData();
@@ -170,6 +233,112 @@ export class SalesTrackerComponent {
       : '';
   });
 
+  // ---- Chart: cumulative sales vs goal pace ----
+  protected readonly chartWidth = signal(800);
+  protected readonly hasChartData = computed(() => this.goal() > 0 || this.summary().sold > 0);
+
+  protected readonly chartLayout = computed<ChartLayout | null>(() => {
+    if (!this.hasChartData()) return null;
+    const width = this.chartWidth();
+    const plotW = width - CHART_PAD.left - CHART_PAD.right;
+    const plotH = CHART_HEIGHT - CHART_PAD.top - CHART_PAD.bottom;
+    const summary = this.summary();
+    const goal = this.goal();
+    const points = summary.series;
+    const top = Math.max(goal, summary.projected || 0, summary.sold || 0, 1) * 1.08;
+    const x = (i: number): number =>
+      CHART_PAD.left + (points.length > 1 ? (i / (points.length - 1)) * plotW : 0);
+    const y = (v: number): number => CHART_PAD.top + plotH - (v / top) * plotH;
+
+    const rawStep = top / 4;
+    const magnitude = 10 ** Math.floor(Math.log10(rawStep));
+    const niceStep =
+      [1, 2, 2.5, 5, 10].map((m) => m * magnitude).find((s) => s >= rawStep) ?? magnitude * 10;
+    const ticks: ChartTick[] = [];
+    for (let v = 0; v <= top; v += niceStep) ticks.push({ y: y(v), label: compactMoney(v) });
+
+    const xLabels: ChartXLabel[] = [];
+    points.forEach((p, i) => {
+      if (i === 0 || i === points.length - 1 || (p.day % 7 === 1 && points.length - p.day > 2)) {
+        xLabels.push({ x: x(i), label: String(p.day) });
+      }
+    });
+
+    const pacePath =
+      goal > 0 ? points.map((p, i) => `${i ? 'L' : 'M'}${x(i)},${y(p.pace)}`).join('') : '';
+    // Actual days are always a prefix of the month, so an index into `shown` is also an index into
+    // `points` — sales.html relies on the same thing.
+    const shown = points.filter((p) => p.showActual);
+    const lastIndex = shown.length - 1;
+    const actualPath = shown.map((p, i) => `${i ? 'L' : 'M'}${x(i)},${y(p.sold)}`).join('');
+    const areaPath = `${actualPath}L${x(lastIndex)},${y(0)}L${x(0)},${y(0)}Z`;
+    const last = shown[lastIndex];
+    const endDot = last && summary.sold > 0 ? { x: x(lastIndex), y: y(last.sold) } : null;
+
+    return {
+      width,
+      height: CHART_HEIGHT,
+      plotTop: CHART_PAD.top,
+      ticks,
+      xLabels,
+      pacePath,
+      actualPath: shown.length > 1 ? actualPath : '',
+      areaPath: shown.length > 1 ? areaPath : '',
+      goalLabel:
+        goal > 0
+          ? { x: width - CHART_PAD.right + 8, y: y(goal) + 4, text: `Goal ${compactMoney(goal)}` }
+          : null,
+      endDot,
+      endLabel: endDot
+        ? { x: endDot.x + 8, y: endDot.y - 8, text: compactMoney(Math.round(last.sold)) }
+        : null,
+      points,
+      x,
+      y,
+    };
+  });
+
+  protected readonly chartPlotBottom = computed(() => CHART_HEIGHT - CHART_PAD.bottom);
+  protected readonly chartRightEdge = computed(() => this.chartWidth() - CHART_PAD.right);
+  protected readonly chartLeftEdge = CHART_PAD.left;
+
+  protected readonly chartDescription = computed(() => {
+    const goal = this.goal();
+    return goal
+      ? `Running total ${formatMoney(this.summary().sold)} against a goal pace reaching ${formatMoney(goal)} by month end. ` +
+          'Use the left and right arrow keys to read each day, or show the table.'
+      : 'Set a goal to see the goal pace.';
+  });
+
+  protected readonly focusIndex = signal<number | null>(null);
+
+  protected readonly tip = computed<TipData | null>(() => {
+    const layout = this.chartLayout();
+    const index = this.focusIndex();
+    if (!layout || index === null || index >= layout.points.length) return null;
+    const point = layout.points[index];
+    return {
+      title: shortDate(point.date),
+      thatDay: point.sales === null ? '—' : formatCents(point.sales),
+      runningTotal: point.showActual ? formatMoney(point.sold) : null,
+      goalPace: point.pace ? formatMoney(point.pace) : null,
+      crossX: layout.x(index),
+    };
+  });
+
+  // Positioned as a share of the SVG's own width, so it tracks the crosshair at any rendered size.
+  protected readonly tipLeftPercent = computed(() => {
+    const tip = this.tip();
+    return tip ? (tip.crossX / this.chartWidth()) * 100 : 0;
+  });
+
+  protected readonly showDayTable = signal(false);
+
+  // ---- Weekly breakdown / stats / tools ----
+  protected readonly toolsMessage = signal('');
+  protected readonly clearArmed = signal(false);
+  private clearTimer: ReturnType<typeof setTimeout> | undefined;
+
   constructor() {
     // Calendar/goal/today display text resets to match the newly-viewed month's stored data — but only
     // on a month change, not on every keystroke (sales.html's buildCalendar() has the same boundary).
@@ -177,6 +346,206 @@ export class SalesTrackerComponent {
       const month = this.month();
       untracked(() => this.resetTextsForMonth(month));
     });
+
+    // The chart only exists once there's something to plot (and is removed again if that goes away), so
+    // its resize observer follows the element in and out rather than attaching once at startup.
+    effect((onCleanup) => {
+      if (!this.hasChartData()) return;
+      let observer: ResizeObserver | null = null;
+      const render = afterNextRender(() => (observer = this.attachChartResizeObserver()), {
+        injector: this.injector,
+      });
+      onCleanup(() => {
+        render.destroy();
+        observer?.disconnect();
+      });
+    });
+
+    // Confetti: once per month, the moment the goal is first hit (not on every visit).
+    effect(() => {
+      if (this.summary().goalMet && !this.monthData().celebrated) {
+        untracked(() => this.celebrateOnce());
+      }
+    });
+  }
+
+  private attachChartResizeObserver(): ResizeObserver | null {
+    const chartBox = this.elementRef.nativeElement.querySelector<HTMLElement>('.sl-chart');
+    if (!chartBox) return null;
+    this.chartWidth.set(Math.max(320, chartBox.clientWidth || 800));
+    try {
+      const observer = new ResizeObserver(() => {
+        if (chartBox.clientWidth) this.chartWidth.set(Math.max(320, chartBox.clientWidth));
+      });
+      observer.observe(chartBox);
+      return observer;
+    } catch {
+      return null; // older browsers: the chart just keeps its first size
+    }
+  }
+
+  protected showTip(index: number): void {
+    const layout = this.chartLayout();
+    if (!layout) return;
+    this.focusIndex.set(Math.max(0, Math.min(layout.points.length - 1, index)));
+  }
+
+  protected hideTip(): void {
+    this.focusIndex.set(null);
+  }
+
+  protected onChartPointerMove(event: PointerEvent): void {
+    const layout = this.chartLayout();
+    if (!layout) return;
+    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+    const px = (event.clientX - rect.left) * (layout.width / rect.width);
+    const plotW = layout.width - CHART_PAD.left - CHART_PAD.right;
+    this.showTip(Math.round(((px - CHART_PAD.left) / plotW) * (layout.points.length - 1)));
+  }
+
+  protected onChartKeydown(event: KeyboardEvent): void {
+    const layout = this.chartLayout();
+    if (!layout) return;
+    if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+      event.preventDefault();
+      this.showTip((this.focusIndex() ?? -1) + (event.key === 'ArrowRight' ? 1 : -1));
+    } else if (event.key === 'Home' || event.key === 'End') {
+      event.preventDefault();
+      this.showTip(event.key === 'Home' ? 0 : layout.points.length - 1);
+    }
+  }
+
+  protected weekRange(start: string, end: string): string {
+    return `${this.dayLabel(start)}–${this.dayLabel(end)}`;
+  }
+
+  protected formatMoney(value: number): string {
+    return formatMoney(value);
+  }
+
+  protected formatCents(value: number): string {
+    return formatCents(value);
+  }
+
+  protected formatSigned(value: number): string {
+    return formatSigned(value);
+  }
+
+  // ---- Export / import / clear ----
+  protected exportCsv(): void {
+    const blob = new Blob([toCsv(this.store())], { type: 'text/csv' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `sales-tracker-${localToday()}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+    this.toolsMessage.set('Exported. Keep the file somewhere safe; it has your sales numbers.');
+  }
+
+  protected async onImportFile(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    const imported = fromCsv(await file.text());
+    const keys = Object.keys(imported.months);
+    const months = { ...this.store().months };
+    for (const key of keys) {
+      const existing = months[key] ?? EMPTY_MONTH;
+      const incoming = imported.months[key];
+      months[key] = {
+        ...existing,
+        goal: incoming.goal !== null ? incoming.goal : existing.goal,
+        sales: { ...existing.sales, ...incoming.sales },
+        overrides: { ...existing.overrides, ...incoming.overrides },
+      };
+    }
+    input.value = '';
+    this.replaceStore({ months });
+    this.resetTextsForMonth(this.month());
+    this.toolsMessage.set(
+      keys.length
+        ? `Imported ${keys.length} month${keys.length === 1 ? '' : 's'}.`
+        : 'Nothing to import in that file.',
+    );
+  }
+
+  // Two-step clear (no pop-up): first press arms it, second press clears.
+  protected onClearClick(): void {
+    clearTimeout(this.clearTimer);
+    if (!this.clearArmed()) {
+      this.clearArmed.set(true);
+      this.clearTimer = setTimeout(() => this.clearArmed.set(false), 4000);
+      return;
+    }
+    this.clearArmed.set(false);
+    const months = { ...this.store().months };
+    delete months[this.month()];
+    this.replaceStore({ months });
+    this.resetTextsForMonth(this.month());
+    this.toolsMessage.set('This month is cleared.');
+  }
+
+  // Skipped for people who ask for reduced motion; the "Goal hit" message still shows.
+  private celebrateOnce(): void {
+    this.updateMonth((data) => ({ ...data, celebrated: true }));
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    this.launchConfetti();
+  }
+
+  private launchConfetti(): void {
+    const canvas = document.createElement('canvas');
+    canvas.setAttribute('aria-hidden', 'true');
+    canvas.style.cssText =
+      'position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:60';
+    document.body.appendChild(canvas);
+    const ratio = window.devicePixelRatio || 1;
+    canvas.width = innerWidth * ratio;
+    canvas.height = innerHeight * ratio;
+    const context = canvas.getContext('2d');
+    if (!context) {
+      canvas.remove();
+      return;
+    }
+    context.scale(ratio, ratio);
+
+    // The page's own palette (Radix steps used elsewhere), so it looks like it belongs.
+    const colors = ['#46a758', '#0090ff', '#ffc53d', '#e5484d', '#6e56cf', '#12a594', '#d6409f'];
+    const pieces = Array.from({ length: 160 }, () => ({
+      x: innerWidth / 2 + (Math.random() - 0.5) * innerWidth * 0.3,
+      y: innerHeight * 0.35,
+      vx: (Math.random() - 0.5) * 14,
+      vy: -Math.random() * 14 - 6,
+      size: 6 + Math.random() * 6,
+      spin: Math.random() * Math.PI,
+      spinSpeed: (Math.random() - 0.5) * 0.3,
+      color: colors[Math.floor(Math.random() * colors.length)],
+    }));
+    const started = performance.now();
+    const duration = 3200;
+
+    const frame = (now: number): void => {
+      const elapsed = now - started;
+      context.clearRect(0, 0, innerWidth, innerHeight);
+      context.globalAlpha = Math.max(0, 1 - Math.max(0, elapsed - duration + 800) / 800);
+      for (const piece of pieces) {
+        piece.vy += 0.35; // gravity
+        piece.vx *= 0.99; // air
+        piece.x += piece.vx;
+        piece.y += piece.vy;
+        piece.spin += piece.spinSpeed;
+        context.save();
+        context.translate(piece.x, piece.y);
+        context.rotate(piece.spin);
+        context.fillStyle = piece.color;
+        context.fillRect(-piece.size / 2, -piece.size / 4, piece.size, piece.size / 2);
+        context.restore();
+      }
+      if (elapsed < duration) requestAnimationFrame(frame);
+      else canvas.remove();
+    };
+    requestAnimationFrame(frame);
   }
 
   private resetTextsForMonth(month: string): void {
@@ -198,7 +567,10 @@ export class SalesTrackerComponent {
   private updateMonth(fn: (data: MonthRecord) => MonthRecord): void {
     const month = this.month();
     const current = this.store().months[month] ?? EMPTY_MONTH;
-    const next: SalesStore = { months: { ...this.store().months, [month]: fn(current) } };
+    this.replaceStore({ months: { ...this.store().months, [month]: fn(current) } });
+  }
+
+  private replaceStore(next: SalesStore): void {
     this.store.set(next);
     const saved = this.salesStore.save(next);
     this.savedIsWarning.set(!saved);

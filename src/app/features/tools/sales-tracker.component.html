@@ -131,6 +131,139 @@
     </div>
   </div>
 
+  <!-- Chart: cumulative sales vs goal pace -->
+  <div class="sl-card sl-section">
+    <div class="sl-section-head">
+      <h3 id="sl-chart-h">Sales vs goal pace</h3>
+      <div class="sl-legend" aria-hidden="true">
+        <span>Your sales</span>
+        <span class="pace">Goal pace</span>
+      </div>
+      <button
+        type="button"
+        class="sl-linkbtn"
+        aria-controls="sl-daytable"
+        [attr.aria-expanded]="showDayTable()"
+        (click)="showDayTable.set(!showDayTable())"
+      >
+        {{ showDayTable() ? 'Hide table' : 'Show as table' }}
+      </button>
+    </div>
+    @if (chartLayout(); as chart) {
+      <div
+        class="sl-chart"
+        tabindex="0"
+        role="img"
+        aria-labelledby="sl-chart-h sl-chart-desc"
+        (pointermove)="onChartPointerMove($event)"
+        (pointerleave)="hideTip()"
+        (blur)="hideTip()"
+        (keydown)="onChartKeydown($event)"
+      >
+        <svg
+          preserveAspectRatio="none"
+          aria-hidden="true"
+          [attr.viewBox]="'0 0 ' + chart.width + ' ' + chart.height"
+        >
+          <g class="grid">
+            @for (tick of chart.ticks; track $index) {
+              <line
+                [attr.x1]="chartLeftEdge"
+                [attr.x2]="chartRightEdge()"
+                [attr.y1]="tick.y"
+                [attr.y2]="tick.y"
+              />
+            }
+          </g>
+          <g class="axis">
+            @for (tick of chart.ticks; track $index) {
+              <text [attr.x]="chartLeftEdge - 8" [attr.y]="tick.y + 4" text-anchor="end">
+                {{ tick.label }}
+              </text>
+            }
+            @for (label of chart.xLabels; track $index) {
+              <text [attr.x]="label.x" [attr.y]="chart.height - 6" text-anchor="middle">
+                {{ label.label }}
+              </text>
+            }
+          </g>
+          @if (chart.pacePath) {
+            <path class="pace-line" [attr.d]="chart.pacePath" />
+          }
+          @if (chart.goalLabel; as goalLabel) {
+            <text class="goal-label" [attr.x]="goalLabel.x" [attr.y]="goalLabel.y">
+              {{ goalLabel.text }}
+            </text>
+          }
+          @if (chart.actualPath) {
+            <path class="actual-area" [attr.d]="chart.areaPath" />
+            <path class="actual-line" [attr.d]="chart.actualPath" />
+          }
+          @if (chart.endDot; as dot) {
+            <circle class="end-dot" [attr.cx]="dot.x" [attr.cy]="dot.y" r="4.5" />
+          }
+          @if (chart.endLabel; as endLabel) {
+            <text class="end-label" [attr.x]="endLabel.x" [attr.y]="endLabel.y">
+              {{ endLabel.text }}
+            </text>
+          }
+          @if (tip(); as t) {
+            <line
+              class="crosshair"
+              [attr.x1]="t.crossX"
+              [attr.x2]="t.crossX"
+              [attr.y1]="chart.plotTop"
+              [attr.y2]="chartPlotBottom()"
+            />
+          }
+        </svg>
+        @if (tip(); as t) {
+          <div class="sl-tip" [style.left]="'calc(' + tipLeftPercent() + '% + 12px)'">
+            <b>{{ t.title }}</b>
+            <div class="row">
+              <span>That day</span><strong>{{ t.thatDay }}</strong>
+            </div>
+            @if (t.runningTotal) {
+              <div class="row">
+                <span>Running total</span><strong>{{ t.runningTotal }}</strong>
+              </div>
+            }
+            @if (t.goalPace) {
+              <div class="row">
+                <span>Goal pace</span><strong>{{ t.goalPace }}</strong>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    } @else {
+      <p class="sl-empty">Set a goal and enter a day's sales to see your pace here.</p>
+    }
+    <p class="sr-only" id="sl-chart-desc">{{ chartDescription() }}</p>
+    <div id="sl-daytable" [hidden]="!showDayTable()">
+      <table class="sl-table">
+        <thead>
+          <tr>
+            <th scope="col">Day</th>
+            <th scope="col">Sales</th>
+            <th scope="col">Running total</th>
+            <th scope="col">Goal pace</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of summary().series; track p.date) {
+            <tr>
+              <td>{{ dayFullLabel(p.date) }}</td>
+              <td>{{ p.sales === null ? '—' : formatCents(p.sales) }}</td>
+              <td>{{ p.showActual ? formatMoney(p.sold) : '—' }}</td>
+              <td>{{ summary().baseline ? formatMoney(p.pace) : '—' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   <!-- Calendar -->
   <div class="sl-card sl-section">
     <div class="sl-section-head">
@@ -180,6 +313,109 @@
           <span class="sl-day-hit">{{ hitText(day) }}</span>
         </div>
       }
+    </div>
+  </div>
+
+  <!-- Weekly breakdown + stats -->
+  <div class="sl-card sl-section">
+    <div class="sl-section-head"><h3>Weekly breakdown</h3></div>
+    <div class="sl-scroll">
+      <table class="sl-table">
+        <thead>
+          <tr>
+            <th scope="col">Week</th>
+            <th scope="col">Days</th>
+            <th scope="col">Target</th>
+            <th scope="col">Sold</th>
+            <th scope="col">vs target</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (week of summary().weeks; track week.start; let i = $index) {
+            <tr>
+              <td>
+                Week {{ i + 1 }}<span class="sl-range">{{ weekRange(week.start, week.end) }}</span>
+              </td>
+              <td>{{ week.sellingDays }}</td>
+              <td>{{ goal() ? formatMoney(week.target) : '—' }}</td>
+              <td>{{ week.hasSales ? formatMoney(week.sold) : '—' }}</td>
+              <td
+                [class.pos]="week.hasSales && week.difference >= 0"
+                [class.neg]="week.hasSales && week.difference < 0"
+              >
+                {{ week.hasSales && goal() ? formatSigned(week.difference) : '—' }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="sl-card sl-section">
+    <div class="sl-section-head"><h3>Month stats</h3></div>
+    @if (summary().enteredSellingDays) {
+      <dl class="sl-stats">
+        <div>
+          <dt>Best day</dt>
+          <dd>
+            @if (summary().best; as best) {
+              {{ formatMoney(best.sales ?? 0) }} · {{ dayFullLabel(best.date) }}
+            } @else {
+              —
+            }
+          </dd>
+        </div>
+        <div>
+          <dt>Slowest day</dt>
+          <dd>
+            @if (summary().worst; as worst) {
+              {{ formatMoney(worst.sales ?? 0) }} · {{ dayFullLabel(worst.date) }}
+            } @else {
+              —
+            }
+          </dd>
+        </div>
+        <div>
+          <dt>Days at or above baseline</dt>
+          <dd>
+            {{ goal() ? summary().daysAtBaseline + ' of ' + summary().enteredSellingDays : '—' }}
+          </dd>
+        </div>
+        <div>
+          <dt>Percent of goal</dt>
+          <dd>{{ goal() ? summary().percent.toFixed(1) + '%' : '—' }}</dd>
+        </div>
+        <div>
+          <dt>Selling days left</dt>
+          <dd>{{ summary().openDays }}</dd>
+        </div>
+        <div>
+          <dt>Selling days in month</dt>
+          <dd>{{ summary().sellingDays }}</dd>
+        </div>
+      </dl>
+    } @else {
+      <p class="sl-empty">Stats show up once you enter a day's sales.</p>
+    }
+    <div class="sl-tools">
+      <button type="button" class="sl-btn" (click)="exportCsv()">Export CSV (all months)</button>
+      <button type="button" class="sl-btn" (click)="importFile.click()">Import CSV</button>
+      <input
+        #importFile
+        type="file"
+        accept=".csv,text/csv"
+        hidden
+        (change)="onImportFile($event)"
+      />
+      <button
+        type="button"
+        class="sl-btn danger"
+        [attr.data-armed]="clearArmed()"
+        (click)="onClearClick()"
+      >
+        {{ clearArmed() ? 'Click again to clear this month' : 'Clear this month' }}
+      </button>
+      <span role="status" aria-live="polite">{{ toolsMessage() }}</span>
     </div>
   </div>
 </section>
