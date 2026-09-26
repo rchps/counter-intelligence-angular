@@ -100,7 +100,7 @@ export function poeBudget({ budgetWatts, basis, devices }: PoeBudgetInput) {
   let highestType = -1;
   for (const device of devices) {
     const known = device.poeClass !== undefined ? POE_CLASSES[device.poeClass] : undefined;
-    const wattsEach = known ? known[basis] : (device.watts as number);
+    const wattsEach = known ? known[basis] : (device.watts ?? NaN);
     totalWatts += wattsEach * device.quantity;
     ports += device.quantity;
     if (known) highestType = Math.max(highestType, PORT_TYPE_ORDER.indexOf(known.standard));
