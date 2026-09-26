@@ -528,6 +528,55 @@ mark {
   }
 }
 
+/* Page shell: the hero header and sticky search toolbar every searchable feature page (Line Card,
+   Branches, ...) uses. Ported from counter-intelligence/styles.css's "Hero" and "Toolbar" sections. */
+.hero {
+  padding: 44px 0 18px;
+}
+.eyebrow {
+  margin: 0 0 14px;
+  font: 500 12px/1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.hero h1 {
+  margin: 0;
+  font: 600 clamp(30px, 4.4vw, 48px) / 1.05 var(--display);
+  letter-spacing: -0.035em;
+  max-width: 30ch;
+  text-wrap: balance;
+}
+.hero h1 .dim {
+  color: var(--ink-2);
+}
+.hero .sub {
+  margin: 14px 0 0;
+  color: var(--ink-2);
+  max-width: 64ch;
+  font-size: 15px;
+}
+
+.toolbar {
+  position: sticky;
+  top: var(--bar-h);
+  z-index: 20;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+.toolbar .wrap {
+  padding: 14px 0 10px;
+}
+
+main {
+  padding: 28px 0 8px;
+}
+main:focus {
+  outline: none;
+}
+
 /* Print: base rules every page shares (chrome that never belongs on paper). Feature-specific print
    rules, like the Line Card's, move with their component in a later phase. */
 @media print {

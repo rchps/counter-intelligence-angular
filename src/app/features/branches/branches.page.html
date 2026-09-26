@@ -1,0 +1,66 @@
+<section class="hero" aria-labelledby="branches-h">
+  <div class="wrap">
+    <p class="eyebrow">Security Data Supply · Branches</p>
+    <h1 id="branches-h">
+      Branches &amp; phone numbers. <span class="dim">Every location, one tap to call.</span>
+    </h1>
+    <p class="sub">
+      Every SDS branch with its address and main number. Search by city, state, ZIP, or any part of
+      a phone number.
+    </p>
+  </div>
+</section>
+
+<div class="toolbar" role="search">
+  <div class="wrap">
+    <app-search-toolbar
+      inputLabel="Search branches by city, state, ZIP, address, or phone"
+      placeholderWide="Search branches by city, state, ZIP, or phone (e.g. Texas, 985, Spokane)"
+      placeholderNarrow="Search city, state, ZIP, or phone"
+      [(search)]="search"
+    />
+
+    <app-filter-chips
+      groupLabel="Filter by state"
+      [total]="matching().length"
+      [chips]="chips()"
+      [(selected)]="filter"
+    />
+
+    <app-search-status
+      [shownCount]="shown().length"
+      [totalCount]="data.branches().length"
+      [noun]="{ one: 'branch', many: 'branches' }"
+      [filterLabel]="filterLabel()"
+      [search]="search()"
+      (clear)="clearSearch()"
+    />
+  </div>
+</div>
+
+<section class="branches">
+  <main class="wrap" id="bgrid" tabindex="-1">
+    @if (shown().length === 0) {
+      <div class="empty">
+        <h2>No branches match "{{ search().trim() }}"</h2>
+        <p>Try a city, a state name or abbreviation, a ZIP code, or part of a phone number.</p>
+        @if (data.reportEmail(); as email) {
+          <p class="empty-report">
+            Branch missing or wrong?
+            <a
+              class="linkbtn"
+              [href]="'mailto:' + email + '?subject=' + 'Counter Intelligence: branch info'"
+              >Report it</a
+            >
+          </p>
+        }
+      </div>
+    } @else {
+      <ul class="bgrid">
+        @for (branch of shown(); track branch.city + branch.st) {
+          <app-branch-card [branch]="branch" [searchWords]="searchWords()" />
+        }
+      </ul>
+    }
+  </main>
+</section>

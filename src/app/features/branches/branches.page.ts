@@ -1,14 +1,65 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject, signal, viewChild } from '@angular/core';
+import { DataService } from '../../core/data.service';
+import { searchBranches, STATE_NAMES } from '../../core/search/match';
+import { FilterChipsComponent, type FilterChip } from '../../shared/filter-chips.component';
+import { SearchStatusComponent } from '../../shared/search-status.component';
+import { SearchToolbarComponent } from '../../shared/search-toolbar.component';
+import { BranchCardComponent } from './branch-card.component';
 
-// Placeholder for Phase 3 (ANGULAR_CONVERSION.md): the route exists now so the shell's navigation can be
-// exercised end to end; this template is replaced wholesale when the real Branches page is built.
+// Ported from page.js section 7 (Branches page): the same toolbar/chips/status pattern as Line Card, but
+// simpler — no typo correction (searchBranches never returns a correctedSearch) and no debounce (branch
+// search is cheap: 22 rows). ANGULAR_CONVERSION.md Phase 3.
 @Component({
   selector: 'app-branches-page',
-  template: `
-    <section class="wrap">
-      <h1>Branches</h1>
-      <p>Coming in Phase 3.</p>
-    </section>
-  `,
+  imports: [
+    SearchToolbarComponent,
+    FilterChipsComponent,
+    SearchStatusComponent,
+    BranchCardComponent,
+  ],
+  templateUrl: './branches.page.html',
+  styleUrl: './branches.page.scss',
 })
-export class BranchesPage {}
+export class BranchesPage {
+  protected readonly data = inject(DataService);
+
+  protected readonly search = signal('');
+  protected readonly filter = signal('all');
+
+  private readonly toolbar = viewChild.required(SearchToolbarComponent);
+
+  private readonly searchResult = computed(() =>
+    searchBranches(this.data.branches(), this.search()),
+  );
+  protected readonly matching = computed(() => this.searchResult().matching);
+  protected readonly searchWords = computed(() => this.searchResult().searchWords);
+
+  protected readonly shown = computed(() => {
+    const key = this.filter();
+    return key === 'all' ? this.matching() : this.matching().filter((branch) => branch.st === key);
+  });
+
+  private readonly stateKeys = computed(() =>
+    [...new Set(this.data.branches().map((branch) => branch.st))].sort(),
+  );
+
+  protected readonly chips = computed<FilterChip[]>(() => {
+    const counts: Record<string, number> = {};
+    this.matching().forEach((branch) => (counts[branch.st] = (counts[branch.st] ?? 0) + 1));
+    return this.stateKeys().map((key) => {
+      const label = STATE_NAMES[key] ?? key;
+      return { key, label, count: counts[key] ?? 0, title: label };
+    });
+  });
+
+  protected readonly filterLabel = computed(() => {
+    const key = this.filter();
+    return key === 'all' ? null : (STATE_NAMES[key] ?? key);
+  });
+
+  protected clearSearch(): void {
+    this.search.set('');
+    this.filter.set('all');
+    this.toolbar().focus();
+  }
+}
