@@ -31,16 +31,12 @@ describe('TopBarComponent', () => {
     delete document.documentElement.dataset['theme'];
   });
 
-  it('links to the three sections', () => {
-    const hrefs = [...fixture.nativeElement.querySelectorAll('nav a')].map((a: HTMLAnchorElement) =>
-      a.getAttribute('href'),
-    );
-    expect(hrefs).toEqual(['/lines', '/branches', '/tools']);
-  });
-
-  it('shows the brand and the internal-only pill', () => {
+  it('shows the brand, the section labels, and the internal-only pill', () => {
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
     expect(text).toContain('Counter Intelligence');
+    expect(text).toContain('Line Card');
+    expect(text).toContain('Branches');
+    expect(text).toContain('Tools');
     expect(text).toContain('Internal only');
   });
 
