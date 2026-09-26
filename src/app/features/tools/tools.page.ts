@@ -1,17 +1,38 @@
-import { Component, input } from '@angular/core';
+import { Component, computed, effect, inject, input } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+import { StorageService } from '../../core/storage.service';
+import { MarginCalculatorComponent } from './margin-calculator.component';
+import { isToolId, TOOL_NAV, TOOL_STORAGE_KEY, type ToolId } from './tool-nav';
 
-// Placeholder for Phase 4 (ANGULAR_CONVERSION.md): the route exists now, bound to the :tool param via
-// component input binding, so the shell's navigation can be exercised end to end; this template is
-// replaced wholesale when the real grouped tools list + calculators are built.
+interface ToolNavGroup {
+  group: string;
+  items: typeof TOOL_NAV;
+}
+
+// Ported from page.js section 8b and template.html's #panel-tools: a grouped list of tools (Quoting /
+// Sizing / Tracking) on the left, the chosen tool on the right — real routerLinks now instead of the
+// vanilla's own picker buttons + hidden/shown views, since each tool is its own route.
 @Component({
   selector: 'app-tools-page',
-  template: `
-    <section class="wrap">
-      <h1>Tools</h1>
-      <p>{{ tool() }} — coming in Phase 4.</p>
-    </section>
-  `,
+  imports: [RouterLink, RouterLinkActive, MarginCalculatorComponent],
+  templateUrl: './tools.page.html',
+  styleUrl: './tools.page.scss',
 })
 export class ToolsPage {
+  private readonly storage = inject(StorageService);
+
   readonly tool = input('margin');
+  protected readonly currentTool = computed<ToolId>(() => {
+    const requested = this.tool();
+    return isToolId(requested) ? requested : 'margin';
+  });
+
+  protected readonly navGroups: ToolNavGroup[] = ['Quoting', 'Sizing', 'Tracking'].map((group) => ({
+    group,
+    items: TOOL_NAV.filter((item) => item.group === group),
+  }));
+
+  constructor() {
+    effect(() => this.storage.set(TOOL_STORAGE_KEY, this.currentTool()));
+  }
 }

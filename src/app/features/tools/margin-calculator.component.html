@@ -1,0 +1,140 @@
+<section class="mc" aria-labelledby="mc-h">
+  <p class="eyebrow">Security Data Supply · Quoting</p>
+  <h1 id="mc-h">Margin calculator. <span class="dim">Quote the right number every time.</span></h1>
+  <p class="mc-lede">
+    Enter any two values and the rest fills in. Margin is profit as a share of the selling price;
+    markup is profit as a share of cost.
+  </p>
+
+  <div class="mc-card">
+    <form class="mc-in" novalidate (submit)="$event.preventDefault()">
+      <fieldset>
+        <legend>I know the…</legend>
+        <div class="mc-modes segmented">
+          @for (item of modes; track item.value) {
+            <label>
+              <input
+                type="radio"
+                name="mc-mode"
+                [value]="item.value"
+                [checked]="mode() === item.value"
+                (change)="onModeChange(item.value)"
+              />
+              <span>{{ item.label }}</span>
+            </label>
+          }
+        </div>
+      </fieldset>
+
+      <div
+        class="mc-msg"
+        role="status"
+        aria-live="polite"
+        [class.err]="messageIsError()"
+        [class.warn]="!messageIsError() && messageText()"
+      >
+        {{ messageText() }}
+      </div>
+
+      @if (showCostField()) {
+        <div class="mc-field">
+          <label for="mc-cost">Our cost</label>
+          <div class="mc-inputwrap">
+            <span class="affix pre" aria-hidden="true">$</span>
+            <input
+              #costInput
+              type="text"
+              id="mc-cost"
+              inputmode="decimal"
+              autocomplete="off"
+              placeholder="50.00"
+              [value]="costText()"
+              [attr.aria-invalid]="invalidFields().has('cost') ? 'true' : 'false'"
+              (input)="costText.set($any($event.target).value)"
+            />
+          </div>
+        </div>
+      }
+      @if (showPriceField()) {
+        <div class="mc-field">
+          <label for="mc-price">Selling price</label>
+          <div class="mc-inputwrap">
+            <span class="affix pre" aria-hidden="true">$</span>
+            <input
+              #priceInput
+              type="text"
+              id="mc-price"
+              inputmode="decimal"
+              autocomplete="off"
+              placeholder="100.00"
+              [value]="priceText()"
+              [attr.aria-invalid]="invalidFields().has('price') ? 'true' : 'false'"
+              (input)="priceText.set($any($event.target).value)"
+            />
+          </div>
+        </div>
+      }
+      @if (showMarginField()) {
+        <div class="mc-field">
+          <label for="mc-margin">Gross margin</label>
+          <div class="mc-inputwrap">
+            <span class="affix suf" aria-hidden="true">%</span>
+            <input
+              type="text"
+              id="mc-margin"
+              inputmode="decimal"
+              autocomplete="off"
+              placeholder="18"
+              style="padding-left: 12px"
+              [value]="marginText()"
+              [attr.aria-invalid]="invalidFields().has('margin') ? 'true' : 'false'"
+              (input)="marginText.set($any($event.target).value)"
+            />
+          </div>
+        </div>
+      }
+      <button type="button" class="mc-reset linkbtn" (click)="clearAll()">Clear all</button>
+    </form>
+
+    <div class="mc-out" aria-live="polite" aria-atomic="true">
+      <h3>Results</h3>
+      <div class="mc-quote" [class.neg]="display().belowCost">
+        <span class="k">Customer price · quote this</span>
+        <span class="v">{{ display().price }}</span>
+        @if (display().canCopy) {
+          <button type="button" class="mc-copy" (click)="copyPrice()">{{ copyLabel() }}</button>
+        }
+      </div>
+      <dl>
+        <!-- Only shown when the calculator worked the cost out (Price & margin). When it was typed in,
+             repeating it here would just be a second number that could be read out by mistake. -->
+        @if (costIsCalculated()) {
+          <dt>Our cost</dt>
+          <dd class="mc-costval">{{ display().cost }}</dd>
+        }
+        <dt>Gross profit</dt>
+        <dd
+          [class.neg]="display().belowCost"
+          [class.pos]="!display().belowCost && display().canCopy"
+        >
+          {{ display().profit }}
+        </dd>
+        <dt>Gross margin</dt>
+        <dd
+          [class.neg]="display().belowCost"
+          [class.pos]="!display().belowCost && display().canCopy"
+        >
+          {{ display().margin }}
+        </dd>
+        <dt>Markup</dt>
+        <dd
+          [class.neg]="display().belowCost"
+          [class.pos]="!display().belowCost && display().canCopy"
+        >
+          {{ display().markup }}
+        </dd>
+      </dl>
+      <p class="mc-note">You can paste values like $1,234.50; the $ and commas are ignored.</p>
+    </div>
+  </div>
+</section>

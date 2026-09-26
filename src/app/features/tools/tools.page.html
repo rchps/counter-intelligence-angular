@@ -1,0 +1,39 @@
+<div class="tk">
+  <nav class="tk-nav" aria-label="Tools">
+    @for (group of navGroups; track group.group) {
+      <p class="tk-group">{{ group.group }}</p>
+      @for (item of group.items; track item.id) {
+        <a
+          [routerLink]="['/tools', item.id]"
+          routerLinkActive="current"
+          ariaCurrentWhenActive="page"
+        >
+          <span class="tk-dot" [attr.data-dot]="item.id"></span>
+          {{ item.label }}
+        </a>
+      }
+    }
+  </nav>
+  <div class="tk-body">
+    @switch (currentTool()) {
+      @case ('margin') {
+        <app-margin-calculator />
+      }
+      @case ('battery') {
+        <p>Battery standby — coming next.</p>
+      }
+      @case ('vdrop') {
+        <p>Voltage drop — coming next.</p>
+      }
+      @case ('poe') {
+        <p>PoE budget — coming next.</p>
+      }
+      @case ('nvr') {
+        <p>NVR storage — coming next.</p>
+      }
+      @case ('sales') {
+        <p>Sales tracker — coming next.</p>
+      }
+    }
+  </div>
+</div>
