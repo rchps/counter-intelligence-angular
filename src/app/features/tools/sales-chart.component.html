@@ -1,0 +1,91 @@
+@if (layout(); as chart) {
+  <div
+    class="sl-chart"
+    tabindex="0"
+    role="img"
+    [attr.aria-labelledby]="labelledBy() + ' sl-chart-desc'"
+    (pointermove)="onPointerMove($event)"
+    (pointerleave)="hideTip()"
+    (blur)="hideTip()"
+    (keydown)="onKeydown($event)"
+  >
+    <svg
+      preserveAspectRatio="none"
+      aria-hidden="true"
+      [attr.viewBox]="'0 0 ' + chart.width + ' ' + chart.height"
+    >
+      <g class="grid">
+        @for (tick of chart.ticks; track $index) {
+          <line
+            [attr.x1]="chart.plotLeft"
+            [attr.x2]="chart.plotRight"
+            [attr.y1]="tick.y"
+            [attr.y2]="tick.y"
+          />
+        }
+      </g>
+      <g class="axis">
+        @for (tick of chart.ticks; track $index) {
+          <text [attr.x]="chart.plotLeft - 8" [attr.y]="tick.y + 4" text-anchor="end">
+            {{ tick.label }}
+          </text>
+        }
+        @for (label of chart.dayLabels; track $index) {
+          <text [attr.x]="label.x" [attr.y]="chart.height - 6" text-anchor="middle">
+            {{ label.label }}
+          </text>
+        }
+      </g>
+      @if (chart.pacePath) {
+        <path class="pace-line" [attr.d]="chart.pacePath" />
+      }
+      @if (chart.goalLabel; as goalLabel) {
+        <text class="goal-label" [attr.x]="goalLabel.x" [attr.y]="goalLabel.y">
+          {{ goalLabel.text }}
+        </text>
+      }
+      @if (chart.actualPath) {
+        <path class="actual-area" [attr.d]="chart.areaPath" />
+        <path class="actual-line" [attr.d]="chart.actualPath" />
+      }
+      @if (chart.endDot; as dot) {
+        <circle class="end-dot" [attr.cx]="dot.x" [attr.cy]="dot.y" r="4.5" />
+      }
+      @if (chart.endLabel; as endLabel) {
+        <text class="end-label" [attr.x]="endLabel.x" [attr.y]="endLabel.y">
+          {{ endLabel.text }}
+        </text>
+      }
+      @if (tip(); as t) {
+        <line
+          class="crosshair"
+          [attr.x1]="t.x"
+          [attr.x2]="t.x"
+          [attr.y1]="chart.plotTop"
+          [attr.y2]="chart.plotBottom"
+        />
+      }
+    </svg>
+    @if (tip(); as t) {
+      <div class="sl-tip" [style.left]="'calc(' + tipLeftPercent() + '% + 12px)'">
+        <b>{{ t.title }}</b>
+        <div class="row">
+          <span>That day</span><strong>{{ t.thatDay }}</strong>
+        </div>
+        @if (t.runningTotal) {
+          <div class="row">
+            <span>Running total</span><strong>{{ t.runningTotal }}</strong>
+          </div>
+        }
+        @if (t.goalPace) {
+          <div class="row">
+            <span>Goal pace</span><strong>{{ t.goalPace }}</strong>
+          </div>
+        }
+      </div>
+    }
+  </div>
+} @else {
+  <p class="sl-empty">Set a goal and enter a day's sales to see your pace here.</p>
+}
+<p class="sr-only" id="sl-chart-desc">{{ description() }}</p>

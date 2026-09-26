@@ -3,6 +3,7 @@ import {
   formatMoney,
   formatSigned,
   fromCsv,
+  mergeImportedMonths,
   parseMoney,
   shortDate,
   summarize,
@@ -144,5 +145,43 @@ describe('CSV round trip', () => {
     };
     const back = fromCsv(toCsv(store));
     expect(back.months['2026-09']).toEqual(store.months['2026-09']);
+  });
+});
+
+describe('mergeImportedMonths', () => {
+  const saved = {
+    months: {
+      '2026-08': { goal: 30000, sales: { '2026-08-03': 900 }, overrides: {}, celebrated: true },
+      '2026-09': { goal: 44000, sales: { '2026-09-01': 1500, '2026-09-02': 2500 }, overrides: {} },
+    },
+  };
+
+  it('adds imported days, with the file winning on the same day, and keeps untouched months', () => {
+    const merged = mergeImportedMonths(saved, {
+      months: {
+        '2026-09': { goal: null, sales: { '2026-09-02': 2600, '2026-09-03': 2000 }, overrides: {} },
+      },
+    });
+    expect(merged.months['2026-09']).toEqual({
+      goal: 44000,
+      sales: { '2026-09-01': 1500, '2026-09-02': 2600, '2026-09-03': 2000 },
+      overrides: {},
+    });
+    expect(merged.months['2026-08']).toEqual(saved.months['2026-08']);
+  });
+
+  it("takes the file's goal when it has one, and adds new months", () => {
+    const merged = mergeImportedMonths(saved, {
+      months: {
+        '2026-09': { goal: 50000, sales: {}, overrides: {} },
+        '2026-10': { goal: 40000, sales: {}, overrides: { '2026-10-12': false } },
+      },
+    });
+    expect(merged.months['2026-09'].goal).toBe(50000);
+    expect(merged.months['2026-10']).toEqual({
+      goal: 40000,
+      sales: {},
+      overrides: { '2026-10-12': false },
+    });
   });
 });

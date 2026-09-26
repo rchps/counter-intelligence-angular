@@ -292,3 +292,20 @@ export function fromCsv(text: string): SalesStore {
   });
   return store;
 }
+
+// Folds an imported CSV into what's already saved, month by month (sales.html's import handler): an
+// imported goal replaces the saved one, but a month with no goal in the file keeps its own; days and
+// selling-day overrides are added, with the file winning where both have the same day.
+export function mergeImportedMonths(saved: SalesStore, imported: SalesStore): SalesStore {
+  const months = { ...saved.months };
+  for (const [key, incoming] of Object.entries(imported.months)) {
+    const existing = months[key] ?? { goal: null, sales: {}, overrides: {} };
+    months[key] = {
+      ...existing,
+      goal: incoming.goal !== null ? incoming.goal : existing.goal,
+      sales: { ...existing.sales, ...incoming.sales },
+      overrides: { ...existing.overrides, ...incoming.overrides },
+    };
+  }
+  return { months };
+}
