@@ -645,13 +645,13 @@ main:focus {
   background: var(--surface-2);
   border-left: 1px solid var(--line);
 }
-.mc fieldset {
+.mc-card fieldset {
   border: 0;
   margin: 0 0 18px;
   padding: 0;
 }
-.mc legend,
-.mc label {
+.mc-card legend,
+.mc-card label {
   display: block;
   font: 600 14px/1.3 var(--font);
   color: var(--ink);
@@ -678,7 +678,7 @@ main:focus {
 .mc-inputwrap .suf {
   right: 12px;
 }
-.mc input[type='text'] {
+.mc-card input[type='text'] {
   width: 100%;
   min-height: 48px;
   padding: 10px 32px 10px 28px;
@@ -689,12 +689,12 @@ main:focus {
   font: 500 18px/1.2 var(--mono);
   font-variant-numeric: tabular-nums;
 }
-.mc input[type='text']:focus {
+.mc-card input[type='text']:focus {
   outline: none;
   border-color: var(--brand);
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 18%, transparent);
 }
-.mc input[aria-invalid='true'] {
+.mc-card input[aria-invalid='true'] {
   border-color: #b42318;
 }
 .mc-msg {
@@ -750,26 +750,26 @@ main:focus {
   font-variant-numeric: tabular-nums;
   color: var(--ink);
 }
-.mc dl {
+.mc-card dl {
   margin: 0;
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 10px 16px;
 }
-.mc dt {
+.mc-card dt {
   color: var(--ink-2);
   align-self: center;
 }
-.mc dd {
+.mc-card dd {
   margin: 0;
   text-align: right;
   font: 500 15px/1.4 var(--mono);
   font-variant-numeric: tabular-nums;
 }
-.mc .pos {
+.mc-card .pos {
   color: var(--grass-11);
 }
-.mc .neg {
+.mc-card .neg {
   color: var(--neg);
 }
 .mc-note {
@@ -797,7 +797,7 @@ main:focus {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 0 12px;
 }
-.mc select {
+.mc-card select {
   width: 100%;
   min-height: 48px;
   padding: 10px 12px;
@@ -807,12 +807,12 @@ main:focus {
   color: var(--ink);
   font: 500 16px/1.2 var(--font);
 }
-.mc select:focus {
+.mc-card select:focus {
   outline: none;
   border-color: var(--brand);
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 18%, transparent);
 }
-.mc input[type='text'].tl-plain {
+.mc-card input[type='text'].tl-plain {
   padding-left: 12px;
 }
 .tl-hint {
@@ -823,6 +823,11 @@ main:focus {
 }
 .tl-result .v {
   font-size: 40px;
+}
+.tl-result .sub {
+  display: block;
+  font: 500 14px/1.4 var(--font);
+  color: var(--ink);
 }
 .tl-result.fail {
   border-color: #b42318;
