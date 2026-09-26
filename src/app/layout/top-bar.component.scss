@@ -85,9 +85,9 @@
 }
 .nav a {
   flex: 0 0 auto;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   height: 36px;
-  line-height: 36px;
   padding: 0 14px;
   border-radius: 9px;
   color: var(--ink-2);
