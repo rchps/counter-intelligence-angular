@@ -1,4 +1,13 @@
-import { fromCsv, parseMoney, summarize, toCsv } from './sales-math';
+import {
+  formatCents,
+  formatMoney,
+  formatSigned,
+  fromCsv,
+  parseMoney,
+  shortDate,
+  summarize,
+  toCsv,
+} from './sales-math';
 
 // Ported from counter-intelligence/tests/sales.js. September 2026 starts on a Tuesday and has 22
 // weekdays. Goal $44,000 -> baseline $2,000 a selling day. Sales entered through Wed Sep 9 total
@@ -98,6 +107,27 @@ describe('parseMoney', () => {
   });
   it('parses " 99 " as 99', () => {
     expect(parseMoney(' 99 ')).toBe(99);
+  });
+});
+
+describe('shortDate', () => {
+  it('formats "2026-09-04" as "Fri, Sep 4"', () => {
+    expect(shortDate('2026-09-04')).toBe('Fri, Sep 4');
+  });
+});
+
+describe('formatMoney / formatCents / formatSigned', () => {
+  it('formatMoney rounds to whole dollars', () => {
+    expect(formatMoney(1234.5)).toBe('$1,235');
+  });
+  it('formatCents keeps two decimal places', () => {
+    expect(formatCents(1234.5)).toBe('$1,234.50');
+  });
+  it('formatSigned prefixes a positive amount with +', () => {
+    expect(formatSigned(500)).toBe('+$500');
+  });
+  it('formatSigned prefixes a negative amount with a minus sign', () => {
+    expect(formatSigned(-500)).toBe('−$500');
   });
 });
 

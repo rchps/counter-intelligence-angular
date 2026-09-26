@@ -206,6 +206,8 @@ export interface MonthRecord {
   goal: number | null;
   sales: Record<string, number>;
   overrides: Record<string, boolean>;
+  /** Set once the goal-hit confetti has played for this month, so it only plays once. */
+  celebrated?: boolean;
 }
 
 export interface SalesStore {
@@ -233,6 +235,39 @@ export function toCsv(store: SalesStore): string {
     });
   });
   return rows.join('\n') + '\n';
+}
+
+// Today's date in the browser's own local time zone, not UTC (a plain `new Date().toISOString()`
+// would drift a day around midnight for anyone west of UTC).
+export function localToday(): string {
+  const now = new Date();
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+}
+
+// "2026-09-04" -> "Fri, Sep 4". Noon avoids any UTC/local rounding landing on the wrong day.
+export function shortDate(iso: string): string {
+  return new Date(`${iso}T12:00:00`).toLocaleDateString('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+  });
+}
+
+export function formatMoney(value: number): string {
+  return value.toLocaleString('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0,
+  });
+}
+
+export function formatCents(value: number): string {
+  return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+}
+
+// Uses the minus sign (−), not a hyphen, matching sales.html's own signed() helper.
+export function formatSigned(value: number): string {
+  return (value >= 0 ? '+' : '−') + formatMoney(Math.abs(value));
 }
 
 export function fromCsv(text: string): SalesStore {

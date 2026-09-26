@@ -12,11 +12,14 @@ export class StorageService {
     }
   }
 
-  set(key: string, value: string): void {
+  // Returns whether the write actually succeeded, so callers that need to tell the user their data
+  // isn't being saved (private windows, storage quota) can — most callers just ignore it.
+  set(key: string, value: string): boolean {
     try {
       localStorage.setItem(key, value);
+      return true;
     } catch {
-      // not saved, the app still works for this visit
+      return false;
     }
   }
 
