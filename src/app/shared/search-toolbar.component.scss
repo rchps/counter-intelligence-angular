@@ -1,0 +1,96 @@
+// Ported from counter-intelligence/styles.css's "Toolbar (search + filters)" section.
+
+:host {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.search {
+  position: relative;
+  flex: 1 1 auto;
+}
+.search svg {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: var(--ink-2);
+  pointer-events: none;
+}
+.search input {
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 110px 12px 46px;
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font: 450 16px/1.2 var(--font);
+  box-shadow: var(--shadow);
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.search input::placeholder {
+  color: var(--ink-2);
+  opacity: 1;
+}
+.search input:focus {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 18%, transparent);
+}
+.search input::-webkit-search-cancel-button {
+  display: none;
+}
+.search .kbd {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 4px;
+  pointer-events: none;
+}
+.search .kbd kbd {
+  font: 500 11px/1 var(--mono);
+  color: var(--ink-2);
+  border: 1px solid var(--line-strong);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  padding: 4px 6px;
+  background: var(--surface-2);
+}
+.search .clear {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: none;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--surface-2);
+  color: var(--ink);
+  font: 500 13px/1 var(--font);
+  cursor: pointer;
+}
+.search .clear:hover {
+  background: var(--line);
+}
+.search.has-value .clear {
+  display: inline-flex;
+  align-items: center;
+}
+.search.has-value .kbd {
+  display: none;
+}
+@media (max-width: 640px) {
+  .search:not(.has-value) input {
+    padding-right: 14px;
+  }
+}
