@@ -1,0 +1,224 @@
+<app-tool-result-card
+  tool="nvr"
+  estimateNote="Estimate for quoting. Real storage depends on each camera's actual bitrate and scene."
+>
+  <ng-container form>
+    <fieldset>
+      <legend>Bitrate per camera</legend>
+      <div class="segmented">
+        <label>
+          <input
+            type="radio"
+            name="nvr-mode"
+            [checked]="mode() === 'known'"
+            (change)="mode.set('known')"
+          />
+          <span>I know the bitrate</span>
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="nvr-mode"
+            [checked]="mode() === 'estimate'"
+            (change)="mode.set('estimate')"
+          />
+          <span>Estimate from resolution</span>
+        </label>
+      </div>
+    </fieldset>
+
+    @if (mode() === 'known') {
+      <div class="mc-field">
+        <label for="nvr-kbps">Average bitrate per camera</label>
+        <div class="mc-inputwrap">
+          <input
+            type="text"
+            id="nvr-kbps"
+            class="tl-plain"
+            inputmode="decimal"
+            autocomplete="off"
+            placeholder="4096"
+            [value]="kbpsText()"
+            (input)="kbpsText.set($any($event.target).value)"
+          />
+          <span class="affix suf" aria-hidden="true">Kbps</span>
+        </div>
+        <span class="tl-hint">
+          From the camera's stream settings or the NVR's live bitrate readout. 4 Mbps = 4096 Kbps.
+        </span>
+      </div>
+    } @else {
+      <div class="tl-row">
+        <div class="mc-field">
+          <label for="nvr-res">Resolution</label>
+          <select
+            id="nvr-res"
+            [value]="resolution()"
+            (change)="resolution.set($any($event.target).value)"
+          >
+            @for (option of resolutions; track option.key) {
+              <option [value]="option.key">{{ option.label }}</option>
+            }
+          </select>
+        </div>
+        <div class="mc-field">
+          <label for="nvr-fps">Frame rate</label>
+          <select id="nvr-fps" [value]="fps()" (change)="fps.set($any($event.target).value)">
+            <option value="normal">5 to 30 fps</option>
+            <option value="high">60 fps</option>
+          </select>
+        </div>
+      </div>
+      <fieldset>
+        <legend>Codec</legend>
+        <div class="segmented">
+          <label>
+            <input
+              type="radio"
+              name="nvr-codec"
+              [checked]="codec() === 'h265'"
+              (change)="codec.set('h265')"
+            />
+            <span>H.265</span>
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="nvr-codec"
+              [checked]="codec() === 'h264'"
+              (change)="codec.set('h264')"
+            />
+            <span>H.264</span>
+          </label>
+        </div>
+      </fieldset>
+    }
+
+    <div class="tl-row">
+      <div class="mc-field">
+        <label for="nvr-cams">Cameras</label>
+        <div class="mc-inputwrap">
+          <input
+            type="text"
+            id="nvr-cams"
+            class="tl-plain"
+            inputmode="numeric"
+            autocomplete="off"
+            placeholder="8"
+            [value]="camerasText()"
+            (input)="camerasText.set($any($event.target).value)"
+          />
+        </div>
+      </div>
+      <div class="mc-field">
+        <label for="nvr-days">Retention</label>
+        <div class="mc-inputwrap">
+          <input
+            type="text"
+            id="nvr-days"
+            class="tl-plain"
+            inputmode="numeric"
+            autocomplete="off"
+            [value]="daysText()"
+            (input)="daysText.set($any($event.target).value)"
+          />
+          <span class="affix suf" aria-hidden="true">days</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mc-field">
+      <label for="nvr-pct">Share of the day recording</label>
+      <div class="mc-inputwrap">
+        <input
+          type="text"
+          id="nvr-pct"
+          class="tl-plain"
+          inputmode="decimal"
+          autocomplete="off"
+          [value]="recordingPercentText()"
+          (input)="recordingPercentText.set($any($event.target).value)"
+        />
+        <span class="affix suf" aria-hidden="true">%</span>
+      </div>
+      <span class="tl-hint">
+        100 = continuous. Motion-only recording is a guess; 100 is the safe number for quoting.
+      </span>
+    </div>
+
+    <div class="tl-row">
+      <div class="mc-field">
+        <label for="nvr-drive">Drive size (optional)</label>
+        <div class="mc-inputwrap">
+          <input
+            type="text"
+            id="nvr-drive"
+            class="tl-plain"
+            inputmode="decimal"
+            autocomplete="off"
+            placeholder="8"
+            [value]="driveTBText()"
+            (input)="driveTBText.set($any($event.target).value)"
+          />
+          <span class="affix suf" aria-hidden="true">TB</span>
+        </div>
+      </div>
+      <div class="mc-field">
+        <label for="nvr-raid">Drive setup</label>
+        <select id="nvr-raid" [value]="raid()" (change)="raid.set($any($event.target).value)">
+          <option value="none">No RAID</option>
+          <option value="raid5">RAID 5</option>
+          <option value="raid6">RAID 6</option>
+          <option value="raid10">RAID 10</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="mc-msg" role="status" aria-live="polite" [class.err]="message()">
+      {{ message() }}
+    </div>
+  </ng-container>
+
+  <ng-container resultHero>
+    <span class="k">{{ heroLabel() }}</span>
+    <span class="v">{{ tbDisplay() }}</span>
+    <span class="sub">{{ lowEndDisplay() }}</span>
+    <span class="sub tl-quip">{{ quip() }}</span>
+    <span class="sub">{{ drivesDisplay() }}</span>
+  </ng-container>
+
+  <ng-container resultDetails>
+    <dl>
+      <dt>Per day, all cameras</dt>
+      <dd>{{ dayDisplay() }}</dd>
+      <dt>Per camera, whole retention</dt>
+      <dd>{{ camDisplay() }}</dd>
+      <dt>Recording bandwidth into the NVR</dt>
+      <dd>{{ bandwidthDisplay() }}</dd>
+      <dt>Bitrate used per camera</dt>
+      <dd>{{ rateDisplay() }}</dd>
+    </dl>
+  </ng-container>
+
+  <ng-container sources>
+    <p>
+      Storage = bitrate ÷ 8 × seconds per day × days × cameras × share of the day recording, in
+      decimal units. This is the formula in Genetec's documentation (500 Kbps for 7 days = 37.8 GB).
+      The bitrate is the one number that decides the answer, and it changes with the scene: motion,
+      lighting, night noise and compression settings all move it (Axis, "Bitrate control for IP
+      video"). Use a real bitrate whenever you can.
+    </p>
+    <p>
+      Estimates use IC Realtime's published bitrate ranges for H.264 (5 to 30 fps: 720p 384 to 2,048
+      Kbps; 2MP and 4MP and 5MP 768 to 4,096; 8MP/4K 1,536 to 8,192; 12MP 2,560 to 12,288. 60 fps:
+      4,096, 8,192, 8,192, 8,192, 16,400 and 18,432 Kbps). H.265 uses about half, per the same
+      guide. The result is a low to high range and the high end is the one to quote.
+    </p>
+    <p>
+      Drives: 1 TB = one trillion bytes (Seagate). RAID 5 loses one drive to parity and RAID 6 loses
+      two (QNAP); RAID 10 keeps half the total and needs an even number of drives, at least four
+      (Dell). RAID 5 needs at least three drives and RAID 6 at least four. NVRs also reserve a
+      little space, so leave some headroom.
+    </p>
+  </ng-container>
+</app-tool-result-card>

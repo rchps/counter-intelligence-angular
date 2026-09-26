@@ -3,6 +3,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { StorageService } from '../../core/storage.service';
 import { BatteryToolComponent } from './battery-tool.component';
 import { MarginCalculatorComponent } from './margin-calculator.component';
+import { NvrStorageToolComponent } from './nvr-storage-tool.component';
 import { PoeBudgetToolComponent } from './poe-budget-tool.component';
 import { isToolId, TOOL_NAV, TOOL_STORAGE_KEY, type ToolId } from './tool-nav';
 import { VoltageDropToolComponent } from './voltage-drop-tool.component';
@@ -24,6 +25,7 @@ interface ToolNavGroup {
     BatteryToolComponent,
     VoltageDropToolComponent,
     PoeBudgetToolComponent,
+    NvrStorageToolComponent,
   ],
   templateUrl: './tools.page.html',
   styleUrl: './tools.page.scss',
