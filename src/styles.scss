@@ -594,6 +594,40 @@ mark {
 .dlg-options input:checked + span::before {
   border: 4.5px solid var(--ink);
 }
+.dlg-check {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 0 0 14px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.dlg-check input {
+  width: 18px;
+  height: 18px;
+  margin: 1px 0 0;
+  accent-color: var(--brand);
+}
+.dlg-check small {
+  display: block;
+  color: var(--ink-2);
+  font-size: 13px;
+}
+.dlg-note {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.dlg-note svg {
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+  flex: 0 0 auto;
+}
 .dlg textarea,
 .dlg input[type='text'] {
   width: 100%;
@@ -638,6 +672,10 @@ mark {
   font: 600 15px/1 var(--font);
   text-decoration: none;
   cursor: pointer;
+}
+.dlg-primary.done {
+  background: #0f7a3a;
+  color: #fff;
 }
 .dlg-primary[aria-disabled='true'] {
   opacity: 0.5;

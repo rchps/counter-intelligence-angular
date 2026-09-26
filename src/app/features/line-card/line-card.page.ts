@@ -2,6 +2,7 @@ import { Component, computed, effect, inject, signal, viewChild } from '@angular
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { debounceTime } from 'rxjs';
+import { brandsForSearch } from '../../core/alternatives';
 import { DataService } from '../../core/data.service';
 import { searchStatusText } from '../../core/feedback';
 import { FeedbackService } from '../../core/feedback.service';
@@ -12,6 +13,9 @@ import { didYouMean } from '../../core/search/typos';
 import { FilterChipsComponent, type FilterChip } from '../../shared/filter-chips.component';
 import { SearchStatusComponent } from '../../shared/search-status.component';
 import { SearchToolbarComponent } from '../../shared/search-toolbar.component';
+import { FEATURES } from '../../features';
+import { AiCopyComponent } from '../ai-copy/ai-copy.component';
+import { AlternativesBoxComponent } from '../alternatives/alternatives-box.component';
 import { AzJumpBarComponent, azAnchorId } from './az-jump-bar.component';
 import { CategoryGroupComponent } from './category-group.component';
 import { EmptyStateComponent } from './empty-state.component';
@@ -34,6 +38,8 @@ interface CategoryLineGroup {
 @Component({
   selector: 'app-line-card-page',
   imports: [
+    AiCopyComponent,
+    AlternativesBoxComponent,
     SearchToolbarComponent,
     FilterChipsComponent,
     SearchStatusComponent,
@@ -188,7 +194,17 @@ export class LineCardPage {
       `Search ${this.data.lines().length} manufacturers, brands, or products (e.g. Wheelock, maglock, Cat6)`,
   );
 
+  protected readonly alternatives = computed(() =>
+    brandsForSearch({
+      brands: this.data.alternatives(),
+      carriedNames: this.data.lines().map((line) => line.name),
+      search: this.debounced(),
+      correctedSearch: this.correctedSearch(),
+    }),
+  );
+
   protected readonly azAnchorId = azAnchorId;
+  protected readonly features = FEATURES;
 
   protected clearSearch(): void {
     this.search.set('');
@@ -198,6 +214,12 @@ export class LineCardPage {
 
   protected showAllCategories(): void {
     this.filter.set('all');
+  }
+
+  // modules/alternatives.html: picking an offered line searches for it and puts focus back in the box.
+  protected pickAlternative(lineName: string): void {
+    this.search.set(lineName);
+    this.toolbar().focus();
   }
 
   protected useSuggestion(text: string): void {

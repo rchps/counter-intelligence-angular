@@ -1,0 +1,124 @@
+// Ported from modules/ai-copy.html's <style>. The dialog shell itself uses the global .dlg styles.
+
+.ai-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 0 12px 0 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+  font: 500 13px/1 var(--font);
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+.ai-trigger:hover {
+  border-color: var(--brand);
+  color: var(--brand-strong);
+}
+.ai-trigger:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+.ai-trigger svg {
+  width: 16px;
+  height: 16px;
+  color: var(--brand);
+  flex: 0 0 auto;
+}
+.ai-trigger[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.ai-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 0 18px;
+  padding: 0;
+  list-style: none;
+  counter-reset: ai-step;
+}
+.ai-steps li {
+  counter-increment: ai-step;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-2);
+  font-size: 13px;
+  line-height: 1.4;
+}
+.ai-steps li::before {
+  content: counter(ai-step);
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-bottom: 8px;
+  border-radius: 50%;
+  background: var(--inv);
+  color: var(--on-inv);
+  font: 600 12px/1 var(--mono);
+}
+.ai-steps b {
+  display: block;
+  font-weight: 600;
+}
+.ai-steps span {
+  color: var(--ink-2);
+}
+.ai-preview {
+  margin: 0 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.ai-preview summary {
+  padding: 10px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.ai-preview summary .n {
+  color: var(--ink-2);
+}
+.ai-preview pre {
+  max-height: 220px;
+  margin: 0;
+  padding: 12px;
+  overflow: auto;
+  border-top: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--ink);
+  font: 400 12px/1.5 var(--mono);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.ai-preview pre:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+@media (max-width: 640px) {
+  .ai-steps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ai-steps li {
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr);
+    column-gap: 10px;
+    align-items: center;
+  }
+  .ai-steps li::before {
+    grid-row: span 2;
+    margin: 0;
+  }
+  .ai-steps b,
+  .ai-steps span {
+    grid-column: 2;
+  }
+}
+@media print {
+  .ai-trigger {
+    display: none !important;
+  }
+}

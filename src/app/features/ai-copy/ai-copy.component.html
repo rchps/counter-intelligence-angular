@@ -1,0 +1,132 @@
+<button
+  #trigger
+  type="button"
+  class="ai-trigger"
+  aria-haspopup="dialog"
+  title="Copies this list so an AI chat (ChatGPT, Copilot, Claude) only suggests lines we carry"
+  [disabled]="shown().length === 0"
+  (click)="open()"
+>
+  <ng-container *ngTemplateOutlet="sparkleIcon" />
+  <span>{{ triggerLabel() }}</span>
+</button>
+
+<!-- The click handler only catches clicks on the backdrop (a mouse shortcut for closing). Its keyboard
+     equivalent is Esc, which a native modal <dialog> already handles, so these two rules don't apply. -->
+<!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+<dialog
+  #dialog
+  class="dlg ai-dialog"
+  aria-labelledby="ai-title"
+  (click)="onDialogClick($event)"
+  (close)="onClose()"
+>
+  <div class="dlg-body">
+    <div class="dlg-head">
+      <h2 class="dlg-title" id="ai-title">
+        <ng-container *ngTemplateOutlet="sparkleIcon" />Use this list in an AI chat
+      </h2>
+      <button type="button" class="dlg-close" aria-label="Close" (click)="close()">×</button>
+    </div>
+    <p class="dlg-lede">
+      AI chats don't know what SDS carries, so they suggest brands we don't stock. Paste this list
+      in first and the AI will stick to our lines.
+    </p>
+    <ol class="ai-steps">
+      <li><b>Copy the list</b><span>with the button below</span></li>
+      <li><b>Paste it into your AI chat</b><span>ChatGPT, Copilot, Claude…</span></li>
+      <li><b>Type your question</b><span>at the end, after "My question:"</span></li>
+    </ol>
+    @if (narrowed()) {
+      <fieldset class="dlg-field" id="ai-scope-field">
+        <legend>What to copy</legend>
+        <div class="segmented">
+          <label>
+            <input
+              type="radio"
+              name="ai-scope"
+              value="shown"
+              [checked]="scope() === 'shown'"
+              (change)="scope.set('shown')"
+            />
+            <span id="ai-scope-shown">{{ shownLabel() }}</span>
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="ai-scope"
+              value="all"
+              [checked]="scope() === 'all'"
+              (change)="scope.set('all')"
+            />
+            <span id="ai-scope-all">{{ allLabel() }}</span>
+          </label>
+        </div>
+      </fieldset>
+    }
+    <label class="dlg-check">
+      <input
+        type="checkbox"
+        id="ai-instructions"
+        [checked]="withInstructions()"
+        (change)="withInstructions.set(!withInstructions())"
+      />
+      <span>
+        Include instructions for the AI
+        <small>Tells it to only suggest these lines and to say so when nothing fits.</small>
+      </span>
+    </label>
+    <details class="ai-preview" [open]="previewOpen()" (toggle)="onPreviewToggle($event)">
+      <summary>
+        Preview what gets copied <span class="n">{{ sizeText() }}</span>
+      </summary>
+      <!-- Focusable so keyboard users can scroll the preview. -->
+      <pre id="ai-preview-text" tabindex="0">{{ text() }}</pre>
+    </details>
+    <p class="dlg-note">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        aria-hidden="true"
+      >
+        <rect x="5" y="11" width="14" height="10" rx="2" />
+        <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+      </svg>
+      <span
+        >Only public line-card info: names, categories, product types, other names and websites. No
+        pricing, costs or customer information. Check that your AI tool is approved for work
+        use.</span
+      >
+    </p>
+  </div>
+  <div class="dlg-foot">
+    <button
+      #copyButton
+      type="button"
+      class="dlg-primary"
+      id="ai-copy"
+      [class.done]="copied()"
+      (click)="copyNow()"
+    >
+      {{ copyLabel() }}
+    </button>
+    <p class="dlg-done" id="ai-done" role="status" aria-live="polite">{{ done() }}</p>
+    <button type="button" class="dlg-cancel" (click)="close()">Close</button>
+  </div>
+</dialog>
+
+<ng-template #sparkleIcon>
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.8"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z" />
+    <path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z" />
+  </svg>
+</ng-template>

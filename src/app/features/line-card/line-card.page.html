@@ -39,22 +39,41 @@
       [search]="debounced()"
       [correctedSearch]="correctedSearch()"
       (clear)="clearSearch()"
-    />
+    >
+      @if (features.aiCopy) {
+        <app-ai-copy
+          statusTools
+          [shown]="shown()"
+          [lines]="data.lines()"
+          [categoryLabels]="data.categories()"
+          [asOf]="data.asOf()"
+          [filterLabel]="filterLabel()"
+          [search]="debounced()"
+          [correctedSearch]="correctedSearch()"
+        />
+      }
+    </app-search-status>
   </div>
 </div>
 
 <main class="wrap" id="results" tabindex="-1">
+  @if (alternatives().length) {
+    <app-alternatives-box [brands]="alternatives()" (pick)="pickAlternative($event)" />
+  }
   @if (shown().length === 0) {
-    <app-line-card-empty-state
-      [search]="debounced()"
-      [filterActive]="filter() !== 'all'"
-      [filterLabel]="filterLabel()"
-      [matchingCount]="matching().length"
-      [suggestion]="suggestion()"
-      (searchAllCategories)="showAllCategories()"
-      (useSuggestion)="useSuggestion($event)"
-      (clear)="clearSearch()"
-    />
+    <!-- A "Not an SDS line" box already explains an empty search, so it replaces the empty state. -->
+    @if (!alternatives().length) {
+      <app-line-card-empty-state
+        [search]="debounced()"
+        [filterActive]="filter() !== 'all'"
+        [filterLabel]="filterLabel()"
+        [matchingCount]="matching().length"
+        [suggestion]="suggestion()"
+        (searchAllCategories)="showAllCategories()"
+        (useSuggestion)="useSuggestion($event)"
+        (clear)="clearSearch()"
+      />
+    }
   } @else if (exactMatchShown()) {
     <app-category-group
       ariaLabel="Search results, best match first"

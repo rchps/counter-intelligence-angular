@@ -1,5 +1,7 @@
 import { computed, Service } from '@angular/core';
 import { httpResource } from '@angular/common/http';
+import { FEATURES } from '../features';
+import type { AlternativeBrand } from './alternatives';
 import {
   type Branch,
   type Line,
@@ -26,7 +28,7 @@ interface TermsJson {
 }
 
 interface AlternativesJson {
-  brands: { brand: string; match: string[]; offer: string[] }[];
+  brands: AlternativeBrand[];
 }
 
 // The one place that turns the static JSON fixtures into the search-ready shape the rest of the app
@@ -63,10 +65,16 @@ export class DataService {
     return branches ? prepareBranches(branches) : [];
   });
 
+  /** Brands SDS doesn't carry, with lines to offer instead (empty when the module is switched off). */
+  readonly alternatives = computed<AlternativeBrand[]>(() =>
+    FEATURES.alternatives ? (this.alternativesJson.value()?.brands ?? []) : [],
+  );
+
   // Matches modules/alternatives.html's `vocab: ALTERNATIVES.brands.flatMap((brand) => brand.match)`, which
   // lets typo-correction fix e.g. "hickvision" even though it isn't an SDS line (core/search/match.spec.ts).
+  // Like the vanilla module, the extra vocabulary goes away with the module.
   readonly knownWords = computed(() => {
-    const extraVocab = this.alternativesJson.value()?.brands.flatMap((brand) => brand.match) ?? [];
+    const extraVocab = this.alternatives().flatMap((brand) => brand.match);
     return buildKnownWords(this.lines(), extraVocab);
   });
 }

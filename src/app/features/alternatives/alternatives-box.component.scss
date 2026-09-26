@@ -1,0 +1,62 @@
+// Ported from modules/alternatives.html's <style>.
+
+:host {
+  display: block;
+}
+.alt-box {
+  margin: 0 0 24px;
+  padding: 18px 20px;
+  border: 1px solid color-mix(in srgb, var(--amber) 45%, var(--line));
+  border-radius: 16px;
+  background: linear-gradient(180deg, var(--amber-soft), var(--surface) 70%);
+  box-shadow: var(--shadow);
+}
+.alt-box + .alt-box {
+  margin-top: -10px;
+}
+.alt-box h2 {
+  margin: 0 0 4px;
+  font: 600 19px/1.25 var(--display);
+  letter-spacing: -0.02em;
+}
+.alt-box p {
+  margin: 0 0 10px;
+  color: var(--ink-2);
+  font-size: 14px;
+}
+.alt-box .alt-note {
+  color: var(--ink);
+  font-weight: 600;
+}
+.alt-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.alt-list button {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+  font: 500 13px/1 var(--font);
+  cursor: pointer;
+}
+.alt-list button:hover {
+  background: var(--inv);
+  color: var(--on-inv);
+  border-color: var(--inv);
+}
+.alt-list button:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+@media print {
+  :host {
+    display: none;
+  }
+}
