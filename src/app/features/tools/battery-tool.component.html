@@ -1,0 +1,181 @@
+<app-tool-result-card
+  tool="battery"
+  [estimateNote]="'Estimate for quoting. Confirm with the panel manufacturer\'s battery calculation; the AHJ has the final say.'"
+  note="24 V panels use two 12 V batteries in series; the amp-hour rating stays the same. Check the panel's maximum battery size its charger supports."
+>
+  <ng-container form>
+    <fieldset>
+      <legend>System</legend>
+      <div class="segmented">
+        <label>
+          <input
+            type="radio"
+            name="bat-preset"
+            [checked]="preset() === 'fire'"
+            (change)="applyPreset('fire')"
+          />
+          <span>Fire alarm</span>
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="bat-preset"
+            [checked]="preset() === 'voice'"
+            (change)="applyPreset('voice')"
+          />
+          <span>Voice evac</span>
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="bat-preset"
+            [checked]="preset() === 'custom'"
+            (change)="applyPreset('custom')"
+          />
+          <span>Custom</span>
+        </label>
+      </div>
+    </fieldset>
+    <div class="tl-row">
+      <div class="mc-field">
+        <label for="bat-standby-a">Standby current</label>
+        <div class="mc-inputwrap">
+          <input
+            type="text"
+            id="bat-standby-a"
+            class="tl-plain"
+            inputmode="decimal"
+            autocomplete="off"
+            placeholder="0.250"
+            [value]="standbyAmpsText()"
+            (input)="standbyAmpsText.set($any($event.target).value)"
+          />
+          <span class="affix suf" aria-hidden="true">A</span>
+        </div>
+      </div>
+      <div class="mc-field">
+        <label for="bat-alarm-a">Alarm current</label>
+        <div class="mc-inputwrap">
+          <input
+            type="text"
+            id="bat-alarm-a"
+            class="tl-plain"
+            inputmode="decimal"
+            autocomplete="off"
+            placeholder="1.500"
+            [value]="alarmAmpsText()"
+            (input)="alarmAmpsText.set($any($event.target).value)"
+          />
+          <span class="affix suf" aria-hidden="true">A</span>
+        </div>
+      </div>
+    </div>
+    <div class="tl-row">
+      <div class="mc-field">
+        <label for="bat-standby-h">Standby time</label>
+        <div class="mc-inputwrap">
+          <input
+            type="text"
+            id="bat-standby-h"
+            class="tl-plain"
+            inputmode="decimal"
+            autocomplete="off"
+            [value]="standbyHoursText()"
+            (input)="standbyHoursText.set($any($event.target).value); onTimingInput()"
+          />
+          <span class="affix suf" aria-hidden="true">hr</span>
+        </div>
+      </div>
+      <div class="mc-field">
+        <label for="bat-alarm-m">Alarm time</label>
+        <div class="mc-inputwrap">
+          <input
+            type="text"
+            id="bat-alarm-m"
+            class="tl-plain"
+            inputmode="decimal"
+            autocomplete="off"
+            [value]="alarmMinutesText()"
+            (input)="alarmMinutesText.set($any($event.target).value); onTimingInput()"
+          />
+          <span class="affix suf" aria-hidden="true">min</span>
+        </div>
+      </div>
+    </div>
+    <fieldset>
+      <legend>Safety factor (NFPA 72 edition the AHJ uses)</legend>
+      <div class="segmented">
+        <label>
+          <input
+            type="radio"
+            name="bat-factor"
+            [checked]="factor() === '1.25'"
+            (change)="factor.set('1.25')"
+          />
+          <span>2022 edition · ×1.25</span>
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="bat-factor"
+            [checked]="factor() === '1.2'"
+            (change)="factor.set('1.2')"
+          />
+          <span>2010–2019 · ×1.20</span>
+        </label>
+      </div>
+    </fieldset>
+    <span class="tl-hint"
+      >Enter amps: 110 mA = 0.110 A. Use the panel's battery worksheet totals if you have
+      them.</span
+    >
+    <div class="mc-msg" role="status" aria-live="polite" [class.err]="message()">
+      {{ message() }}
+    </div>
+  </ng-container>
+
+  <ng-container resultHero>
+    <span class="k">Estimated battery needed</span>
+    <span class="v">{{ ahDisplay() }}</span>
+    <span class="sub">{{ sizeDisplay() }}</span>
+  </ng-container>
+
+  <ng-container resultDetails>
+    @if (result(); as result) {
+      <dl>
+        <dt>Standby</dt>
+        <dd>{{ result.standbyAh | number: '1.3-3' }} Ah</dd>
+        <dt>Alarm</dt>
+        <dd>{{ result.alarmAh | number: '1.3-3' }} Ah</dd>
+        <dt>Subtotal</dt>
+        <dd>{{ result.subtotalAh | number: '1.3-3' }} Ah</dd>
+        <dt>Safety factor</dt>
+        <dd>×{{ factor() }}</dd>
+      </dl>
+    } @else {
+      <dl>
+        <dt>Standby</dt>
+        <dd>—</dd>
+        <dt>Alarm</dt>
+        <dd>—</dd>
+        <dt>Subtotal</dt>
+        <dd>—</dd>
+        <dt>Safety factor</dt>
+        <dd>—</dd>
+      </dl>
+    }
+  </ng-container>
+
+  <ng-container sources>
+    <p>
+      Amp-hours = (standby amps × standby hours + alarm amps × alarm minutes ÷ 60) × safety factor,
+      rounded up to the next common battery size.
+    </p>
+    <p>
+      NFPA 72 §10.6.7.2.1: 24 hours standby, then 5 minutes of alarm; in-building emergency
+      voice/alarm communications: 24 hours, then 15 minutes at maximum load. Safety factor: ×1.25 in
+      the 2022 edition (aging correction), ×1.20 in the 2010–2019 editions (20% margin). Fire-Lite
+      and other panel worksheets use the same method.
+    </p>
+  </ng-container>
+</app-tool-result-card>
