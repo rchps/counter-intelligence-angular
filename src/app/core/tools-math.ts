@@ -1,6 +1,21 @@
 // Ported from counter-intelligence/tools.html `window.SDS_TOOLS`. Names and behavior are unchanged;
 // only types were added. See tools-math.spec.ts for the published worked examples this is checked against.
 
+export interface ReadNumberResult {
+  value: number;
+  bad: boolean;
+}
+
+// Ported from tools.html's page code (readNumber) — outside SDS_TOOLS there, but pure, and shared by all
+// four sizing tools' input boxes, so it belongs with the rest of this math. Blank -> NaN, not bad (nothing
+// entered yet); anything else that isn't a finite number >= 0 -> bad, so the box can be flagged invalid.
+export function readPositiveNumber(text: string): ReadNumberResult {
+  const cleaned = text.replace(/[,\s]/g, '');
+  if (cleaned === '') return { value: NaN, bad: false };
+  const value = Number(cleaned);
+  return { value, bad: !isFinite(value) || value < 0 };
+}
+
 // ---- Battery standby (NFPA 72 §10.6.7.2.1) ----
 export const BATTERY_PRESETS = {
   fire: { standbyHours: 24, alarmMinutes: 5 },

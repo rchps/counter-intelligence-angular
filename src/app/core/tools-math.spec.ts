@@ -228,3 +228,22 @@ describe('tools-math (worked examples from published sources)', () => {
     });
   }
 });
+
+describe('readPositiveNumber', () => {
+  it('is NaN, not bad, for blank text', () => {
+    expect(T.readPositiveNumber('')).toEqual({ value: NaN, bad: false });
+  });
+
+  it('strips commas and whitespace', () => {
+    expect(T.readPositiveNumber('1,500')).toEqual({ value: 1500, bad: false });
+    expect(T.readPositiveNumber(' 24 ')).toEqual({ value: 24, bad: false });
+  });
+
+  it('flags non-numeric text as bad', () => {
+    expect(T.readPositiveNumber('abc').bad).toBe(true);
+  });
+
+  it('flags a negative number as bad', () => {
+    expect(T.readPositiveNumber('-5').bad).toBe(true);
+  });
+});
