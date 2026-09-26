@@ -21,7 +21,7 @@ describe('DataService', () => {
     const service = TestBed.inject(DataService);
     TestBed.tick(); // triggers the httpResources' initial requests
 
-    httpMock.expectOne('assets/data/lines.json').flush({
+    httpMock.expectOne('data/lines.json').flush({
       asOf: '2026-09-25',
       source: 'https://securitydatasupply.com/suppliers',
       reportEmail: 'reports@example.com',
@@ -45,9 +45,9 @@ describe('DataService', () => {
       ],
     });
     httpMock
-      .expectOne('assets/data/terms.json')
+      .expectOne('data/terms.json')
       .flush({ terms: [{ label: 'Maglocks', syn: ['maglock'], lines: ['Altronix'] }] });
-    httpMock.expectOne('assets/data/alternatives.json').flush({
+    httpMock.expectOne('data/alternatives.json').flush({
       brands: [{ brand: 'Hikvision', match: ['hikvision', 'hik vision'], offer: ['Altronix'] }],
     });
 
@@ -84,9 +84,9 @@ describe('DataService', () => {
     expect(service.branches()).toEqual([]);
 
     httpMock
-      .expectOne('assets/data/lines.json')
+      .expectOne('data/lines.json')
       .flush({ asOf: '', source: '', logoBase: '', cats: {}, lines: [], branches: [] });
-    httpMock.expectOne('assets/data/terms.json').flush({ terms: [] });
-    httpMock.expectOne('assets/data/alternatives.json').flush({ brands: [] });
+    httpMock.expectOne('data/terms.json').flush({ terms: [] });
+    httpMock.expectOne('data/alternatives.json').flush({ brands: [] });
   });
 });

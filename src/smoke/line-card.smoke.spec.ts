@@ -18,9 +18,9 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { routes } from '../app/app.routes';
-import alternativesData from '../assets/data/alternatives.json';
-import linesData from '../assets/data/lines.json';
-import termsData from '../assets/data/terms.json';
+import alternativesData from '../../public/data/alternatives.json';
+import linesData from '../../public/data/lines.json';
+import termsData from '../../public/data/terms.json';
 
 describe('Line Card page (smoke)', () => {
   let httpMock: HttpTestingController;
@@ -42,9 +42,9 @@ describe('Line Card page (smoke)', () => {
     const harness = await RouterTestingHarness.create('/lines');
     TestBed.tick(); // triggers DataService's httpResource requests
 
-    httpMock.expectOne('assets/data/lines.json').flush(linesData);
-    httpMock.expectOne('assets/data/terms.json').flush(termsData);
-    httpMock.expectOne('assets/data/alternatives.json').flush(alternativesData);
+    httpMock.expectOne('data/lines.json').flush(linesData);
+    httpMock.expectOne('data/terms.json').flush(termsData);
+    httpMock.expectOne('data/alternatives.json').flush(alternativesData);
 
     await TestBed.inject(ApplicationRef).whenStable();
     harness.detectChanges();

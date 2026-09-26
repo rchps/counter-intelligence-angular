@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import alternativesData from '../../../assets/data/alternatives.json';
-import linesData from '../../../assets/data/lines.json';
-import termsData from '../../../assets/data/terms.json';
+import alternativesData from '../../../../public/data/alternatives.json';
+import linesData from '../../../../public/data/lines.json';
+import termsData from '../../../../public/data/terms.json';
 import { buildKnownWords } from './typos';
 import {
   attachProductTerms,

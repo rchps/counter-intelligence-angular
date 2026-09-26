@@ -187,7 +187,7 @@ function readJson<T>(path: string): T {
 
 function main(): void {
   const here = dirname(fileURLToPath(import.meta.url));
-  const dataDir = join(here, '..', 'src', 'assets', 'data');
+  const dataDir = join(here, '..', 'public', 'data');
 
   const data = readJson<LinesData>(join(dataDir, 'lines.json'));
   const productTypes = readJson<{ terms: ProductType[] }>(join(dataDir, 'terms.json')).terms;

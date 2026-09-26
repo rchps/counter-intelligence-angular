@@ -35,10 +35,10 @@ interface AlternativesJson {
 // typo-correction logic lives here — this is a thin fetch-and-expose layer over Phase 1's pure functions.
 @Service()
 export class DataService {
-  private readonly linesJson = httpResource<LinesJson>(() => 'assets/data/lines.json');
-  private readonly termsJson = httpResource<TermsJson>(() => 'assets/data/terms.json');
+  private readonly linesJson = httpResource<LinesJson>(() => 'data/lines.json');
+  private readonly termsJson = httpResource<TermsJson>(() => 'data/terms.json');
   private readonly alternativesJson = httpResource<AlternativesJson>(
-    () => 'assets/data/alternatives.json',
+    () => 'data/alternatives.json',
   );
 
   readonly isLoading = computed(
