@@ -80,14 +80,14 @@ jump bar), filter with category chips that show live counts, or search.
 
 ![The voltage drop calculator comparing every wire gauge](docs/screenshots/tools-vdrop.png)
 
-| Group    | Tool              | What it answers                                                                   |
-| -------- | ----------------- | --------------------------------------------------------------------------------- |
-| Quoting  | Margin calculator | Any two of cost, price and margin give the third                                  |
-| Sizing   | Battery standby   | Amp-hours for fire and security panels (NFPA 72 standby and alarm times)          |
-| Sizing   | Voltage drop      | Will the wire run make it? Compares every gauge at once                           |
-| Sizing   | PoE budget        | Can the switch power every device, by IEEE 802.3 class                            |
-| Sizing   | NVR storage       | How much drive a camera system needs for its retention                            |
-| Tracking | Sales tracker     | Daily sales against a monthly goal, with a pace chart drawn in plain SVG          |
+| Group    | Tool              | What it answers                                                          |
+| -------- | ----------------- | ------------------------------------------------------------------------ |
+| Quoting  | Margin calculator | Any two of cost, price and margin give the third                         |
+| Sizing   | Battery standby   | Amp-hours for fire and security panels (NFPA 72 standby and alarm times) |
+| Sizing   | Voltage drop      | Will the wire run make it? Compares every gauge at once                  |
+| Sizing   | PoE budget        | Can the switch power every device, by IEEE 802.3 class                   |
+| Sizing   | NVR storage       | How much drive a camera system needs for its retention                   |
+| Tracking | Sales tracker     | Daily sales against a monthly goal, with a pace chart drawn in plain SVG |
 
 Every sizing tool shows its formula and sources under "How this is calculated", and labels its result as
 an estimate for quoting: final designs follow the manufacturer's calculations and the local authority.
@@ -181,7 +181,7 @@ cypress/           e2e/ (behavior), visual/ (screenshots), fixtures/, support/
   that style content projected into a component live in `styles.scss`.
 - **Logos get equal visual weight, not equal boxes.** A wide wordmark and a square badge fitted to the
   same box look wildly different in size, so each logo is scaled to about the same _area_: for a
-  width-to-height ratio _r_, a height of _k_/√_r_. Never larger than the image itself, so small files
+  width-to-height ratio _r_, a height of _k_/√*r*. Never larger than the image itself, so small files
   don't blur.
 
 ### Motion
@@ -229,34 +229,34 @@ npm start          # http://localhost:4200
 
 `npm run build` reads two optional environment variables:
 
-| Variable       | What it does                                                                         |
-| -------------- | ------------------------------------------------------------------------------------ |
-| `REPORT_EMAIL` | Where feedback emails go. Without it, the feedback button and card are hidden.        |
-| `MAPS_NAME`    | Text put in front of a branch's address in its Google Maps search.                     |
+| Variable       | What it does                                                                   |
+| -------------- | ------------------------------------------------------------------------------ |
+| `REPORT_EMAIL` | Where feedback emails go. Without it, the feedback button and card are hidden. |
+| `MAPS_NAME`    | Text put in front of a branch's address in its Google Maps search.             |
 
 ### Scripts
 
-| Script                                    | What it does                                                          |
-| ----------------------------------------- | --------------------------------------------------------------------- |
-| `npm start`                               | Dev server with live reload                                           |
-| `npm run build`                           | Production build, stamped with the date and commit                    |
-| `npm test`                                | Unit tests (Vitest) in watch mode; add `-- --watch=false` to run once |
-| `npm run test:scripts`                    | Tests for the data validator                                          |
-| `npm run e2e` / `npm run e2e:open`        | End-to-end tests, headless or in the Cypress app                      |
-| `npm run visual:base` / `npm run visual`  | Record screenshot baselines / compare against them                    |
-| `npm run readme:screenshots`              | Retake this README's screenshots into `docs/screenshots/`             |
-| `npm run validate-data`                   | Check the data files                                                  |
-| `npm run lint` / `npm run format`         | ESLint / Prettier (`format:check` to check without writing)           |
+| Script                                   | What it does                                                          |
+| ---------------------------------------- | --------------------------------------------------------------------- |
+| `npm start`                              | Dev server with live reload                                           |
+| `npm run build`                          | Production build, stamped with the date and commit                    |
+| `npm test`                               | Unit tests (Vitest) in watch mode; add `-- --watch=false` to run once |
+| `npm run test:scripts`                   | Tests for the data validator                                          |
+| `npm run e2e` / `npm run e2e:open`       | End-to-end tests, headless or in the Cypress app                      |
+| `npm run visual:base` / `npm run visual` | Record screenshot baselines / compare against them                    |
+| `npm run readme:screenshots`             | Retake this README's screenshots into `docs/screenshots/`             |
+| `npm run validate-data`                  | Check the data files                                                  |
+| `npm run lint` / `npm run format`        | ESLint / Prettier (`format:check` to check without writing)           |
 
 ### Testing
 
 The project splits its tests by what they can prove:
 
-| Level                 | Tool                                 | Covers                                                                   |
-| --------------------- | ------------------------------------ | ------------------------------------------------------------------------ |
-| Unit                  | Vitest (`ng test`)                   | Pure functions and services that don't render: search, math, storage     |
-| End-to-end            | Cypress                              | Everything a person does: typing, filtering, dialogs, navigation         |
-| Visual regression     | Cypress + cypress-visual-regression  | How every page and state looks, pixel by pixel                           |
+| Level             | Tool               | Covers                                                               |
+| ----------------- | ------------------ | -------------------------------------------------------------------- |
+| Unit              | Vitest (`ng test`) | Pure functions and services that don't render: search, math, storage |
+| End-to-end        | Cypress            | Everything a person does: typing, filtering, dialogs, navigation     |
+| Visual regression | Cypress + reg-cli  | How every page and state looks, pixel by pixel                       |
 
 **Unit tests** sit next to the code they test (`*.spec.ts`). Components are tested in Cypress instead of
 with rendering unit tests, where a real browser shows what a person would see.
@@ -267,16 +267,24 @@ line, cards, chips, suggestions and highlights. When a search's results change o
 recording in the same commit.
 
 **Visual regression** screenshots every page state in light and dark, at desktop and phone sizes, and
-fails on any pixel that moved:
+[reg-cli](https://github.com/reg-viz/reg-cli) compares them with a baseline:
 
 ```bash
 npm run visual:base   # record screenshots of the current code as the baseline
 # ...make a change...
-npm run visual        # compare; diffs land in cypress/snapshots/diff/
+npm run visual        # screenshot again and compare
 ```
 
-Snapshots replace every logo with one stand-in image (so a new logo isn't a "style change"), switch off
-animations, and wait for data and images to finish loading. They're taken in Chromium.
+Open `cypress/snapshots/report.html` to see what changed: before, after, and a diff for each changed
+page, plus any page states that are new or gone. Snapshots replace every logo with one stand-in image (so
+a new logo isn't a "style change"), switch off animations, and wait until every image has loaded, been
+sized, and been drawn. They're taken in Chromium.
+
+On a pull request, the _Screenshot review_ check does the same against the `main` commit the branch
+started from. If any page looks different, the check fails and a comment on the PR lists the pages; the
+run's **screenshot-report** artifact holds the report. Once you've looked and the changes are intended,
+add the **visual-ok** label and the check passes. Pushing again removes the label, since the new commits
+may change more.
 
 **README screenshots** are taken the same way by `npm run readme:screenshots`
 (`cypress/readme/screenshots.cy.ts`), with each logo swapped for a redaction-bar placeholder. Retake them
@@ -290,10 +298,10 @@ after a visible change so the README stays true to the app.
 - **GitHub Actions** (`.github/workflows/ci.yml`) on every push:
   - _Checks_: lint, format, unit and script tests, data validation, build.
   - _End-to-end tests_, with failure screenshots uploaded as an artifact.
-  - _Screenshot comparison_ against `main`, reported as a comment on the pull request. It reports rather
-    than blocks, since a style change on purpose shows up there too.
   - _Deploy_: `main` deploys to Cloudflare once checks and end-to-end tests pass; other branches get a
     preview.
+- **GitHub Actions** (`.github/workflows/screenshots.yml`): each push to `main` records its screenshots
+  as the next baseline, and each pull request gets the _Screenshot review_ check described above.
 
 ### Keeping the data current
 
@@ -301,11 +309,11 @@ All content is in `public/data/`, and `npm run validate-data` checks it (the pre
 it too): required fields, duplicates, unknown fields (usually a typo), and every name that has to match a
 manufacturer exactly.
 
-| File                | Holds                                                                                       |
-| ------------------- | ------------------------------------------------------------------------------------------- |
+| File                | Holds                                                                                                                   |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | `lines.json`        | `asOf` date, categories, manufacturers (`name`, `url`, `cats`, `aka`, `logo`), branches (`st`, `city`, `addr`, `phone`) |
-| `terms.json`        | Product terms: a `label`, the other ways people type it (`syn`), and the `lines` that make it |
-| `alternatives.json` | Brands not carried: what a rep might type (`match`), lines to `offer` instead, optional `note` |
+| `terms.json`        | Product terms: a `label`, the other ways people type it (`syn`), and the `lines` that make it                           |
+| `alternatives.json` | Brands not carried: what a rep might type (`match`), lines to `offer` instead, optional `note`                          |
 
 **Adding a manufacturer:** add it to `lines.json` with at least one category and a logo, update `asOf`,
 run `npm run validate-data`, and check it in the app. If it was listed in `alternatives.json` as a brand

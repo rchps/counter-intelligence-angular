@@ -49,6 +49,8 @@ function shoot(name: string): void {
       const rect = img.getBoundingClientRect();
       if (rect.height && rect.bottom > 0 && rect.top < win.innerHeight) {
         expect(img.complete && img.naturalWidth > 0, img.src).to.equal(true);
+        // A logo's balanced height is set by its load handler, so a moment after it loads.
+        if (img.closest('app-line-card-item')) expect(img.style.height, img.src).not.to.equal('');
       }
     }
   });
