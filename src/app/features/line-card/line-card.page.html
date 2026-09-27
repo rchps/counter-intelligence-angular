@@ -19,7 +19,7 @@
           type="button"
           data-cy="view-category"
           [attr.aria-pressed]="view() === 'cat'"
-          (click)="view.set('cat')"
+          (click)="setView('cat')"
         >
           <span class="by">By </span>category
         </button>
@@ -27,7 +27,7 @@
           type="button"
           data-cy="view-az"
           [attr.aria-pressed]="view() === 'az'"
-          (click)="view.set('az')"
+          (click)="setView('az')"
         >
           A–Z
         </button>
@@ -38,7 +38,8 @@
       groupLabel="Filter by category"
       [total]="matching().length"
       [chips]="chips()"
-      [(selected)]="filter"
+      [selected]="filter()"
+      (selectedChange)="setFilter($event)"
     />
 
     <app-search-status
@@ -67,6 +68,21 @@
 </div>
 
 <div class="wrap results" id="results" data-cy="results">
+  @if (recentLines().length) {
+    <app-recent-lines [lines]="recentLines()" />
+  }
+  @if (pinnedLines().length) {
+    <app-category-group
+      anchorId="pinned"
+      heading="Pinned"
+      data-cy="pinned-lines"
+      [countLabel]="'' + pinnedLines().length"
+      [lines]="pinnedLines()"
+      [logoBase]="data.logoBase()"
+      [categoryLabels]="data.categories()"
+      [showsCategories]="true"
+    />
+  }
   @if (alternatives().length) {
     <app-alternatives-box [brands]="alternatives()" (pick)="pickAlternative($event)" />
   }

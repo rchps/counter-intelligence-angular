@@ -4,6 +4,8 @@ export const STORAGE_KEYS = {
   aiHintSeen: 'counter-intelligence:ai-hint-seen',
   sales: 'counter-intelligence:sales:v1',
   tool: 'counter-intelligence:tool',
+  pinnedLines: 'counter-intelligence:pinned-lines:v1',
+  recentLines: 'counter-intelligence:recent-lines:v1',
 } as const;
 
 // The names the same keys had before the rename. A browser keeps what it saved under the old name

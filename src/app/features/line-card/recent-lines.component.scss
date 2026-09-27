@@ -1,0 +1,30 @@
+// The links reuse the global .chip look, so they read as the same family as the filter chips.
+:host {
+  display: block;
+  margin: 0 0 28px;
+}
+
+.recent {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+h2 {
+  margin: 0;
+  font: 500 12px/1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+a.chip {
+  text-decoration: none;
+}
