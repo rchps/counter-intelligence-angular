@@ -10,6 +10,8 @@ describe('App shell', () => {
 
     cy.getBySel('nav-lines').click();
     cy.location('pathname').should('eq', '/lines');
+    // A new page moves focus to its content, so keyboard and screen-reader users hear it changed.
+    cy.focused().should('have.attr', 'data-cy', 'main-content');
     cy.getBySel('nav-lines').should('have.attr', 'aria-current', 'page');
     cy.getBySel('nav-branches').should('not.have.attr', 'aria-current');
   });

@@ -1,7 +1,7 @@
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Component, ElementRef, inject, viewChild } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { filter, skip } from 'rxjs';
+import { distinctUntilChanged, filter, map, skip } from 'rxjs';
 import { FeedbackService } from './core/feedback.service';
 import { FeedbackDialogComponent } from './features/feedback/feedback-dialog.component';
 import { FeedbackCardComponent } from './layout/feedback-card.component';
@@ -27,11 +27,15 @@ export class App {
 
   // Angular's a11y guidance: move focus to the main content on navigation, so keyboard/screen-reader
   // users get feedback that the page changed instead of focus silently staying on a removed nav link.
-  // Skip the very first NavigationEnd (initial load) — there's nothing to return focus to yet.
+  // Only a new page counts: the Line Card also navigates to keep ?q= and its filters in the address
+  // bar, and moving focus then would pull it out of the search box after every keystroke. The first
+  // page (initial load) is skipped too — there's nothing to return focus to yet.
   constructor() {
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationEnd),
+        map((event) => event.urlAfterRedirects.split(/[?#]/)[0]),
+        distinctUntilChanged(),
         skip(1),
         takeUntilDestroyed(),
       )
