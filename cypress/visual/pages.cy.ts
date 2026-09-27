@@ -43,9 +43,10 @@ function openSalesTrackerOnSep10(theme: Theme, width: number, height: number): v
 /** Takes the screenshot once nothing is still changing: the data loaded, no text cursor blinking in a
  *  focused field, and every image on screen finished loading. */
 function snapshot(name: string, capture: 'viewport' | 'fullPage'): void {
-  // The feedback card appears once the data file (which has the address feedback goes to) has loaded, and
-  // adds to the page's height, so a page isn't finished until it's there.
-  cy.getBySel('feedback-card-report').should('exist');
+  // Every page's footer says how current the line list is, from the data file, and that line adds to the
+  // page's height, so a page isn't finished until it's there. (Not the feedback card: its address is built
+  // in, so it shows before the data arrives.)
+  cy.getBySel('footer-source').should('exist');
   cy.document().then((doc) => (doc.activeElement as HTMLElement | null)?.blur());
   cy.window().should((win) => {
     for (const img of Array.from(win.document.images)) {
