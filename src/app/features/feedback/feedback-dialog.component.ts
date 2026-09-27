@@ -15,35 +15,42 @@ import { DataService } from '../../core/data.service';
 import {
   countText,
   HOW_OFTEN,
-  ideaEmail,
-  mailtoHref,
+  ideaReport,
   MODE_COPY,
   NO_KIND_HINT,
   PROBLEM_KINDS,
-  problemEmail,
   problemKind,
+  problemReport,
+  SEND_COPY,
   TEXT_LIMIT,
   type FeedbackMode,
   type ProblemKindKey,
 } from '../../core/feedback';
+import { FeedbackSender } from '../../core/feedback-sender.service';
 import { FeedbackService, type FeedbackRequest } from '../../core/feedback.service';
 import { inputValue } from '../../shared/input-value';
+import { TurnstileComponent } from './turnstile.component';
+
+type SendStatus = 'idle' | 'sending' | 'sent';
 
 // One native <dialog> with two modes. "Something's wrong" asks what first (closed choices, then optional
 // manufacturer and note); "I have an idea" asks what you were trying to do first, since the task behind
-// a request is the stronger signal (NN/g). Either way the primary action is a mailto: link.
+// a request is the stronger signal (NN/g). Either way Send posts the report, which the site's Worker
+// files as a GitHub issue once the Turnstile check has passed.
 @Component({
   selector: 'app-feedback-dialog',
-  imports: [NgTemplateOutlet],
+  imports: [NgTemplateOutlet, TurnstileComponent],
   templateUrl: './feedback-dialog.component.html',
   styleUrl: './feedback-dialog.component.scss',
 })
 export class FeedbackDialogComponent {
   protected readonly inputValue = inputValue;
   private readonly feedback = inject(FeedbackService);
+  private readonly sender = inject(FeedbackSender);
   private readonly data = inject(DataService);
   private readonly injector = inject(Injector);
   private readonly dialog = viewChild.required<ElementRef<HTMLDialogElement>>('dialog');
+  private readonly turnstile = viewChild(TurnstileComponent);
 
   protected readonly kinds = PROBLEM_KINDS;
   protected readonly howOften = HOW_OFTEN;
@@ -58,6 +65,10 @@ export class FeedbackDialogComponent {
   protected readonly wish = signal('');
   protected readonly often = signal<string | null>(null);
   protected readonly done = signal('');
+  protected readonly status = signal<SendStatus>('idle');
+  /** The bot check is drawn only while the dialog is open, so its script loads only when needed. */
+  protected readonly open = signal(false);
+  protected readonly siteKey = this.feedback.siteKey;
 
   private opener: HTMLElement | null = null;
 
@@ -67,14 +78,14 @@ export class FeedbackDialogComponent {
   protected readonly lineNames = computed(() => this.data.lines().map((line) => line.name));
   protected readonly pageText = computed(() => this.feedback.pageLines().join('\n'));
 
-  private readonly email = computed(() => {
+  private readonly report = computed(() => {
     const pageLines = this.feedback.pageLines();
     if (this.mode() === 'idea') {
-      return ideaEmail({ task: this.task(), wish: this.wish(), often: this.often(), pageLines });
+      return ideaReport({ task: this.task(), wish: this.wish(), often: this.often(), pageLines });
     }
     const kind = this.kindInfo();
     return kind
-      ? problemEmail({
+      ? problemReport({
           kind,
           line: this.line(),
           details: this.details(),
@@ -84,22 +95,24 @@ export class FeedbackDialogComponent {
       : null;
   });
 
-  protected readonly ready = computed(() => this.email() !== null);
-  protected readonly href = computed(() => {
-    const email = this.email();
-    return email ? mailtoHref(this.feedback.reportEmail(), email) : '#';
-  });
+  protected readonly ready = computed(() => this.report() !== null && this.status() === 'idle');
+  protected readonly sendLabel = computed(() =>
+    this.status() === 'sending' ? 'Sending…' : this.status() === 'sent' ? 'Sent' : 'Send',
+  );
 
   constructor() {
     effect(() => {
       const request = this.feedback.request();
       if (request) untracked(() => this.openFor(request));
     });
-    // Any change that makes the email sendable clears a stale "pick what's wrong first" nudge or thanks,
-    // so the message never describes an older version of the report.
+    // Any change to the report clears a stale nudge or thanks and allows sending again, so the message
+    // never describes an older version of the report.
     effect(() => {
-      this.email();
-      untracked(() => this.done.set(''));
+      this.report();
+      untracked(() => {
+        this.done.set('');
+        this.status.set('idle');
+      });
     });
   }
 
@@ -115,6 +128,8 @@ export class FeedbackDialogComponent {
     this.wish.set('');
     this.often.set(null);
     this.done.set('');
+    this.status.set('idle');
+    this.open.set(true);
     this.opener = request.opener ?? (document.activeElement as HTMLElement | null);
 
     // The panes render from the mode signal, so show and focus once this change has rendered.
@@ -140,6 +155,7 @@ export class FeedbackDialogComponent {
 
   // Fires for every way the dialog closes: Esc, the × and Close buttons, a backdrop click.
   protected onClose(): void {
+    this.open.set(false);
     this.feedback.closed();
     this.opener?.focus();
     this.opener = null;
@@ -149,21 +165,38 @@ export class FeedbackDialogComponent {
     if (event.target === this.dialog().nativeElement) this.close(); // the backdrop
   }
 
-  protected onSend(event: MouseEvent): void {
-    if (this.ready()) {
-      // The link's href is the email; the browser hands it to the email app. Say what happens next.
-      this.done.set(this.copy().thanks);
+  protected async onSend(): Promise<void> {
+    if (this.status() !== 'idle') return; // already on its way, or sent and unchanged since
+    const report = this.report();
+    if (!report) {
+      // aria-disabled, not disabled: people can still press it, so tell them what's missing.
+      this.done.set(this.copy().nudge);
+      this.dialog()
+        .nativeElement.querySelector<HTMLElement>(
+          this.mode() === 'idea' ? '#idea-task' : 'input[name="report-kind"]',
+        )
+        ?.focus();
       return;
     }
-    // aria-disabled, not disabled: people can still press it, so tell them what's missing.
-    event.preventDefault();
-    this.done.set(this.copy().nudge);
-    const dialog = this.dialog().nativeElement;
-    dialog
-      .querySelector<HTMLElement>(
-        this.mode() === 'idea' ? '#idea-task' : 'input[name="report-kind"]',
-      )
-      ?.focus();
+    const turnstile = this.turnstile();
+    const turnstileToken = turnstile?.token();
+    if (!turnstileToken) {
+      this.done.set(turnstile?.failed() ? SEND_COPY.blocked : SEND_COPY.checking);
+      return;
+    }
+
+    this.status.set('sending');
+    this.done.set(SEND_COPY.sending);
+    try {
+      await this.sender.send({ kind: this.mode(), ...report, turnstileToken });
+      this.status.set('sent');
+      this.done.set(this.copy().thanks);
+    } catch {
+      this.status.set('idle');
+      this.done.set(SEND_COPY.failed);
+    } finally {
+      turnstile?.reset(); // each token passes once
+    }
   }
 
   protected setMode(mode: FeedbackMode): void {

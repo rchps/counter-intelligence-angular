@@ -1,14 +1,24 @@
-// How Cloudflare serves the site: a Worker with only static assets (no script of its own), deployed by
-// `wrangler deploy` in CI (.github/workflows/ci.yml). Who can see it is set in the Cloudflare dashboard
-// (the Worker's Access tab), not here.
+// How Cloudflare serves the site: a Worker with static assets, deployed by `wrangler deploy` in CI
+// (.github/workflows/ci.yml). Its one script (worker/index.ts) runs only for /api/*, where the feedback
+// dialog posts; every other path is a file from the build. Who can see it is set in the Cloudflare
+// dashboard (the Worker's Access tab), not here.
 // developers.cloudflare.com/workers/static-assets/routing/single-page-application/
+// developers.cloudflare.com/workers/static-assets/binding/
 {
   "name": "counter-intelligence",
   "compatibility_date": "2026-09-26",
+  "main": "worker/index.ts",
   "assets": {
     "directory": "./dist/counter-intelligence-angular/browser",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"],
     // Any path that isn't a file gets index.html, so Angular's router can handle /branches, /tools, etc.
     "not_found_handling": "single-page-application",
+  },
+  // Where feedback is filed. The GitHub token and the Turnstile secret are Worker secrets, not listed
+  // here (docs/ci-cd.md).
+  "vars": {
+    "GITHUB_REPO": "rchps/counter-intelligence-angular",
   },
   // Serve main on the workers.dev address, and each branch CI uploads on a preview URL of its own
   // (<branch>-counter-intelligence.<subdomain>.workers.dev). Access covers both: the Worker is protected

@@ -126,14 +126,16 @@ describe('Sales Tracker', () => {
   it('never puts sales numbers in a problem report', () => {
     visitTrackerOnSep10();
     enterTheFirstWeekAndAHalf();
+    cy.intercept('POST', '/api/feedback', { statusCode: 201 }).as('feedback');
     cy.getBySel('topbar-feedback').click();
     cy.getBySel('feedback-kind-other').check();
-    cy.getBySel('feedback-send')
-      .invoke('attr', 'href')
-      .then((href = '') => {
-        const email = decodeURIComponent(href);
-        expect(email).not.to.contain('3000');
-        expect(email).not.to.contain('44,000');
+    cy.getBySel('feedback-send').click();
+    cy.wait('@feedback')
+      .its('request.body')
+      .then((submission) => {
+        const sent = JSON.stringify(submission);
+        expect(sent).not.to.contain('3000');
+        expect(sent).not.to.contain('44,000');
       });
   });
 

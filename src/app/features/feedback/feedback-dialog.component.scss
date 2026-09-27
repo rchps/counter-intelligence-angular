@@ -93,3 +93,8 @@
   white-space: pre-wrap;
   word-break: break-word;
 }
+
+// The bot check takes no room unless Cloudflare asks the person to click.
+app-turnstile {
+  display: block;
+}

@@ -82,9 +82,12 @@ cypress/           e2e/ (behavior), visual/ (screenshots), fixtures/, support/
 
 ## Privacy and deployment
 
-- **No server code.** The site is static files served by a Cloudflare Worker, behind Cloudflare Access.
-  Every branch other than `main` gets its own preview URL behind the same login.
-- **Build-time configuration.** The feedback address and the name used in map searches are passed in
+- **One small piece of server code.** The site is static files served by a Cloudflare Worker, behind
+  Cloudflare Access. Every branch other than `main` gets its own preview URL behind the same login. The
+  Worker's only script (`worker/`) takes feedback: it checks a Turnstile token and files the report as a
+  GitHub issue under the site's own account, so the GitHub token never reaches the browser and the sender
+  stays anonymous.
+- **Build-time configuration.** The Turnstile site key and the name used in map searches are passed in
   with `ng build --define`, along with a build stamp (date and commit) shown in the footer, so any
   screenshot or report can be traced to the exact commit.
 - **Feature switches** in `features.ts` remove an optional feature everywhere at once.

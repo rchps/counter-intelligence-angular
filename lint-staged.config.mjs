@@ -3,7 +3,7 @@
 // (tests, build, e2e) run before a push instead (.husky/pre-push), since they take minutes.
 export default {
   // The same files `npm run format` and `npm run lint` cover.
-  '{src,cypress}/**/*.{ts,html}': ['prettier --write', 'eslint --fix --max-warnings=0'],
+  '{src,cypress,worker}/**/*.{ts,html}': ['prettier --write', 'eslint --fix --max-warnings=0'],
   'scripts/**/*.mts': ['prettier --write', 'eslint --fix --max-warnings=0'],
   'cypress*.config.ts': ['prettier --write', 'eslint --fix --max-warnings=0'],
   'src/**/*.scss': 'prettier --write',

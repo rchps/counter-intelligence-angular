@@ -3,9 +3,10 @@
 # Cloudflare Access decides who can see it. Any other branch gets a preview of its own, behind the same
 # login. Screenshot comparisons have a workflow of their own (screenshots.yml).
 #
-# Cloudflare serves the site as a Worker with static assets only (wrangler.jsonc), so deploying uploads the
-# build and nothing runs on the server. The build carries the report address, so it's never uploaded as a
-# GitHub artifact: on a public repo, anyone can download those.
+# Cloudflare serves the site as a Worker with static assets (wrangler.jsonc). Its one script,
+# worker/index.ts, files feedback as GitHub issues; its secrets are set in Cloudflare, never here
+# (docs/ci-cd.md). The build carries the maps name, so it's never uploaded as a GitHub artifact: on a
+# public repo, anyone can download those.
 name: CI
 
 on:
@@ -43,6 +44,8 @@ jobs:
       - run: npm run format:check
       - run: npm test -- --watch=false
       - run: npm run test:scripts
+      - run: npm run test:worker
+      - run: npm run typecheck:worker
       - run: npm run validate-data
       - run: npm run build
 
@@ -105,7 +108,7 @@ jobs:
       - run: npm ci
       - name: Build
         env:
-          REPORT_EMAIL: ${{ secrets.REPORT_EMAIL }}
+          TURNSTILE_SITE_KEY: ${{ vars.TURNSTILE_SITE_KEY }}
           MAPS_NAME: ${{ secrets.MAPS_NAME }}
         run: npm run build
       # Uploads a version without deploying it: main's site doesn't change.
@@ -140,15 +143,15 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      # Without the secret the build still succeeds, just with the feedback button hidden, so stop here
+      # Without the site key the build still succeeds, just with the feedback button hidden, so stop here
       # instead of shipping that by accident.
       - name: Build
         env:
-          REPORT_EMAIL: ${{ secrets.REPORT_EMAIL }}
+          TURNSTILE_SITE_KEY: ${{ vars.TURNSTILE_SITE_KEY }}
           MAPS_NAME: ${{ secrets.MAPS_NAME }}
         run: |
-          if [ -z "$REPORT_EMAIL" ]; then
-            echo "::error::The REPORT_EMAIL secret isn't set (repo Settings > Secrets and variables > Actions)."
+          if [ -z "$TURNSTILE_SITE_KEY" ]; then
+            echo "::error::The TURNSTILE_SITE_KEY variable isn't set (repo Settings > Secrets and variables > Actions > Variables)."
             exit 1
           fi
           npm run build

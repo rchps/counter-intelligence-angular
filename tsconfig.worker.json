@@ -1,0 +1,12 @@
+/* The Cloudflare Worker (worker/), which runs on Cloudflare rather than in the browser or Node. Wrangler
+   bundles it without type-checking, so `npm run typecheck:worker` does that. The WebWorker lib has the
+   fetch/Request/Response globals the Workers runtime provides. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "WebWorker"],
+    "types": [],
+    "noEmit": true
+  },
+  "include": ["worker/**/*.ts"]
+}
