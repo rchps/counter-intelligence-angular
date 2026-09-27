@@ -19,13 +19,8 @@ calculator, on a desktop or a phone.
 
 - [Highlights](#highlights)
 - [Features](#features)
-- [Architecture and design decisions](#architecture-and-design-decisions)
-- [Developer guide](#developer-guide)
-  - [Getting started](#getting-started)
-  - [Scripts](#scripts)
-  - [Testing](#testing)
-  - [Git hooks and CI/CD](#git-hooks-and-cicd)
-  - [Keeping the data current](#keeping-the-data-current)
+- [Quick start](#quick-start)
+- [Documentation](#documentation)
 - [Credits](#credits)
 - [License](#license)
 
@@ -40,7 +35,7 @@ calculator, on a desktop or a phone.
   Chapter 9 for voltage drop, IEEE 802.3af/at/bt for PoE budgets.
 - **No backend.** Static JSON data, a static site, and build-time configuration. Feedback goes out
   through the rep's own email app.
-- **Tested at three levels,** and every push is compared pixel by pixel against `main` in light and dark
+- **Tested at three levels,** and every pull request is compared pixel by pixel against `main` in light and dark
   mode, on desktop and phone.
 - **Accessible by default:** WCAG AA as the target, native dialogs, ARIA patterns where HTML falls
   short, full keyboard use, and motion that respects reduced-motion settings.
@@ -115,218 +110,24 @@ lists that state's branches.
 
 ![The battery standby calculator in dark mode](docs/screenshots/tools-battery-dark.png)
 
-## Architecture and design decisions
+## Quick start
 
-### Layout
-
-```
-src/app/
-  core/            Pure logic and singleton services: search, the tools' math, storage, theme,
-    search/        feedback, AI copy. Everything that can be a plain function is one.
-  features/        One folder per page or feature: line-card, branches, tools, feedback,
-                   ai-copy, alternatives
-  layout/          The top bar, footer and feedback card around every page
-  shared/          Components used by more than one page (search toolbar, filter chips, status line)
-  app.routes.ts    One lazy-loaded route per section
-  features.ts      On/off switches for optional features
-public/
-  data/            lines.json, terms.json, alternatives.json: all of the app's content
-  logos/           One image per manufacturer
-scripts/           validate-data.mts: checks the data files before they ship
-cypress/           e2e/ (behavior), visual/ (screenshots), fixtures/, support/
-```
-
-### From data to screen
-
-1. **Static JSON, fetched with signals.** `DataService` loads the three data files with Angular's
-   `httpResource`, and exposes them as `computed()` signals already prepared for search. It's a thin
-   layer: the preparation itself lives in `core/search` as pure functions.
-2. **Each page is a pipeline of `computed()` signals:** typed search → corrected words → matches →
-   category filter → groups or ranked list. Each step re-runs only when something it reads changes, and
-   the search is debounced (60 ms) so a burst of keystrokes doesn't re-run the whole pipeline.
-3. **Zoneless, and `OnPush` everywhere** (Angular 22's defaults). There's no zone.js: views update because
-   a signal they read changed, not because some event fired somewhere.
-
-### Search
-
-- `normalize()` puts what people type and what the data says into one form: lower-case, accents removed,
-  "&" as "and", punctuation collapsed. "SECO-LARM / Enforcer" becomes "seco larm enforcer".
-- **Typo correction** uses an edit distance that counts two swapped neighboring letters as one mistake,
-  and stops early once a word is clearly too far off. Short words must match exactly (so "ups" and "poe"
-  are never "corrected"); longer words allow one or two edits. Ties go to the word more entries use.
-- The vocabulary includes brands that _aren't_ carried, so a misspelled one still reaches its
-  "Not a line we carry" box.
-- Search modules take everything as parameters and never touch Angular, which keeps them fast to test and
-  easy to reason about.
-
-### State and persistence
-
-- Signals for all state. Services are singletons (`@Service()`), injected with `inject()`.
-- One `StorageService` wraps `localStorage`: private windows and blocked storage never break a page;
-  features keep working for the visit and just aren't remembered.
-- Every storage key is named in one file. Keys that hold JSON carry a version (`:v1`), and renamed keys are
-  migrated automatically, so a rename never loses someone's saved sales figures or pins.
-- The page's search and filter live in the URL and are written back with `Location.replaceState`
-  rather than a router navigation, which keeps Back meaningful and doesn't interrupt animations.
-
-### Styling
-
-- **Design tokens** (colors, radii, shadows, fonts) are CSS custom properties defined once, then
-  redefined for dark mode. The dark theme applies from the system setting in plain CSS, so there's no
-  flash of the wrong theme; an explicit choice overrides it with a `data-theme` attribute.
-- **Category colors** come from the Radix Colors scales, and color is never the only signal: the category
-  name is always there too (WCAG 1.4.1).
-- **Global vs. component styles** is a deliberate split: component styles are scoped by Angular's view
-  encapsulation, so only rules that genuinely span components (dialogs, chips, the tools' shared card) or
-  that style content projected into a component live in `styles.scss`.
-- **Logos get equal visual weight, not equal boxes.** A wide wordmark and a square badge fitted to the
-  same box look wildly different in size, so each logo is scaled to about the same _area_: for a
-  width-to-height ratio _r_, a height of _k_/√*r*. Never larger than the image itself, so small files
-  don't blur.
-
-### Motion
-
-- Route changes use Angular's `withViewTransitions()`, and skip the animation for navigations that stay
-  on the same page, and for anyone with reduced motion turned on.
-- Filter changes, view changes and pinning use `document.startViewTransition` directly, with each card
-  named `match-element` only for the length of that one change. The browser runs one view transition at
-  a time, which is why the URL is updated without a router navigation: that would start a second
-  transition and cut the cards' short. An end-to-end test guards exactly this.
-
-### Privacy and deployment
-
-- **No server code.** The site is static files served by a Cloudflare Worker, behind Cloudflare Access.
-  Every branch other than `main` gets its own preview URL behind the same login.
-- **Build-time configuration.** The feedback address and the name used in map searches are passed in
-  with `ng build --define`, along with a build stamp (date and commit) shown in the footer, so any
-  screenshot or report can be traced to the exact commit.
-- **Feature switches** in `features.ts` remove an optional feature everywhere at once.
-
-### Accessibility
-
-- WCAG AA as the target: contrast, focus management, and ARIA attributes.
-- Native `<dialog>` with `showModal()`, so Esc and focus trapping come from the browser.
-- Real links for navigation (`aria-current="page"`), `aria-pressed` toggle buttons for chips and pins,
-  and the WAI-ARIA switch pattern for the theme toggle.
-- A skip link, a visible focus ring on every control, and animations that switch off under
-  `prefers-reduced-motion`.
-
-## Developer guide
-
-### Getting started
-
-Requires **Node 24** (pinned in `.nvmrc`). With [nvm](https://github.com/nvm-sh/nvm):
+Requires **Node 24** (pinned in `.nvmrc`):
 
 ```bash
-nvm install        # reads .nvmrc
-npm ci
+nvm install && npm ci
 npm start          # http://localhost:4200
 ```
 
-`npm ci` also installs the Git hooks (Husky) and downloads the Cypress test runner.
+More in [Development](docs/development.md).
 
-#### Build-time settings
+## Documentation
 
-`npm run build` reads two optional environment variables:
-
-| Variable       | What it does                                                                   |
-| -------------- | ------------------------------------------------------------------------------ |
-| `REPORT_EMAIL` | Where feedback emails go. Without it, the feedback button and card are hidden. |
-| `MAPS_NAME`    | Text put in front of a branch's address in its Google Maps search.             |
-
-### Scripts
-
-| Script                                   | What it does                                                          |
-| ---------------------------------------- | --------------------------------------------------------------------- |
-| `npm start`                              | Dev server with live reload                                           |
-| `npm run build`                          | Production build, stamped with the date and commit                    |
-| `npm test`                               | Unit tests (Vitest) in watch mode; add `-- --watch=false` to run once |
-| `npm run test:scripts`                   | Tests for the data validator                                          |
-| `npm run e2e` / `npm run e2e:open`       | End-to-end tests, headless or in the Cypress app                      |
-| `npm run visual:base` / `npm run visual` | Record screenshot baselines / compare against them                    |
-| `npm run readme:screenshots`             | Retake this README's screenshots into `docs/screenshots/`             |
-| `npm run validate-data`                  | Check the data files                                                  |
-| `npm run lint` / `npm run format`        | ESLint / Prettier (`format:check` to check without writing)           |
-
-### Testing
-
-The project splits its tests by what they can prove:
-
-| Level             | Tool               | Covers                                                               |
-| ----------------- | ------------------ | -------------------------------------------------------------------- |
-| Unit              | Vitest (`ng test`) | Pure functions and services that don't render: search, math, storage |
-| End-to-end        | Cypress            | Everything a person does: typing, filtering, dialogs, navigation     |
-| Visual regression | Cypress + reg-cli  | How every page and state looks, pixel by pixel                       |
-
-**Unit tests** sit next to the code they test (`*.spec.ts`). Components are tested in Cypress instead of
-with rendering unit tests, where a real browser shows what a person would see.
-
-**End-to-end tests** run against `ng serve`. The Line Card and Branches specs compare every search they
-run with `cypress/fixtures/search-baseline.json`, a recording of what each search should show: status
-line, cards, chips, suggestions and highlights. When a search's results change on purpose, update that
-recording in the same commit.
-
-**Visual regression** screenshots every page state in light and dark, at desktop and phone sizes, and
-[reg-cli](https://github.com/reg-viz/reg-cli) compares them with a baseline:
-
-```bash
-npm run visual:base   # record screenshots of the current code as the baseline
-# ...make a change...
-npm run visual        # screenshot again and compare
-```
-
-Open `cypress/snapshots/report.html` to see what changed: before, after, and a diff for each changed
-page, plus any page states that are new or gone. Snapshots replace every logo with one stand-in image (so
-a new logo isn't a "style change"), switch off animations, and wait until every image has loaded, been
-sized, and been drawn. They're taken in Chromium.
-
-On a pull request, the _Screenshot review_ check does the same against the `main` commit the branch
-started from. If any page looks different, the check fails and a comment on the PR lists the pages; the
-run's **screenshot-report** artifact holds the report. Once you've looked and the changes are intended,
-add the **visual-ok** label and the check passes. Pushing again removes the label, since the new commits
-may change more.
-
-**README screenshots** are taken the same way by `npm run readme:screenshots`
-(`cypress/readme/screenshots.cy.ts`), with each logo swapped for a redaction-bar placeholder. Retake them
-after a visible change so the README stays true to the app.
-
-### Git hooks and CI/CD
-
-- **pre-commit** (lint-staged): formats and lints just the staged files, and validates the data files
-  when one of them changes.
-- **pre-push**: the quick whole-project checks: lint, format, unit tests, data validation, build.
-- **GitHub Actions** (`.github/workflows/ci.yml`) on every push:
-  - _Checks_: lint, format, unit and script tests, data validation, build.
-  - _End-to-end tests_, with failure screenshots uploaded as an artifact.
-  - _Deploy_: `main` deploys to Cloudflare once checks and end-to-end tests pass; other branches get a
-    preview.
-- **GitHub Actions**, screenshots: each push to `main` records its screenshots as the next baseline
-  (`screenshots-main.yml`), and each pull request gets the _Screenshot review_ check described above
-  (`screenshots.yml`).
-
-### Keeping the data current
-
-All content is in `public/data/`, and `npm run validate-data` checks it (the pre-commit hook and CI run
-it too): required fields, duplicates, unknown fields (usually a typo), and every name that has to match a
-manufacturer exactly.
-
-| File                | Holds                                                                                                                   |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `lines.json`        | `asOf` date, categories, manufacturers (`name`, `url`, `cats`, `aka`, `logo`), branches (`st`, `city`, `addr`, `phone`) |
-| `terms.json`        | Product terms: a `label`, the other ways people type it (`syn`), and the `lines` that make it                           |
-| `alternatives.json` | Brands not carried: what a rep might type (`match`), lines to `offer` instead, optional `note`                          |
-
-**Adding a manufacturer:** add it to `lines.json` with at least one category and a logo, update `asOf`,
-run `npm run validate-data`, and check it in the app. If it was listed in `alternatives.json` as a brand
-not carried, that entry is skipped automatically once the line exists.
-
-**Adding a logo:** put the image in `public/logos/` and reference its file name in the line's `logo`
-field. Trim the empty border around the artwork first; the app sizes each logo by the area of its
-artwork, and padding in the file makes a logo look smaller than it should:
-
-```bash
-magick mogrify -fuzz 8% -trim +repage public/logos/new-logo.png   # ImageMagick
-```
+- [Architecture and design decisions](docs/architecture.md): how the app is put together, and why
+- [Development](docs/development.md): setup, build-time settings, npm scripts
+- [Testing](docs/testing.md): unit, end-to-end and visual regression tests, and the screenshot review on PRs
+- [Git hooks and CI/CD](docs/ci-cd.md): what runs on commit, on push, and in GitHub Actions
+- [Keeping the data current](docs/data.md): the data files, adding a manufacturer or a logo
 
 ## Credits
 
