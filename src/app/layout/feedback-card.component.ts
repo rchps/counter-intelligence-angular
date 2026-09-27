@@ -32,7 +32,7 @@ import { FeedbackService } from '../core/feedback.service';
         <div class="feedback-actions">
           <button
             type="button"
-            class="feedback-btn secondary"
+            class="feedback-btn idea"
             data-cy="feedback-card-idea"
             (click)="feedback.open({ kind: 'idea' }, $event.currentTarget)"
           >
@@ -59,6 +59,18 @@ import { FeedbackService } from '../core/feedback.service';
             data-cy="feedback-card-report"
             (click)="feedback.open({}, $event.currentTarget)"
           >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M5 21V4" />
+              <path d="M5 4h11l-2 4 2 4H5" />
+            </svg>
             Report a problem
           </button>
         </div>

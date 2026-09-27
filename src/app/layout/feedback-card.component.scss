@@ -49,8 +49,14 @@
   gap: 8px;
   flex: 0 0 auto;
 }
+// Each button pairs its words with an icon: a lightbulb for an idea, a flag for a problem. The flag stays
+// the text color so a report doesn't look like an alarm.
 .feedback-btn {
+  display: inline-flex;
   flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   min-height: 42px;
   padding: 0 16px;
   border: 1px solid var(--line-strong);
@@ -67,15 +73,13 @@
   outline: 3px solid var(--focus);
   outline-offset: 2px;
 }
-.feedback-btn.secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-.feedback-btn.secondary svg {
+.feedback-btn svg {
+  flex: 0 0 auto;
   width: 16px;
   height: 16px;
+  color: var(--ink-2);
+}
+.feedback-btn.idea svg {
   color: var(--amber-ink);
 }
 @media (max-width: 640px) {
