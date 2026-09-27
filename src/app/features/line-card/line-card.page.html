@@ -1,6 +1,6 @@
 <section class="hero">
   <div class="wrap">
-    <p class="eyebrow">Security Data Supply · Line Card</p>
+    <p class="eyebrow">Counter Intelligence · Line Card</p>
     <h1>Every line we carry. <span class="dim">Searchable, linked, and current.</span></h1>
     <p class="sub">{{ subText() }}</p>
   </div>
@@ -71,7 +71,7 @@
     <app-alternatives-box [brands]="alternatives()" (pick)="pickAlternative($event)" />
   }
   @if (shown().length === 0) {
-    <!-- A "Not an SDS line" box already explains an empty search, so it replaces the empty state. -->
+    <!-- A "Not a line we carry" box already explains an empty search, so it replaces the empty state. -->
     @if (!alternatives().length) {
       <app-line-card-empty-state
         [search]="debounced()"

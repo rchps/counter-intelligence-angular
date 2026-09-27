@@ -41,7 +41,7 @@ describe('brandsForSearch', () => {
     expect(brandsFor('dmp panel')).toEqual([]);
   });
 
-  it('skips a brand once SDS carries it', () => {
+  it('skips a brand once we carry it', () => {
     expect(brandsFor('dmp', '', [...CARRIED, 'DMP'])).toEqual([]);
   });
 

@@ -1,9 +1,10 @@
 import { computed, inject, Service, signal } from '@angular/core';
+import { STORAGE_KEYS } from './storage-keys';
 import { StorageService } from './storage.service';
 
 export type Theme = 'light' | 'dark';
 
-const THEME_KEY = 'sds-theme';
+const THEME_KEY = STORAGE_KEYS.theme;
 
 // Follows the computer's setting until someone flips the switch, then
 // remembers the choice. The colors themselves already follow the system live through the plain CSS media

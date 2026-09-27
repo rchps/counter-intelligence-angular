@@ -1,9 +1,19 @@
 import { Service } from '@angular/core';
+import { migrateKeys, RENAMED_KEYS } from './storage-keys';
 
 // Safe localStorage wrapper: some browsers
 // block storage entirely (private windows, embedded previews), and this should never break the page.
 @Service()
 export class StorageService {
+  // Every read goes through here, so moving renamed keys first means nothing ever sees the old names.
+  constructor() {
+    try {
+      migrateKeys(localStorage, RENAMED_KEYS);
+    } catch {
+      // storage blocked: nothing saved to move
+    }
+  }
+
   get(key: string): string | null {
     try {
       return localStorage.getItem(key);

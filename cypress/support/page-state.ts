@@ -12,7 +12,7 @@ export interface LineCardState {
   status: string;
   /** "name|caption|link" for each card, in page order (a line appears once per group it's in). */
   cards: string[];
-  /** "Not an SDS line: ..." box headings. */
+  /** "Not a line we carry: ..." box headings. */
   alt: string[];
   /** "Label count", with * on the pressed chip. */
   chips: string[];

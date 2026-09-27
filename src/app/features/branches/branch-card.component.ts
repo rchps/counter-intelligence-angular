@@ -1,4 +1,5 @@
 import { Component, computed, input } from '@angular/core';
+import { MAPS_NAME_PREFIX } from '../../core/build-info';
 import type { Branch } from '../../core/search/match';
 import { highlightMatches } from '../../core/search/normalize';
 
@@ -35,6 +36,6 @@ export class BranchCardComponent {
   protected readonly mapLink = computed(
     () =>
       'https://www.google.com/maps/search/?api=1&query=' +
-      encodeURIComponent('Security Data Supply ' + this.branch().addr),
+      encodeURIComponent([MAPS_NAME_PREFIX, this.branch().addr].filter(Boolean).join(' ')),
   );
 }

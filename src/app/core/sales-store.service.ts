@@ -1,8 +1,9 @@
 import { inject, Service } from '@angular/core';
 import type { SalesStore } from './sales-math';
+import { STORAGE_KEYS } from './storage-keys';
 import { StorageService } from './storage.service';
 
-const STORAGE_KEY = 'sds-counter-reference:sales:v1';
+const STORAGE_KEY = STORAGE_KEYS.sales;
 
 // Reads and writes the whole SalesStore as one JSON blob,
 // falling back to an empty store (never throwing) if storage is blocked or holds something unreadable.

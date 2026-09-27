@@ -4,3 +4,4 @@
 declare const BUILD_ID: string;
 declare const BUILD_DATE: string;
 declare const REPORT_EMAIL: string;
+declare const MAPS_NAME: string;

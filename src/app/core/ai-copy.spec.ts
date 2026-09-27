@@ -45,7 +45,7 @@ describe('aiCopyText', () => {
     const text = copy();
     expect(text).toContain('Only suggest manufacturers from this list');
     expect(text).toContain(
-      'SDS line card, current as of September 25, 2026: 2 of 3 lines (category: Fire)',
+      'Line card, current as of September 25, 2026: 2 of 3 lines (category: Fire)',
     );
     const rows = text
       .split('\n')
@@ -62,7 +62,7 @@ describe('aiCopyText', () => {
 
   it('without instructions, the list comes first; "all" copies every line', () => {
     const text = copy({ scope: 'all', withInstructions: false });
-    expect(text.startsWith('SDS line card, current as of')).toBe(true);
+    expect(text.startsWith('Line card, current as of')).toBe(true);
     expect(text).toContain('all 3 lines');
     expect(text).not.toContain('My question:');
   });

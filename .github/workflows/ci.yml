@@ -248,6 +248,7 @@ jobs:
       - name: Build
         env:
           REPORT_EMAIL: ${{ secrets.REPORT_EMAIL }}
+          MAPS_NAME: ${{ secrets.MAPS_NAME }}
         run: npm run build
       # Uploads a version without deploying it: main's site doesn't change.
       - uses: cloudflare/wrangler-action@v4
@@ -286,6 +287,7 @@ jobs:
       - name: Build
         env:
           REPORT_EMAIL: ${{ secrets.REPORT_EMAIL }}
+          MAPS_NAME: ${{ secrets.MAPS_NAME }}
         run: |
           if [ -z "$REPORT_EMAIL" ]; then
             echo "::error::The REPORT_EMAIL secret isn't set (repo Settings > Secrets and variables > Actions)."
