@@ -14,7 +14,7 @@ function expectSearchesMatchBaseline(searches: string[]): void {
     cy.getBySel('search-status').should(($status) =>
       expect(squash($status.text()), `status for "${text}"`).to.equal(want.s),
     );
-    cy.document().then((doc) => expect(branchesState(doc), text).to.deep.equal(want));
+    cy.document().should((doc) => expect(branchesState(doc), text).to.deep.equal(want));
   }
 }
 
