@@ -194,6 +194,10 @@ jobs:
       && (needs.e2e.result == 'success' || needs.e2e.result == 'skipped') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    # Records each deploy as a GitHub deployment, listed with the previews and linking to the live site.
+    environment:
+      name: production
+      url: https://${{ env.WORKER_NAME }}.${{ env.WORKERS_SUBDOMAIN }}
     # One deploy at a time, and a queued one waits instead of cancelling the one in flight.
     concurrency:
       group: deploy-production

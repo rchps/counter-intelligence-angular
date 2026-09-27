@@ -9,7 +9,7 @@
   - _Checks_: lint, format, unit, script and Worker tests, a Worker type-check, data validation, build.
   - _End-to-end tests_, with failure screenshots uploaded as an artifact.
   - _Deploy_: `main` deploys to Cloudflare once checks and end-to-end tests pass; other branches get a
-    preview.
+    preview. GitHub lists both under Deployments, as the _production_ and _preview_ environments.
 - **GitHub Actions**, screenshots: each push to `main` records its screenshots as the next baseline
   (`screenshots-main.yml`), and each pull request gets the _Screenshot review_ check (see [Testing](testing.md#screenshot-review-on-pull-requests))
   (`screenshots.yml`).
