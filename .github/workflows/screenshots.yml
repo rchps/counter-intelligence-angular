@@ -26,8 +26,51 @@ env:
   SNAPSHOTS: cypress/snapshots
 
 jobs:
+  # Whether the PR changes anything the screenshots could show. A PR that doesn't (docs, the Worker, tests
+  # that aren't screenshots) skips the review, and a skipped job reports success, so the required check
+  # still passes (skipping the whole workflow would leave it pending). "Everything except...", so a new kind
+  # of file gets a review until it's listed here.
+  changes:
+    name: What changed
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      pull-requests: read # a PR's changed files come from the GitHub API, no checkout needed
+    outputs:
+      looks: ${{ steps.filter.outputs.looks }}
+    steps:
+      - uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          predicate-quantifier: some-with-excludes
+          filters: |
+            looks:
+              - '**'
+              - '!**/*.md'
+              - '!docs/**'
+              - '!LICENSE'
+              - '!.claude/**'
+              - '!.vscode/**'
+              - '!.mcp.json'
+              - '!.github/dependabot.yml'
+              - '!.github/workflows/{ci,dependabot-auto-merge}.yml'
+              - '!worker/**'
+              - '!wrangler.jsonc'
+              - '!scripts/**'
+              - '!src/**/*.spec.ts'
+              - '!tsconfig.{spec,scripts,worker}.json'
+              - '!eslint.config.js'
+              - '!.prettierrc'
+              - '!.husky/**'
+              - '!lint-staged.config.mjs'
+              - '!cypress/{e2e,readme}/**'
+              - '!cypress.{config,readme.config}.ts'
+
   review:
     name: Screenshot review
+    needs: [changes]
+    # !cancelled(): if "What changed" itself fails, review anyway. When in doubt, look.
+    if: ${{ !cancelled() && needs.changes.outputs.looks != 'false' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     permissions:

@@ -27,8 +27,65 @@ env:
   WORKERS_SUBDOMAIN: counter-intelligence-angular.workers.dev
 
 jobs:
+  # Which jobs this push needs, from the files it changes. On main, that's the files changed since the
+  # previous push; on any other branch, everything it changes compared with main, so a docs-only push to a
+  # branch that also changes code still runs every test. A job skipped this way reports success, which is
+  # what lets a required check pass on a docs-only PR (skipping the whole workflow would leave it pending).
+  # Each filter is "everything except...", so a new kind of file runs every test until it's listed here.
+  changes:
+    name: What changed
+    # Run by hand, everything runs: the outputs stay empty, and the jobs below treat that as "changed".
+    if: github.event_name == 'push'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+      app: ${{ steps.filter.outputs.app }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          predicate-quantifier: some-with-excludes
+          filters: |
+            # Nothing a check, test, or build reads.
+            not-code: &not-code
+              - '!**/*.md'
+              - '!docs/**'
+              - '!LICENSE'
+              - '!.claude/**'
+              - '!.vscode/**'
+              - '!.mcp.json'
+              - '!.github/dependabot.yml'
+              - '!.github/workflows/dependabot-auto-merge.yml'
+              - '!.github/workflows/screenshots*.yml'
+            # Anything else: lint, tests, the build, and a deploy.
+            code:
+              - '**'
+              - *not-code
+            # What the end-to-end tests run: the app, its data, and the Cypress specs. Not the Worker
+            # (the tests stand in for /api/feedback), the data scripts, unit tests, or lint and format
+            # settings, which the checks job covers.
+            app:
+              - '**'
+              - *not-code
+              - '!worker/**'
+              - '!wrangler.jsonc'
+              - '!scripts/**'
+              - '!src/**/*.spec.ts'
+              - '!tsconfig.{spec,scripts,worker}.json'
+              - '!eslint.config.js'
+              - '!.prettierrc'
+              - '!.husky/**'
+              - '!lint-staged.config.mjs'
+              - '!cypress/{visual,readme}/**'
+              - '!cypress.{visual,readme}.config.ts'
+
   checks:
     name: Lint, unit tests, data, build
+    needs: [changes]
+    # !cancelled() lets this run when "What changed" was skipped (run by hand) or failed: when in doubt, test.
+    if: ${{ !cancelled() && needs.changes.outputs.code != 'false' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     env:
@@ -51,6 +108,8 @@ jobs:
 
   e2e:
     name: End-to-end tests
+    needs: [changes]
+    if: ${{ !cancelled() && needs.changes.outputs.app != 'false' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
@@ -76,10 +135,11 @@ jobs:
 
   # Every branch but main gets its own preview URL, behind the same Access login as the real site. Not
   # Dependabot's branches: its runs don't get the repo's secrets, and there's nothing to look at anyway.
+  # Nor a docs-only push, where the checks were skipped: the site hasn't changed.
   preview:
     name: Preview deploy
     needs: [checks]
-    if: github.ref != 'refs/heads/main' && github.actor != 'dependabot[bot]'
+    if: ${{ !cancelled() && needs.checks.result == 'success' && github.ref != 'refs/heads/main' && github.actor != 'dependabot[bot]' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     environment:
@@ -127,7 +187,11 @@ jobs:
   deploy:
     name: Deploy to Cloudflare
     needs: [checks, e2e]
-    if: github.ref == 'refs/heads/main'
+    # A job whose needs were skipped is skipped too, unless its condition says otherwise. A Worker-only
+    # change skips the end-to-end tests but still deploys; a docs-only change skips the checks and doesn't.
+    if: >-
+      ${{ !cancelled() && github.ref == 'refs/heads/main' && needs.checks.result == 'success'
+      && (needs.e2e.result == 'success' || needs.e2e.result == 'skipped') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     # One deploy at a time, and a queued one waits instead of cancelling the one in flight.

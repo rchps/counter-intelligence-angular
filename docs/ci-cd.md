@@ -14,6 +14,26 @@
   (`screenshots-main.yml`), and each pull request gets the _Screenshot review_ check (see [Testing](testing.md#screenshot-review-on-pull-requests))
   (`screenshots.yml`).
 
+## Only the checks a change needs
+
+Each workflow starts with a _What changed_ job ([dorny/paths-filter](https://github.com/dorny/paths-filter))
+that skips the jobs a change can't affect:
+
+| Change                                                         | Checks | End-to-end | Screenshot review | Deploy (main) |
+| -------------------------------------------------------------- | ------ | ---------- | ----------------- | ------------- |
+| Docs and Markdown, editor and assistant settings               | —      | —          | —                 | —             |
+| The Worker, data scripts, unit tests, lint and format settings | runs   | —          | —                 | runs          |
+| End-to-end specs                                               | runs   | runs       | —                 | runs          |
+| Screenshot specs                                               | runs   | —          | runs              | runs          |
+| The app, its data, dependencies, anything else                 | runs   | runs       | runs              | runs          |
+
+A job skipped this way reports success, so the required checks still pass. Skipping the whole workflow
+(`paths-ignore`) would leave them pending, and the PR couldn't merge. On a branch, the change is
+everything the branch changes compared with `main`, not just the last push. The filters list what to
+_leave out_, so a new kind of file runs everything until it's added to them, and if _What changed_ fails,
+everything runs. Running CI by hand (_Run workflow_) also runs everything. Main's screenshots are still
+recorded on every push to `main`, since a PR branching from a commit without them has to take them itself.
+
 ## Feedback setup
 
 The feedback dialog posts to `/api/feedback`, where the Worker (`worker/index.ts`) checks a Cloudflare
