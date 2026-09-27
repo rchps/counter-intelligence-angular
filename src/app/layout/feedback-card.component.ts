@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FeedbackService } from '../core/feedback.service';
 
-// Ported from template.html's end-of-page <aside class="feedback"> (GOV.UK pattern: after the content,
+// The end-of-page feedback card (GOV.UK pattern: after the content,
 // one clear action). The app shell only renders it when there's a reportEmail to send to.
 @Component({
   selector: 'app-feedback-card',

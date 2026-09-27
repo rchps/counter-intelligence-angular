@@ -1,5 +1,4 @@
-// Ported from counter-intelligence/styles.css: "Top bar", "Tabs" (restyled as .nav, see top-bar.component.ts)
-// and "Theme switch". :host replaces the vanilla .topbar selector since this *is* the <header> now.
+// :host is the top bar itself (it carries role="banner"; see top-bar.component.ts).
 
 :host {
   display: block;

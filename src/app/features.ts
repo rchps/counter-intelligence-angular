@@ -1,4 +1,4 @@
-// ANGULAR_CONVERSION.md section 7: build.py's MODULES list, kept as switches so an add-on can be removed
+// Optional add-ons, kept as switches so one can be removed
 // without touching the pages that host it. Set one to false and it disappears everywhere it shows up.
 export const FEATURES = {
   /** "Try these instead": SDS lines to offer when someone searches for a brand SDS doesn't carry. */

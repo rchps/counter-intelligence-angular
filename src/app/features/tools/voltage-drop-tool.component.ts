@@ -17,7 +17,7 @@ interface GaugeRow {
   passes: boolean | null;
 }
 
-// Ported from tools.html's Voltage drop tool.
+// Voltage drop sizing: the voltage left at the far end of a wire run.
 @Component({
   selector: 'app-voltage-drop-tool',
   imports: [ToolResultCardComponent],

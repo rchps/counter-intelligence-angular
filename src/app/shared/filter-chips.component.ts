@@ -10,7 +10,7 @@ export interface FilterChip {
   title?: string;
 }
 
-// Ported from page.js's createSearchPage() `renderChips` (page.js section 2). The "All" chip is always
+// The filter chips under a search box. The "All" chip is always
 // first and is not part of `chips` — every search page needs it, so callers only describe their own
 // categories.
 @Component({

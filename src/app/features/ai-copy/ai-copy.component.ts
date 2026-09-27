@@ -17,10 +17,9 @@ import {
   type AiCopyScope,
 } from '../../core/ai-copy';
 
-// Ported from modules/ai-copy.html: a button beside the Line Card's status line, and the dialog it
-// opens. The sparkles icon is always paired with words saying what happens, the button shows its scope,
-// and the dialog explains the purpose, previews exactly what gets copied, and confirms the copy (NN/g,
-// per the module's own notes).
+// A button beside the Line Card's status line, and the dialog it opens. The sparkles icon is always
+// paired with words saying what happens, the button shows its scope, and the dialog explains the
+// purpose, previews exactly what gets copied, and confirms the copy (NN/g).
 @Component({
   selector: 'app-ai-copy',
   imports: [NgTemplateOutlet],

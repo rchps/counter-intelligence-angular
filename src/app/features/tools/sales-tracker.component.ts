@@ -26,7 +26,7 @@ import { inputValue } from '../../shared/input-value';
 const pad = (n: number): string => String(n).padStart(2, '0');
 const EMPTY_MONTH: MonthRecord = { goal: null, sales: {}, overrides: {} };
 
-// Ported from sales.html. The math, wording and chart geometry are pure functions in core/ (sales-math,
+// The Sales Tracker. The math, wording and chart geometry are pure functions in core/ (sales-math,
 // sales-display, sales-chart); the chart draws itself (SalesChartComponent). This component owns the
 // page's own state: which month is showing, the text in each box, saving, and the tools row.
 @Component({
@@ -50,7 +50,7 @@ export class SalesTrackerComponent {
   private readonly store = signal<SalesStore>(this.salesStore.load());
 
   // What's typed in each box. Kept apart from the saved numbers so typing is never reformatted mid-word;
-  // reset from the saved numbers only when the month changes (sales.html's buildCalendar() boundary).
+  // reset from the saved numbers only when the month changes.
   protected readonly goalText = signal('');
   protected readonly goalInvalid = signal(false);
   protected readonly todayText = signal('');
@@ -270,8 +270,8 @@ export class SalesTrackerComponent {
     this.dayInvalid.set({});
   }
 
-  // Returns whether the text was invalid (sales.html's readMoneyInto: bad input is rejected and never
-  // saved; a blank box is valid and clears that day).
+  // Returns whether the text was invalid (bad input is rejected and never saved; a blank box is valid
+  // and clears that day).
   private commitSales(date: string, text: string): boolean {
     const parsed = parseMoney(text);
     if (Number.isNaN(parsed)) return true;

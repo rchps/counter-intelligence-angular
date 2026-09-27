@@ -1,6 +1,3 @@
-// Ported from counter-intelligence/page.js section 6 (`emptySearchQuip`). Names and behavior are
-// unchanged; only types were added.
-
 // A little personality for searches that find nothing at all (Mailchimp voice guide: dry, never forced;
 // NN/g: keep it subtle). The pick depends on the search, so it doesn't flicker while typing.
 export const EMPTY_SEARCH_QUIPS = [

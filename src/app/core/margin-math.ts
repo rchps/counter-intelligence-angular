@@ -1,6 +1,5 @@
-// Ported from counter-intelligence/calculator.html's inline script (the Margin Calculator). Names and
-// behavior are unchanged; only types were added, and DOM manipulation (showMessage, markInvalid,
-// clearResults) was replaced with a plain returned outcome the component renders.
+// The Margin Calculator's math and validation. Returns a plain outcome (the numbers, or which fields
+// are invalid and why) that the component renders; nothing here touches the page.
 //   price  = cost / (1 - margin)       margin = (price - cost) / price
 //   cost   = price x (1 - margin)      markup = (price - cost) / cost
 

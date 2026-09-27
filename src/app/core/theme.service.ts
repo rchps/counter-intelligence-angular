@@ -5,7 +5,7 @@ export type Theme = 'light' | 'dark';
 
 const THEME_KEY = 'sds-theme';
 
-// Ported from page.js section 10: follows the computer's setting until someone flips the switch, then
+// Follows the computer's setting until someone flips the switch, then
 // remembers the choice. The colors themselves already follow the system live through the plain CSS media
 // query in styles.scss; explicitTheme only overrides that, and isDark only tracks it for the switch's UI.
 @Service()

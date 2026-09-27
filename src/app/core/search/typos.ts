@@ -1,6 +1,5 @@
-// Ported from counter-intelligence/page.js sections 3 (the known-words half) and 4 (typo tolerance).
-// Names and behavior are unchanged; only types were added, and KNOWN_WORDS/LINES are now parameters
-// instead of module-level globals built from `window`, so this stays a pure, DataService-agnostic module.
+// Typo tolerance: the words the data knows, and correcting a search to the closest of them. The known
+// words and lines come in as parameters, so this stays a pure, DataService-agnostic module.
 
 import { searchWordsOf } from './normalize';
 

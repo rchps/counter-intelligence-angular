@@ -1,6 +1,5 @@
-// The Sales Tracker, driven in a real browser against `ng serve`. Ported from the page half of vanilla's
-// tests/sales.js; the math (the hand-worked September 2026 example, CSV round trip, parsing) is covered
-// by src/app/core/sales-math.spec.ts.
+// The Sales Tracker, driven in a real browser against `ng serve`. The math (the hand-worked September
+// 2026 example, CSV round trip, parsing) is covered by src/app/core/sales-math.spec.ts.
 import { fill } from '../support/actions';
 
 // September 2026 starts on a Tuesday and has 22 weekdays. Goal $44,000 -> baseline $2,000 a selling day.

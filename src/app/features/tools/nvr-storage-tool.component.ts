@@ -24,7 +24,7 @@ type NvrMode = 'known' | 'estimate';
 const tbText = (tb: number): string =>
   tb < 1 ? (tb * 1000).toFixed(1) + ' GB' : tb.toFixed(2) + ' TB';
 
-// Ported from tools.html's NVR storage tool.
+// NVR storage sizing: drive space for a camera count and retention.
 @Component({
   selector: 'app-nvr-storage-tool',
   imports: [ToolResultCardComponent],

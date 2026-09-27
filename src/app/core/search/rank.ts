@@ -1,5 +1,5 @@
-// Ported from counter-intelligence/page.js section 6, the ranking core of `bestMatchFirstHtml` (the
-// HTML-building parts stay with the future Line Card component). Names and behavior are unchanged.
+// Orders search results best match first (see lineMatchRank for the tiers). The Line Card component
+// does the rendering.
 
 export interface RankableLine {
   name: string;

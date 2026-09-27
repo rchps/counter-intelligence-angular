@@ -8,8 +8,8 @@ import {
   searchStatusText,
 } from './feedback';
 
-// Ported from counter-intelligence/tests/report.js: the emails the dialog builds. (Its entry-point,
-// focus and Esc checks are behavioral and belong to the Cypress port.)
+// The emails the dialog builds. (Entry points, focus and the dialog itself are checked in
+// cypress/e2e/feedback.cy.ts.)
 const PAGE_LINES = pageDetailLines({
   build: '2026-09-26 · c68fb5d',
   tabName: 'Line Card',

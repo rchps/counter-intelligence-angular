@@ -1,7 +1,6 @@
-// The Line Card, driven in a real browser against `ng serve`. Ported from vanilla's tests/behavior.js
-// and tests/voice.js: each search and view is compared with what the vanilla page showed for the same
-// input, recorded in its baseline (fixtures/vanilla-baseline.json, copied unchanged).
-import baseline from '../fixtures/vanilla-baseline.json';
+// The Line Card, driven in a real browser against `ng serve`. Each search and view is compared with
+// everything the page should show for it, recorded in fixtures/search-baseline.json.
+import baseline from '../fixtures/search-baseline.json';
 import {
   lineCardState,
   squash,
@@ -11,9 +10,9 @@ import {
 
 const recorded = baseline as unknown as Record<string, unknown>;
 
-/** Waits for the page to finish the search (its status line says what vanilla's said), then compares
+/** Waits for the page to finish the search (its status line says what the baseline says), then compares
  *  everything visible: status, cards, "Not an SDS line" boxes, chips, suggestions and highlights. */
-function expectSameAsVanilla(key: string): void {
+function expectMatchesBaseline(key: string): void {
   const expected = squashLineCardState(recorded[key] as LineCardState);
   cy.getBySel('search-status').should(($status) =>
     expect(squash($status.text()), `status for ${key}`).to.equal(expected.status),
@@ -26,10 +25,10 @@ function search(text: string): void {
   if (text) cy.getBySel('search-input').type(text);
 }
 
-function expectSearchesSameAsVanilla(searches: string[]): void {
+function expectSearchesMatchBaseline(searches: string[]): void {
   for (const text of searches) {
     search(text);
-    expectSameAsVanilla(`q:${text}`);
+    expectMatchesBaseline(`q:${text}`);
   }
 }
 
@@ -40,13 +39,13 @@ describe('Line Card', () => {
     cy.getBySel('line-card').should('have.length.greaterThan', 0);
   });
 
-  it('lists every manufacturer from the data files, as vanilla did', () => {
+  it('lists every manufacturer from the data files', () => {
     // A real request to the real server, so this also catches a data file missing from the build.
-    expectSameAsVanilla('initial');
+    expectMatchesBaseline('initial');
   });
 
   it('corrects typos and says what it searched for instead', () => {
-    expectSearchesSameAsVanilla([
+    expectSearchesMatchBaseline([
       'wheelok',
       'maglok',
       'hickvision',
@@ -57,7 +56,7 @@ describe('Line Card', () => {
   });
 
   it('puts exact names and product types first', () => {
-    expectSearchesSameAsVanilla([
+    expectSearchesMatchBaseline([
       'ups',
       'poe',
       'altronix',
@@ -70,7 +69,7 @@ describe('Line Card', () => {
   });
 
   it('explains empty searches, lookalikes and brands we don’t carry', () => {
-    expectSearchesSameAsVanilla([
+    expectSearchesMatchBaseline([
       'zzqx',
       'dmp',
       'seco larm',
@@ -85,10 +84,10 @@ describe('Line Card', () => {
 
   it('filters by category, switches to A–Z, and jumps by letter', () => {
     cy.getBySel('filter-chip-fire').click();
-    expectSameAsVanilla('fire');
+    expectMatchesBaseline('fire');
 
     cy.getBySel('view-az').click();
-    expectSameAsVanilla('fireAZ');
+    expectMatchesBaseline('fireAZ');
 
     cy.getBySel('filter-chip-all').click();
     const allAZ = recorded['allAZ'] as { n: number; letters: string };

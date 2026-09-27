@@ -38,7 +38,7 @@ const MODES: { value: MarginMode; label: string }[] = [
   { value: 'price-margin', label: 'Price & margin' },
 ];
 
-// Ported from counter-intelligence/calculator.html. The math and every validation message live in
+// The Margin Calculator. The math and every validation message live in
 // core/margin-math.ts — this component only renders calculateMargin()'s outcome and
 // manages the small bits of local UI state (which mode, the copy button's temporary label).
 @Component({

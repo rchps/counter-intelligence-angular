@@ -3,9 +3,8 @@ import { Routes } from '@angular/router';
 import { StorageService } from './core/storage.service';
 import { isToolId, TOOL_STORAGE_KEY } from './features/tools/tool-nav';
 
-// Ported from the architecture map in ANGULAR_CONVERSION.md: tabs #tab=lines/branches/tools become real
-// routes /lines, /branches, /tools/:tool. No legacy-hash redirect (#tab=...) — nobody has bookmarked the
-// vanilla page yet, so there's nothing to migrate.
+// One route per section (/lines, /branches, /tools/:tool), each loaded only when it's first opened, so
+// every section has its own address to bookmark or share.
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'lines' },
   {
@@ -19,7 +18,7 @@ export const routes: Routes = [
   {
     path: 'tools',
     pathMatch: 'full',
-    // Remembers the last tool used (page.js section 8b's TOOL_KEY), defaulting to the margin calculator.
+    // Reopens the last tool used (saved by ToolsPage), defaulting to the margin calculator.
     redirectTo: () => {
       const saved = inject(StorageService).get(TOOL_STORAGE_KEY);
       return `tools/${isToolId(saved) ? saved : 'margin'}`;

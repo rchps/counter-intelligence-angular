@@ -2,7 +2,7 @@ import { Component, computed, input } from '@angular/core';
 import type { Branch } from '../../core/search/match';
 import { highlightMatches } from '../../core/search/normalize';
 
-// Ported from page.js section 7's branchCardHtml. The list item itself belongs to the page's <ul>, so the
+// One branch's card. The list item itself belongs to the page's <ul>, so the
 // list stays a real list (a <ul> may only contain <li>s, and this component's own element sits between).
 @Component({
   selector: 'app-branch-card',

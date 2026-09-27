@@ -13,10 +13,9 @@ import { inputValue } from './input-value';
 
 let nextId = 0;
 
-// Ported from page.js's createSearchPage() search-box half (page.js section 2): placeholder swaps by
-// width, Ctrl/Cmd+K (or "/" outside a field) focuses and selects, Esc clears (or blurs if already empty).
-// Only one instance is ever mounted at a time now (routing replaced the old always-in-the-DOM tabs), so
-// the global shortcut listens for itself directly instead of going through a page-picking coordinator.
+// A search page's search box: placeholder swaps by width, Ctrl/Cmd+K (or "/" outside a field) focuses
+// and selects, Esc clears (or blurs if already empty). Only one search page is mounted at a time (each
+// is its own route), so the global shortcut can listen for itself directly.
 @Component({
   selector: 'app-search-toolbar',
   styleUrl: './search-toolbar.component.scss',

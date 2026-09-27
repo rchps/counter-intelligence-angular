@@ -3,7 +3,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { highlightMatches } from '../../core/search/normalize';
 import { matchReason, type Line } from '../../core/search/match';
 
-// Ported from page.js section 6's logoHtml/cardHtml. `[innerHTML]` is used only for the name, which is
+// One manufacturer's card. `[innerHTML]` is used only for the name, which is
 // highlightMatches()'s own escaped output plus the <mark> tags it generates itself — no user-supplied
 // markup ever reaches it.
 @Component({

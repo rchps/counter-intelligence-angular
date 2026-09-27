@@ -221,7 +221,7 @@ describe('checkData: "Try these instead" alternatives', () => {
     };
     const { problems } = checkData(baseData(), [], modules);
     expect(problems).toContain(
-      'modules/alternatives.json: "Hikvision" offers "Nope Inc", which isn\'t in lines.json',
+      'alternatives.json: "Hikvision" offers "Nope Inc", which isn\'t in lines.json',
     );
   });
 

@@ -18,7 +18,7 @@ interface ParsedDevices {
   bad: boolean;
 }
 
-// Ported from tools.html's PoE budget tool.
+// PoE budget sizing: whether a switch can power every device.
 @Component({
   selector: 'app-poe-budget-tool',
   imports: [ToolResultCardComponent],

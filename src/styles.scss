@@ -1,11 +1,7 @@
-/* Ported from counter-intelligence/styles.css: design tokens (light/dark, Radix category scales, radii,
-   shadows, fonts), plus the shared rules ANGULAR_CONVERSION.md Phase 2 calls out as global (dialogs,
-   chips, segmented controls, focus rings, print rules). Everything feature-specific (Line Card group
-   headings, the feedback form's own fields, tool pages) stays out of here and moves with its component
-   in a later phase. Class names were kept where the shape carries over unchanged (.chip, .dlg), and
-   renamed where the vanilla name was tied to markup this port doesn't use (.dlg-seg, a segmented control
-   used only inside dialogs there, is generalized to .segmented since Angular components will reuse it
-   outside dialogs too, e.g. the margin calculator's mode picker). */
+/* Global styles: design tokens (light/dark, Radix category scales, radii, shadows, fonts), plus the
+   rules shared across features (dialogs, chips, segmented controls, focus rings, print rules) and the
+   few that must style content projected into a component (see the sizing-tool section). Everything
+   specific to one component lives in that component's own stylesheet. */
 
 :root {
   --bg: #fafafa;
@@ -421,7 +417,7 @@ mark {
 }
 
 /* Segmented control: a fieldset of mutually-exclusive choices that looks like one pill-shaped control
-   (radio inputs, visually hidden, with the checked one's label raised). Ported from .dlg-seg. */
+   (radio inputs, visually hidden, with the checked one's label raised). */
 .segmented {
   display: flex;
   gap: 2px;
@@ -723,7 +719,7 @@ mark {
 }
 
 /* Page shell: the hero header and sticky search toolbar every searchable feature page (Line Card,
-   Branches, ...) uses. Ported from counter-intelligence/styles.css's "Hero" and "Toolbar" sections. */
+   Branches, ...) uses. */
 .hero {
   padding: 44px 0 18px;
 }
@@ -786,9 +782,8 @@ mark {
 }
 
 /* Quoting-tool shell: the "mc" (Margin Calculator) card pattern, shared by the Margin calculator and all
-   four sizing tools (tools.html reuses .mc-* wholesale rather than its own names, per its own comment:
-   "Reuses the margin calculator's card, input and results styles"). Ported from calculator.html's inline
-   <style>; each tool's own stylesheet keeps only what's actually specific to it. */
+   four sizing tools, which reuse its card, input and results styles; each tool's own stylesheet keeps
+   only what's actually specific to it. */
 .mc {
   width: min(920px, 100% - 32px);
   margin: 0 auto 48px;
@@ -963,7 +958,7 @@ mark {
    ToolResultCardComponent). Global rather than scoped to one component because Angular's emulated view
    encapsulation can't reliably style *inside* content a component projects in from elsewhere — every
    result hero/details/sources block here is authored by each tool's own template, not by
-   ToolResultCardComponent, so these rules can't live in its stylesheet. Ported from tools.html. */
+   ToolResultCardComponent, so these rules can't live in its stylesheet. */
 .tl-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);

@@ -1,7 +1,7 @@
 import * as T from './tools-math';
 
-// Ported verbatim from counter-intelligence/tests/tools.js MATH_CASES. Each case's `run` and `expect`
-// come straight from the original file; only the harness changed (no browser, call the module directly).
+// Published worked examples and source tables. Each case says where its answer comes from, so a failure
+// points at the source to re-check rather than at a number someone typed in.
 const MATH_CASES = [
   {
     name: 'Battery: Talkaphone AOR-10 NFPA 72-2022 worked example',
@@ -199,7 +199,7 @@ const MATH_CASES = [
 ];
 
 // Recursively compare expected values (numbers within tolerance); extra actual fields are ignored.
-// Ported from the same helper in tests/tools.js so the comparison semantics stay identical.
+// Compares only the fields a case expects (numbers within its tolerance); extra fields are ignored.
 function mismatches(expected: unknown, actual: unknown, tolerance: number, where = ''): string[] {
   if (typeof expected === 'number') {
     return typeof actual === 'number' && Math.abs(actual - expected) <= tolerance

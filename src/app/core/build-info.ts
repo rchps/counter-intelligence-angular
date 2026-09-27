@@ -1,5 +1,5 @@
 // The build stamp ("2026-09-26 · c68fb5d"), so a feedback email or a screenshot of the footer can be
-// matched to the commit it came from. Replaces build.py's content-fingerprint stamp with the git commit.
+// matched to the commit it came from. `npm run build` passes both values in with --define.
 // `typeof` guards the builds that don't define the constants: reading an undefined identifier directly
 // would throw a ReferenceError instead of falling back.
 export interface BuildInfo {

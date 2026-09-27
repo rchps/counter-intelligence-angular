@@ -1,5 +1,4 @@
-// The Tools pages, driven in a real browser against `ng serve`. Ported from the page halves of vanilla's
-// tests/tools.js, tests/voice.js and the margin calculator cases in tests/behavior.js. The math itself
+// The Tools pages, driven in a real browser against `ng serve`. The math itself
 // (published worked examples and source tables) is covered by the unit tests in src/app/core; these
 // check that typing those same examples into the page shows the same answers.
 import { fill } from '../support/actions';

@@ -2,7 +2,7 @@ import { Component, input } from '@angular/core';
 import type { Line } from '../../core/search/match';
 import { LineCardItemComponent } from './line-card-item.component';
 
-// Ported from page.js section 6's byCategoryHtml/alphabeticalHtml/cardListHtml group markup — a section
+// A section
 // of cards, either with a visible heading (grouped by category: countLabel like "12 manufacturers",
 // showsCategories false since the heading already says the category; or grouped by first letter in the
 // A-Z view: countLabel a bare number, showsCategories true) or, when `heading` is left null, a flat list

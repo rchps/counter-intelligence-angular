@@ -1,7 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import type { AlternativeBrand } from '../../core/alternatives';
 
-// Ported from modules/alternatives.html's suggestionBoxHtml: one box per not-carried brand the search
+// One box per not-carried brand the search
 // points to, each offering SDS lines as buttons. Picking one searches for that line.
 @Component({
   selector: 'app-alternatives-box',

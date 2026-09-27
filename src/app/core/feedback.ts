@@ -1,6 +1,5 @@
-// Ported from page.js's Feedback section: the "Report a problem" / "Suggest an idea" choices and copy,
-// and the email each one builds. Pure, so the subjects and bodies can be checked directly
-// (feedback.spec.ts ports tests/report.js's email checks). Nothing is ever sent by the page: the
+// The "Report a problem" / "Suggest an idea" choices and copy, and the email each one builds. Pure, so
+// the subjects and bodies can be checked directly (feedback.spec.ts). Nothing is ever sent by the page: the
 // dialog's link is a mailto: that opens the person's email app, and they press Send.
 
 export type FeedbackMode = 'problem' | 'idea';
@@ -107,7 +106,7 @@ export interface PageDetailsInput {
   search: SearchPageDetails | null;
 }
 
-// page.js's pageDetails(). The search page's "Page said" is the status line's words (no buttons).
+// The search page's "Page said" is the status line's words (no buttons).
 export function pageDetailLines({ build, tabName, search }: PageDetailsInput): string[] {
   const lines = [`Build: ${build}`, `Tab: ${tabName}`];
   if (search) {

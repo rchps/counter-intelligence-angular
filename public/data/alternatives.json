@@ -1,5 +1,5 @@
 {
-  "_readme": "Brands SDS does not carry, and SDS lines to offer instead. 'match' = what a rep might type. 'offer' names must match lines.json exactly (build.py checks). If SDS starts carrying a brand, add it to lines.json and this entry is skipped automatically. 'note' is optional; keep it factual.",
+  "_readme": "Brands SDS does not carry, and SDS lines to offer instead. 'match' = what a rep might type. 'offer' names must match lines.json exactly (npm run validate-data checks). If SDS starts carrying a brand, add it to lines.json and this entry is skipped automatically. 'note' is optional; keep it factual.",
   "brands": [
     {"brand": "Hikvision", "match": ["hikvision", "hik vision", "hikconnect", "hik connect"], "offer": ["Hanwha Vision", "UNV (Uniview)", "Digital Watchdog (DW)", "IDIS", "Speco Technologies", "Luminys", "Milesight", "VIGI by TP-Link"], "note": "Named in NDAA Section 889; can't go on federally funded jobs."},
     {"brand": "Dahua", "match": ["dahua"], "offer": ["Hanwha Vision", "UNV (Uniview)", "Digital Watchdog (DW)", "IDIS", "Speco Technologies", "Luminys", "Milesight", "VIGI by TP-Link"], "note": "Named in NDAA Section 889; can't go on federally funded jobs."},

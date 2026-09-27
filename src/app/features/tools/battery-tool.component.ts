@@ -6,7 +6,7 @@ import { inputValue } from '../../shared/input-value';
 
 type BatteryPreset = 'fire' | 'voice' | 'custom';
 
-// Ported from tools.html's Battery standby tool.
+// Battery standby sizing: amp-hours a fire or voice-evac panel's batteries need.
 @Component({
   selector: 'app-battery-tool',
   imports: [DecimalPipe, ToolResultCardComponent],

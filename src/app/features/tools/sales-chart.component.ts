@@ -21,7 +21,7 @@ interface Tip {
   x: number;
 }
 
-// Ported from sales.html's drawChart/showTip: the running total against the goal pace as an SVG line
+// The running total against the goal pace as an SVG line
 // chart, with a crosshair tooltip that follows the pointer and the arrow/Home/End keys. The geometry
 // is core/sales-chart.ts; this component measures its own width, draws, and handles interaction.
 @Component({

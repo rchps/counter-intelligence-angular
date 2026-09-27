@@ -1,6 +1,6 @@
 import { Service } from '@angular/core';
 
-// Safe localStorage wrapper (ported from the try/catch pattern used throughout page.js): some browsers
+// Safe localStorage wrapper: some browsers
 // block storage entirely (private windows, embedded previews), and this should never break the page.
 @Service()
 export class StorageService {

@@ -2,10 +2,10 @@ import { Component, computed, inject, input, output } from '@angular/core';
 import { FeedbackService } from '../../core/feedback.service';
 import { emptySearchQuip } from '../../core/search/quips';
 
-// Ported from page.js section 6's lineCardEmptyHtml. (When a "Not an SDS line" box applies, the Line Card
-// shows that instead of this, as page.js does.)
+// What the Line Card shows when nothing matches. (When a "Not an SDS line" box applies, the Line Card
+// shows that instead: it already explains the empty result.)
 // "Report a missing line" opens the feedback dialog on that problem with the search filled in as the
-// manufacturer (page.js's data-report="missing" data-report-line).
+// manufacturer.
 @Component({
   selector: 'app-line-card-empty-state',
   styleUrl: './empty-state.component.scss',

@@ -7,7 +7,7 @@ import { pageDetailLines, type ProblemKindKey, type SearchPageDetails } from './
 export interface FeedbackPageContext {
   /** e.g. "Line Card", "Tools · PoE budget" */
   tabName: string;
-  /** The problem to start on when opened without one (page.js: tools -> "tool", branches -> "branch"). */
+  /** The problem to start on when opened without one (Tools -> "tool", Branches -> "branch"). */
   defaultKind: ProblemKindKey | null;
   search: SearchPageDetails | null;
 }
@@ -21,7 +21,7 @@ export interface FeedbackRequest {
 
 // Opens the one feedback dialog from any entry point (top bar, end-of-page card, footer, empty states),
 // and knows which page is on screen for the email's "Page details". Pages register their context
-// instead of the dialog reading it back out of the DOM, as page.js's pageDetails() did.
+// instead of the dialog reading it back out of the DOM.
 @Service()
 export class FeedbackService {
   private readonly data = inject(DataService);

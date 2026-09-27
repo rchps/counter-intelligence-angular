@@ -20,7 +20,7 @@ export function formatDollarsAndCents(amount: number): string {
   });
 }
 
-/** "+$500" or "−$500". The minus is a true minus sign (U+2212), not a hyphen, as in sales.html. */
+/** "+$500" or "−$500". The minus is a true minus sign (U+2212), not a hyphen. */
 export function formatSignedWholeDollars(amount: number): string {
   return (amount >= 0 ? '+' : '−') + formatWholeDollars(Math.abs(amount));
 }

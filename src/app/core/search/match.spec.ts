@@ -21,13 +21,12 @@ import {
 } from './match';
 import { sortByBestMatch } from './rank';
 
-// Real fixtures (same JSON the vanilla counter-intelligence page and its build.py use), so the ported
-// pipeline can be checked against tests/baseline.json from that project: a captured snapshot of what the
-// live page actually returned for these searches.
+// Real fixtures (the app's own data files), so the pipeline is checked against the searches the Line
+// Card and Branches pages really run, with the results recorded in cypress/fixtures/search-baseline.json.
 const CATEGORY_LABELS = linesData.cats;
 const LINES: Line[] = prepareLines(linesData.lines, termsData.terms, CATEGORY_LABELS);
 const BRANCHES: Branch[] = prepareBranches(linesData.branches as RawBranch[]);
-// Matches modules/alternatives.html's `vocab: ALTERNATIVES.brands.flatMap((brand) => brand.match)`, which
+// The same extra vocabulary DataService adds (the not-carried brands' names), which
 // is what lets "hickvision"/"ubiquity" correct even though neither brand is an SDS line.
 const EXTRA_VOCAB = alternativesData.brands.flatMap((brand) => brand.match);
 const KNOWN_WORDS = buildKnownWords(LINES, EXTRA_VOCAB);
@@ -79,10 +78,10 @@ describe('lineMatches / matchReason', () => {
   });
 });
 
-// Each case's expected values come straight from tests/baseline.json in the vanilla project: the
+// Each case's expected values come from the recorded search baseline: the
 // "Showing N of 234 manufacturers matching ..." status line and, where present, the "(you typed ...)"
 // correction it reports.
-describe('searchLines against tests/baseline.json scenarios', () => {
+describe('searchLines against the recorded search baseline', () => {
   const cases: { typed: string; count: number; correctedSearch: string }[] = [
     { typed: 'wheelok', count: 2, correctedSearch: 'wheelock' },
     { typed: 'maglok', count: 5, correctedSearch: 'maglock' },
@@ -133,7 +132,7 @@ describe('resolveStateCode', () => {
   });
 });
 
-describe('searchBranches against tests/baseline.json scenarios', () => {
+describe('searchBranches against the recorded search baseline', () => {
   it('treats a lone state code as "every branch in that state", not a text search', () => {
     expect(
       searchBranches(BRANCHES, 'la')

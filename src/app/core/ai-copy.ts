@@ -1,4 +1,4 @@
-// Ported from modules/ai-copy.html ("Use in an AI chat"): the plain-text copy of the Line Card, with
+// "Use in an AI chat": the plain-text copy of the Line Card, with
 // short instructions, so an AI chat only suggests lines SDS carries. Only public line-card info goes in:
 // names, categories, product types, other names, websites. Never pricing, branches, customer info, or
 // the "Try these instead" pairs.

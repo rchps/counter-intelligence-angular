@@ -8,7 +8,7 @@ import { SearchStatusComponent } from '../../shared/search-status.component';
 import { SearchToolbarComponent } from '../../shared/search-toolbar.component';
 import { BranchCardComponent } from './branch-card.component';
 
-// Ported from page.js section 7 (Branches page): the same toolbar/chips/status pattern as Line Card, but
+// The Branches page: the same toolbar/chips/status pattern as Line Card, but
 // simpler — no typo correction (searchBranches never returns a correctedSearch) and no debounce (branch
 // search is cheap: 22 rows).
 @Component({

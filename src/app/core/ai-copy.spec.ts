@@ -1,7 +1,7 @@
 import { aiCopyText, aiTriggerLabel, lineText, plural, type AiCopyLine } from './ai-copy';
 
-// Ported from counter-intelligence/tests/ai-copy.js: what the copied text says and leaves out. (Its
-// button, dialog, focus and clipboard checks are behavioral and belong to the Cypress port.)
+// What the copied text says and leaves out. (The button, dialog, focus and clipboard are checked in
+// cypress/e2e/ai-copy.cy.ts.)
 const CATEGORIES = { fire: 'Fire', access: 'Access Control' };
 const LINES: AiCopyLine[] = [
   {

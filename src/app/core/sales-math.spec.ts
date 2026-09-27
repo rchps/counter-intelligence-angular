@@ -7,7 +7,7 @@ import {
   toCsv,
 } from './sales-math';
 
-// Ported from counter-intelligence/tests/sales.js. September 2026 starts on a Tuesday and has 22
+// A hand-worked month. September 2026 starts on a Tuesday and has 22
 // weekdays. Goal $44,000 -> baseline $2,000 a selling day. Sales entered through Wed Sep 9 total
 // $14,000 over 7 selling days; "today" is Thu Sep 10 (not entered).
 const SALES: Record<string, number> = {

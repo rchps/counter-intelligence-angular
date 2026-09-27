@@ -1,6 +1,6 @@
 import { Component, computed, input, output } from '@angular/core';
 
-// Ported from page.js's createSearchPage() `renderStatus` (page.js section 2). aria-live so the count
+// "Showing N of M ..." under a search box. aria-live so the count
 // change is read out as the user types or picks a filter (NN/g: visibility of system status).
 @Component({
   selector: 'app-search-status',

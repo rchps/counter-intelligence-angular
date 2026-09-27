@@ -1,8 +1,6 @@
-// Ported from counter-intelligence/page.js section 3 (data prep, the manufacturer half plus the
-// analogous branch prep from section 7), and section 5 (search matching, plus branch matching and the
-// "lone state code" special case from section 7's `search(typed)`). Names and behavior are unchanged;
-// only types were added, and everything that read `DATA`/`LINES`/`MODULES` off `window` now takes those
-// as parameters, so this stays a pure, DataService-agnostic module.
+// Search for both pages: preparing lines and branches for matching, then matching a typed search
+// against them (including the "lone state code" shortcut on Branches). Everything comes in as
+// parameters, so this stays a pure, DataService-agnostic module.
 
 import { domainOf, normalize, removeSpaces, searchWordsOf } from './normalize';
 import { containsWord, correctTypos, type SearchableText } from './typos';
@@ -37,7 +35,7 @@ export interface Line extends RawLine, SearchableText {
 }
 
 // Product types -> manufacturers ("keywords" = the label plus every other way people type it).
-// Matches build.py step 3 exactly, so a line's productTerms are the same whether build.py or this ran.
+// Gives each line the product terms (terms.json) that name it, so searching "horn strobe" finds its makers.
 export function attachProductTerms(
   lines: RawLine[],
   terms: ProductTermSource[],
@@ -118,7 +116,7 @@ export interface LineSearchResult {
   correctedSearch: string;
 }
 
-// Equivalent to the Line Card's `search(typed)` in page.js section 6.
+// The Line Card's search.
 export function searchLines(
   lines: Line[],
   knownWords: Map<string, number>,
@@ -134,7 +132,7 @@ export function searchLines(
 
 // ---- Branch data prep and matching ----
 
-// Two-letter codes recognized for the "lone state code" search shortcut (page.js section 7).
+// Two-letter codes recognized for the "lone state code" search shortcut.
 export const STATE_NAMES: Record<string, string> = {
   AL: 'Alabama',
   AZ: 'Arizona',
@@ -216,7 +214,7 @@ export interface BranchSearchResult {
   searchWords: string[];
 }
 
-// Equivalent to the Branches page's `search(typed)` in page.js section 7.
+// The Branches page's search.
 export function searchBranches(
   branches: Branch[],
   typed: string,

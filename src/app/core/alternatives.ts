@@ -1,6 +1,6 @@
 import { normalize } from './search/normalize';
 
-// Ported from modules/alternatives.html ("Try these instead"): which brands SDS doesn't carry a search
+// "Try these instead": which brands SDS doesn't carry a search
 // points to, so the Line Card can offer SDS lines that cover the same ground.
 
 export interface AlternativeBrand {

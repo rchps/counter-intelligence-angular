@@ -1,5 +1,5 @@
 {
-  "_readme": "Product-term search. Each entry: label (shown as 'Makes: <label>'), syn (other ways people type it), lines (exact names from lines.json). Drafted by Claude from general product knowledge on 2026-09-25; conservative on purpose. build.py merges these into each line's search terms and fails if a line name is misspelled.",
+  "_readme": "Product-term search. Each entry: label (shown as 'Makes: <label>'), syn (other ways people type it), lines (exact names from lines.json). Drafted by Claude from general product knowledge on 2026-09-25; conservative on purpose. The app merges these into each line's search terms; npm run validate-data fails if a line name is misspelled.",
   "terms": [
     {"label": "Cat5e / Cat6 / Cat6A cable", "syn": ["cat6", "cat 6", "cat6a", "cat 6a", "cat5e", "cat 5e", "cat5", "category 6", "ethernet cable", "network cable", "data cable", "utp", "bulk cable"], "lines": ["West Penn Wire", "Vertical Cable", "Commodity Cables", "Genesis", "PureNet", "Proterial", "OCC (Optical Cable Corp)", "Comtran Cable", "Wavenet", "Structured Cable Products (SCP)", "ADC (Advanced Digital Cable)", "ICC", "Signamax", "Shaxon", "Dynacom"]},
     {"label": "Patch cords", "syn": ["patch cord", "patch cable", "jumper"], "lines": ["ICC", "Leviton", "Lynn", "Signamax", "Shaxon", "Dynacom", "Vertical Cable", "Intellinet", "Manhattan", "Ortronics"]},

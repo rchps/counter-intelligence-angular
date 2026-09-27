@@ -1,7 +1,7 @@
 import { formatSignedWholeDollars, formatWholeDollars } from './money';
 import type { SalesSummary } from './sales-math';
 
-// Ported from sales.html's render(): the words and numbers in the Sales Tracker's hero, progress
+// The words and numbers in the Sales Tracker's hero, progress
 // meter and KPI tiles, worked out from the month's summary. Pure, so the wording is tested directly.
 
 const plural = (count: number, word: string): string => `${count} ${word}${count === 1 ? '' : 's'}`;

@@ -3,7 +3,7 @@ import { BUILD_INFO, buildStamp } from '../core/build-info';
 import { DataService } from '../core/data.service';
 import { FeedbackService } from '../core/feedback.service';
 
-// Ported from template.html's <footer> and page.js's "text that depends on the data": the list's as-of
+// The footer: the list's as-of
 // date and source, the build stamp (so a screenshot or an emailed copy can be matched to its commit),
 // and the two feedback links.
 @Component({

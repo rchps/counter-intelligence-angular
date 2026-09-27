@@ -1,8 +1,6 @@
-// Ported from counter-intelligence/build.py's `check_data` (the "Data checks" section). Same rules,
-// same messages, so a problem or warning reads identically whether build.py or this ran. The rest of
-// build.py (assembling the single HTML file, the build stamp, the CHANGELOG log) has no equivalent here:
-// `ng build` replaces all of that. Run standalone with `npm run validate-data`, and later as a
-// pre-build/CI gate (ANGULAR_CONVERSION.md section 9).
+// Checks the data files in public/data before they ship: required fields, duplicates, and every name
+// that has to match a line in lines.json. Problems fail the run; warnings are printed but don't.
+// Run with `npm run validate-data`, and later as a pre-build/CI gate.
 
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -169,7 +167,7 @@ export function checkData(
       brand.offer.forEach((name) => {
         if (!exactNames.has(name)) {
           problems.push(
-            `modules/alternatives.json: "${brand.brand}" offers "${name}", which isn't in lines.json`,
+            `alternatives.json: "${brand.brand}" offers "${name}", which isn't in lines.json`,
           );
         }
       });

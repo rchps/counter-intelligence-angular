@@ -1,4 +1,4 @@
-// Ported from sales.html's launchConfetti(): a one-off burst of confetti drawn on a full-screen canvas
+// A one-off burst of confetti drawn on a full-screen canvas
 // that removes itself when it's done (about 3 seconds). Callers decide whether to play it at all, e.g.
 // skipping it for people who ask for reduced motion.
 

@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 import type { SizingToolId } from './tool-nav';
 
-// Ported from tools.html: the .mc-card + .tl-sources shell every sizing tool wraps its own form fields and
+// The .mc-card + .tl-sources shell every sizing tool wraps its own form fields and
 // result cells in. Each tool projects its own <form> fields, result hero, result <dl>, and sources
 // paragraphs — this only owns the shared chrome: the tool's color tint (--tool/--tool-soft, keyed by
 // data-tool), the "Estimated ..." hero box, the gray "Estimate for quoting" note, and the "How this is

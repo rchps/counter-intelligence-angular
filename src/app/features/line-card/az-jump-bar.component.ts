@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 
-// "#" (for names that don't start with a letter) sorts first; ported from page.js section 6's
-// alphabeticalHtml. Exported so LineCardPage can build matching ids for each letter's <section>.
+// "#" (for names that don't start with a letter) sorts first. Exported so LineCardPage can build
+// matching ids for each letter's <section>.
 export function azAnchorId(letter: string): string {
   return 'L-' + (letter === '#' ? 'num' : letter);
 }

@@ -22,9 +22,8 @@ interface ToolNavGroup {
   items: typeof TOOL_NAV;
 }
 
-// Ported from page.js section 8b and template.html's #panel-tools: a grouped list of tools (Quoting /
-// Sizing / Tracking) on the left, the chosen tool on the right — real routerLinks now instead of the
-// vanilla's own picker buttons + hidden/shown views, since each tool is its own route.
+// A grouped list of tools (Quoting / Sizing / Tracking) on the left, the chosen tool on the right.
+// Each tool is its own route, so the list is plain routerLinks.
 @Component({
   selector: 'app-tools-page',
   imports: [
@@ -54,9 +53,8 @@ export class ToolsPage {
     items: TOOL_NAV.filter((item) => item.group === group),
   }));
 
-  // Battery/voltage-drop/PoE/NVR share tools.html's eyebrow and lede, but each swaps in its own
-  // title + tagline (tools.html's TOOL_TITLES, applied by showTool() the moment a tool is picked).
-  // Margin and sales bring their own heading entirely (each was its own vanilla page).
+  // Battery/voltage-drop/PoE/NVR share an eyebrow and lede, each with its own title + tagline
+  // (SIZING_TOOL_HEADINGS). Margin and sales bring their own heading entirely.
   protected readonly sizingHeading = computed(() => {
     const tool = this.currentTool();
     return isSizingTool(tool) ? SIZING_TOOL_HEADINGS[tool] : null;
@@ -65,7 +63,7 @@ export class ToolsPage {
   constructor() {
     effect(() => this.storage.set(TOOL_STORAGE_KEY, this.currentTool()));
 
-    // page.js: the Tools tab is "Tools · <tool>", and a problem report from it starts on "A calculator
+    // The Tools tab is "Tools · <tool>", and a problem report from it starts on "A calculator
     // looks off" — except from the sales tracker, which isn't a calculator (and whose numbers are never
     // put in an email: there's deliberately no search/page state here to include).
     inject(FeedbackService).registerPage(

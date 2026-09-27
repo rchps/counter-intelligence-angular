@@ -4,7 +4,7 @@ import { StorageService } from './storage.service';
 
 const STORAGE_KEY = 'sds-counter-reference:sales:v1';
 
-// Ported from sales.html's own store/save(): reads and writes the whole SalesStore as one JSON blob,
+// Reads and writes the whole SalesStore as one JSON blob,
 // falling back to an empty store (never throwing) if storage is blocked or holds something unreadable.
 @Service()
 export class SalesStoreService {
@@ -25,8 +25,8 @@ export class SalesStoreService {
     return this.storage.set(STORAGE_KEY, JSON.stringify(store));
   }
 
-  // Whether storage can be read at all — sales.html's own initial canSave check, from the try/catch
-  // around its first read. A missing key is not a failure (JSON.parse(null) is valid JSON, null);
+  // Whether storage can be read at all, so the page can warn that sales won't be saved. A missing key
+  // is not a failure (JSON.parse(null) is valid JSON, null);
   // this only reports false when storage itself throws (fully blocked, e.g. some private windows).
   isAvailable(): boolean {
     try {

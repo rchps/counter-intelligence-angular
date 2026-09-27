@@ -70,9 +70,9 @@ export class DataService {
     FEATURES.alternatives ? (this.alternativesJson.value()?.brands ?? []) : [],
   );
 
-  // Matches modules/alternatives.html's `vocab: ALTERNATIVES.brands.flatMap((brand) => brand.match)`, which
-  // lets typo-correction fix e.g. "hickvision" even though it isn't an SDS line (core/search/match.spec.ts).
-  // Like the vanilla module, the extra vocabulary goes away with the module.
+  // The not-carried brands' names are known words too, which lets typo-correction fix e.g. "hickvision"
+  // even though it isn't an SDS line (core/search/match.spec.ts). Switching the alternatives feature off
+  // empties alternatives(), so its extra vocabulary goes with it.
   readonly knownWords = computed(() => {
     const extraVocab = this.alternatives().flatMap((brand) => brand.match);
     return buildKnownWords(this.lines(), extraVocab);

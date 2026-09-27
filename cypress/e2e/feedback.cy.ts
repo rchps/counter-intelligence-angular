@@ -1,6 +1,6 @@
-// "Report a problem" / "Suggest an idea", driven in a real browser against `ng serve`. Ported from vanilla's
-// tests/report.js. The exact subject and body wording is covered by src/app/core/feedback.spec.ts;
-// these check the entry points, the dialog's behavior, and that the email carries what was entered.
+// "Report a problem" / "Suggest an idea", driven in a real browser against `ng serve`. The exact
+// subject and body wording is covered by src/app/core/feedback.spec.ts; these check the entry points,
+// the dialog's behavior, and that the email carries what was entered.
 
 interface Email {
   to: string;

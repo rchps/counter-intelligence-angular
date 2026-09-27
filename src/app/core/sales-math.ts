@@ -1,5 +1,5 @@
-// Ported from counter-intelligence/sales.html `window.SDS_SALES`. Names and behavior are unchanged;
-// only types were added. See sales-math.spec.ts for the hand-worked worked example this is checked against.
+// The Sales Tracker's math: selling days, pace, weekly targets, money parsing and the CSV format.
+// See sales-math.spec.ts for the hand-worked example this is checked against.
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -276,7 +276,7 @@ export function fromCsv(text: string): SalesStore {
   return store;
 }
 
-// Folds an imported CSV into what's already saved, month by month (sales.html's import handler): an
+// Folds an imported CSV into what's already saved, month by month: an
 // imported goal replaces the saved one, but a month with no goal in the file keeps its own; days and
 // selling-day overrides are added, with the file winning where both have the same day.
 export function mergeImportedMonths(saved: SalesStore, imported: SalesStore): SalesStore {

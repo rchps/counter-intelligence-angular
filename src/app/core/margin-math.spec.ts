@@ -19,7 +19,7 @@ describe('parseMarginNumber', () => {
 });
 
 describe('calculateMargin: cost & margin', () => {
-  it('cost $50, margin 18% -> the calculator.html worked example', () => {
+  it('cost $50, margin 18% -> price $60.98', () => {
     const result = calculateMargin('cost-margin', { cost: '50', price: '', margin: '18' });
     expect(result.status).toBe('ok');
     if (result.status !== 'ok') throw new Error('unreachable');
@@ -40,7 +40,7 @@ describe('calculateMargin: cost & margin', () => {
     });
   });
 
-  // tests/voice.js: "100% margin: rule first, then the line"
+  // The rule comes first, then the dry line.
   it('rejects a margin of 100% or more', () => {
     const result = calculateMargin('cost-margin', { cost: '50', price: '', margin: '100' });
     expect(result.status).toBe('invalid');
@@ -48,7 +48,6 @@ describe('calculateMargin: cost & margin', () => {
     expect(result.message).toMatch(/^Margin has to be under 100%\./);
   });
 
-  // tests/voice.js: "Negative cost: rule first"
   it('rejects a negative cost with its own dry line', () => {
     const result = calculateMargin('cost-margin', { cost: '-5', price: '', margin: '18' });
     expect(result.status).toBe('invalid');
@@ -65,7 +64,7 @@ describe('calculateMargin: cost & margin', () => {
 });
 
 describe('calculateMargin: cost & price', () => {
-  // tests/voice.js: "Below cost stays plain" (no dry line, just the fact)
+  // Money trouble is stated plainly: no dry line, just the fact.
   it('selling below cost is flagged but not editorialized', () => {
     const result = calculateMargin('cost-price', { cost: '50', price: '40', margin: '' });
     expect(result.status).toBe('ok');

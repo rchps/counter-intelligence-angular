@@ -1,6 +1,6 @@
-// Ported from page.js section 8b: TOOL_VIEWS (which tools exist, and their grouping) and TOOL_KEY (the
-// localStorage key remembering the last tool used). Shared by app.routes.ts (the /tools redirect) and
-// ToolsPage (the nav list + remembering what's chosen).
+// Which tools exist and how they're grouped, and the localStorage key remembering the last tool used.
+// Shared by app.routes.ts (the /tools redirect) and ToolsPage (the nav list + remembering what's
+// chosen).
 
 export type SizingToolId = 'battery' | 'vdrop' | 'poe' | 'nvr';
 export type ToolId = 'margin' | SizingToolId | 'sales';
@@ -31,9 +31,7 @@ export interface SizingToolHeading {
   tagline: string;
 }
 
-// tools.html's TOOL_TITLES: the "Counter tools" heading swaps to one of these the moment a sizing
-// tool is picked (its own showTool() runs on load, so the plain "Counter tools." heading in the
-// static markup never actually shows).
+// Each sizing tool's page heading: a title plus a tagline saying what it answers.
 export const SIZING_TOOL_HEADINGS: Record<SizingToolId, SizingToolHeading> = {
   battery: { title: 'Battery standby.', tagline: 'Amp-hours for fire and security panels.' },
   vdrop: { title: 'Voltage drop.', tagline: 'Will the wire run make it?' },

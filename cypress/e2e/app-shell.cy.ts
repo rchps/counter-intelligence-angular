@@ -1,5 +1,4 @@
 // What every page shares: the top bar's sections, deep links, the dark mode switch and the footer.
-// Ported from the tabs, shortcuts and theme checks in vanilla's tests/behavior.js.
 
 describe('App shell', () => {
   it('has three sections, opens any of them from its address, and marks the current one', () => {

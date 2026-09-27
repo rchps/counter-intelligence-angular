@@ -29,10 +29,9 @@ import {
 import { FeedbackService, type FeedbackRequest } from '../../core/feedback.service';
 import { inputValue } from '../../shared/input-value';
 
-// Ported from page.js's Feedback section (buildReportDialog/showMode/refreshReport/openReport): one
-// native <dialog> with two modes. "Something's wrong" asks what first (closed choices, then optional
+// One native <dialog> with two modes. "Something's wrong" asks what first (closed choices, then optional
 // manufacturer and note); "I have an idea" asks what you were trying to do first, since the task behind
-// a request is the stronger signal (NN/g, per page.js). Either way the primary action is a mailto: link.
+// a request is the stronger signal (NN/g). Either way the primary action is a mailto: link.
 @Component({
   selector: 'app-feedback-dialog',
   imports: [NgTemplateOutlet],
@@ -96,15 +95,15 @@ export class FeedbackDialogComponent {
       const request = this.feedback.request();
       if (request) untracked(() => this.openFor(request));
     });
-    // Any change that makes the email sendable clears a stale "pick what's wrong first" nudge or thanks
-    // (page.js's refreshReport clears it on every edit once the report is complete).
+    // Any change that makes the email sendable clears a stale "pick what's wrong first" nudge or thanks,
+    // so the message never describes an older version of the report.
     effect(() => {
       this.email();
       untracked(() => this.done.set(''));
     });
   }
 
-  // page.js's openReport: reset every field, start in the requested mode/problem, then focus where the
+  // Reset every field, start in the requested mode/problem, then focus where the
   // next decision is.
   private openFor(request: FeedbackRequest): void {
     const mode: FeedbackMode = request.kind === 'idea' ? 'idea' : 'problem';

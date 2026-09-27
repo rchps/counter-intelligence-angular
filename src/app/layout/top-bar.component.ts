@@ -3,10 +3,9 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { FeedbackService } from '../core/feedback.service';
 import { ThemeService } from '../core/theme.service';
 
-// Ported from template.html's <header class="topbar">. The old role="tablist" (page.js section 8) is
-// gone: these are real routes now, so real <a routerLink> navigation replaces the ARIA tabs pattern, and
-// ariaCurrentWhenActive="page" replaces aria-selected. role="banner" is what the vanilla <header> gave
-// assistive tech for free: the landmark that holds the brand, nav and page-wide controls.
+// The sections are real routes, so they're plain <a routerLink> navigation (not the ARIA tabs pattern),
+// with ariaCurrentWhenActive="page" marking the current one. role="banner" makes this the landmark that
+// holds the brand, nav and page-wide controls, as a top-level <header> would.
 @Component({
   selector: 'app-top-bar',
   imports: [RouterLink, RouterLinkActive],

@@ -1,12 +1,11 @@
-// The Branches page, driven in a real browser against `ng serve`. Ported from vanilla's
-// tests/behavior.js and tests/voice.js: each search is compared with what the vanilla page showed,
-// recorded in its baseline (fixtures/vanilla-baseline.json, copied unchanged).
-import baseline from '../fixtures/vanilla-baseline.json';
+// The Branches page, driven in a real browser against `ng serve`. Each search is compared with the
+// status line and branches it should show, recorded in fixtures/search-baseline.json.
+import baseline from '../fixtures/search-baseline.json';
 import { branchesState, squash, type BranchesState } from '../support/page-state';
 
 const recorded = baseline as unknown as Record<string, unknown>;
 
-function expectSearchesSameAsVanilla(searches: string[]): void {
+function expectSearchesMatchBaseline(searches: string[]): void {
   for (const text of searches) {
     const expected = recorded[`b:${text}`] as BranchesState;
     const want = { s: squash(expected.s), c: expected.c.map(squash) };
@@ -32,15 +31,15 @@ describe('Branches', () => {
 
   it('finds branches by city, state name and state code', () => {
     // "LA" and "or" are also ordinary letters inside city names, so these check the code wins.
-    expectSearchesSameAsVanilla(['texas', 'la', 'or', 'spokane', 'las']);
+    expectSearchesMatchBaseline(['texas', 'la', 'or', 'spokane', 'las']);
   });
 
   it('finds branches by phone digits and ZIP', () => {
-    expectSearchesSameAsVanilla(['985', '99212']);
+    expectSearchesMatchBaseline(['985', '99212']);
   });
 
   it('says plainly when nothing matches, without a joke', () => {
-    expectSearchesSameAsVanilla(['zz']);
+    expectSearchesMatchBaseline(['zz']);
     cy.contains('No branches match "zz"');
     cy.getBySel('empty-quip').should('not.exist');
   });

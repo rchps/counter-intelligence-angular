@@ -1,4 +1,4 @@
-// "Use in an AI chat", driven in a real browser against `ng serve`. Ported from vanilla's tests/ai-copy.js.
+// "Use in an AI chat", driven in a real browser against `ng serve`.
 // The copied text's exact wording is covered by src/app/core/ai-copy.spec.ts; these check the button,
 // the dialog, and that what lands on the clipboard is exactly the preview and nothing private.
 

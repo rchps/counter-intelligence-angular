@@ -1,9 +1,9 @@
-// Reads what a search page is showing, in the same shape as vanilla's tests/behavior.js, so specs can
-// compare against its recorded baseline (cypress/fixtures/vanilla-baseline.json).
+// Reads what a search page is showing, in the shape of the recorded baseline
+// (cypress/fixtures/search-baseline.json), so specs can compare the two.
 import { sel } from './commands';
 
-/** Whitespace-insensitive text. Vanilla built its HTML with no whitespace between elements, while
- *  Angular templates add line breaks, so comparisons ignore whitespace entirely. */
+/** Whitespace-insensitive text. Template line breaks and indentation end up in textContent but aren't
+ *  what anyone sees, so comparisons ignore whitespace entirely. */
 export function squash(text: string | null | undefined): string {
   return (text ?? '').replace(/\s+/g, '');
 }

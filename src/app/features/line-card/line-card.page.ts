@@ -32,9 +32,8 @@ interface CategoryLineGroup {
   lines: Line[];
 }
 
-// Ported from page.js section 6 (Line Card page): computed() pipeline query -> corrected words ->
-// matching -> filtered -> grouped/ranked, replacing the imperative render()/renderChips()/renderStatus()
-// trio in createSearchPage().
+// The Line Card page, as a computed() pipeline: query -> corrected words -> matching -> filtered ->
+// grouped/ranked. Each step recomputes only when something it reads changes.
 @Component({
   selector: 'app-line-card-page',
   imports: [
@@ -55,8 +54,8 @@ export class LineCardPage {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
-  // Initial state comes from the address bar (?q=&cat=&view=az), matching page.js section 9's
-  // readAddressBar; the effect below writes back to it as state changes (that half's writeAddressBar).
+  // Initial state comes from the address bar (?q=&cat=&view=az), so a search can be bookmarked or shared;
+  // the effect below writes back to it as state changes.
   private readonly initialParams = this.route.snapshot.queryParamMap;
   protected readonly search = signal(this.initialParams.get('q') ?? '');
   protected readonly filter = signal(this.initialParams.get('cat') ?? 'all');
@@ -66,7 +65,7 @@ export class LineCardPage {
 
   private readonly toolbar = viewChild.required(SearchToolbarComponent);
 
-  // Debounced ~60ms (page.js's typingDelay: 60), so a burst of keystrokes doesn't re-run the full search
+  // Debounced ~60ms, so a burst of keystrokes doesn't re-run the full search
   // pipeline on every one. The search box itself stays bound to the undebounced `search` signal above.
   private readonly debounced = toSignal(toObservable(this.search).pipe(debounceTime(60)), {
     initialValue: '',
@@ -93,7 +92,7 @@ export class LineCardPage {
     );
 
     // Replaces the current history entry rather than pushing a new one on every keystroke or filter
-    // click — matches page.js's history.replaceState in writeAddressBar.
+    // click, so Back leaves the page instead of undoing one letter at a time.
     effect(() => {
       void this.router.navigate([], {
         relativeTo: this.route,
@@ -216,7 +215,7 @@ export class LineCardPage {
     this.filter.set('all');
   }
 
-  // modules/alternatives.html: picking an offered line searches for it and puts focus back in the box.
+  // Picking an offered line searches for it and puts focus back in the box.
   protected pickAlternative(lineName: string): void {
     this.search.set(lineName);
     this.toolbar().focus();

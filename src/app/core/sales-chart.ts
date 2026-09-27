@@ -1,6 +1,6 @@
 import type { SalesSeriesPoint } from './sales-math';
 
-// Ported from sales.html's drawChart(): the geometry of the "sales vs goal pace" line chart, as plain
+// The geometry of the "sales vs goal pace" line chart, as plain
 // numbers and SVG path strings, so the component only has to draw them. Coordinates are in the SVG's
 // viewBox: `width` wide (the chart's rendered width) by CHART_HEIGHT tall.
 

@@ -1,6 +1,5 @@
-// Ported from counter-intelligence/page.js section 1 (Helpers). Names and behavior are unchanged;
-// only types were added. `find` and `isMac` were DOM/browser helpers and have no place in a pure
-// module, so they were left behind.
+// Text helpers shared by all of search: normalizing what people type and what the data says, so the two
+// can be compared.
 
 // Lower-case, strip accents, turn "&" into "and", and turn every run of punctuation into one space.
 // "SECO-LARM / Enforcer" -> "seco larm enforcer"

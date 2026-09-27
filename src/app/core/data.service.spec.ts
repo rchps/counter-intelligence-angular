@@ -71,7 +71,7 @@ describe('DataService', () => {
 
     expect(service.branches().map((b) => b.city)).toEqual(['Spokane']);
 
-    // "hikvision" isn't in lines.json at all, but modules/alternatives.html's vocab still makes it a
+    // "hikvision" isn't in lines.json at all, but alternatives.json's brand names still make it a
     // known word so typo-correction ("hickvision") can suggest it.
     expect(service.knownWords().get('hikvision')).toBe(1);
   });
