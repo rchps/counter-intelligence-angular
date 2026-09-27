@@ -1,0 +1,27 @@
+# Weekly update PRs for npm packages and the GitHub Actions the workflows use. Minor and patch updates are
+# grouped into one PR per ecosystem and merge themselves once CI passes (workflows/dependabot-auto-merge.yml);
+# major updates come one group at a time and wait for a person, since they can need code changes (Angular's
+# come with `ng update` migrations).
+#
+# Not covered: the wrangler version pinned in workflows/ci.yml (wranglerVersion), which Dependabot can't see.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      # Angular's packages have to move together, so a major Angular update is one PR, not a dozen.
+      angular:
+        patterns: ['@angular/*', '@angular-devkit/*', 'angular-eslint', '@angular-eslint/*']
+        update-types: [major]
+      npm-minor-and-patch:
+        patterns: ['*']
+        update-types: [minor, patch]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']

@@ -1,9 +1,9 @@
-# The whole-project checks, before anything leaves this machine. Takes about two minutes;
-# `git push --no-verify` skips it when that's really what's wanted.
+# The quick whole-project checks, before anything leaves this machine: seconds, not minutes. The slow
+# ones (e2e, screenshot comparison) run in CI on every push, and a branch can't merge into main until
+# they pass. `git push --no-verify` skips this when that's really what's wanted.
 npm run lint
 npm run format:check
 npm test -- --watch=false
 npm run test:scripts
 npm run validate-data
 npm run build
-npm run e2e

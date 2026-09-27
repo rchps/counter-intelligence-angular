@@ -10,8 +10,9 @@
     // Any path that isn't a file gets index.html, so Angular's router can handle /branches, /tools, etc.
     "not_found_handling": "single-page-application",
   },
-  // Serve the site on its workers.dev address, but don't give every uploaded version a public URL of its
-  // own: the pipeline only ever deploys main, so there's nothing to preview.
+  // Serve main on the workers.dev address, and each branch CI uploads on a preview URL of its own
+  // (<branch>-counter-intelligence.<subdomain>.workers.dev). Access covers both: the Worker is protected
+  // for "All traffic", not just production.
   "workers_dev": true,
-  "preview_urls": false,
+  "preview_urls": true,
 }

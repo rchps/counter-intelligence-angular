@@ -1,10 +1,12 @@
-# Runs on every push: the same checks as the pre-push hook (.husky/pre-push), which `--no-verify` can skip
-# but this can't. A push to main that passes them is deployed to Cloudflare, where Cloudflare Access
-# decides who can see it. The screenshot comparison runs alongside and reports changes, but doesn't hold
-# back a deploy: a style change on purpose shows up there too.
+# Runs on every push. The checks and e2e jobs are what a pull request needs to pass before it can merge
+# into main (branch protection), and a push to main that passes them is deployed to Cloudflare, where
+# Cloudflare Access decides who can see it. Any other branch gets a preview of its own, behind the same
+# login. The screenshot comparison runs alongside and reports changes (on the PR, when there is one), but
+# doesn't hold anything back: a style change on purpose shows up there too.
 #
-# Cloudflare serves the site as a Worker with static assets only (wrangler.jsonc), so `wrangler deploy`
-# uploads the build and nothing runs on the server.
+# Cloudflare serves the site as a Worker with static assets only (wrangler.jsonc), so deploying uploads the
+# build and nothing runs on the server. The build carries the report address, so it's never uploaded as a
+# GitHub artifact: on a public repo, anyone can download those.
 name: CI
 
 on:
@@ -21,11 +23,14 @@ permissions:
 
 env:
   NG_CLI_ANALYTICS: 'false'
+  WORKER_NAME: counter-intelligence
+  WORKERS_SUBDOMAIN: counter-intelligence-angular.workers.dev
 
 jobs:
   checks:
     name: Lint, unit tests, data, build
     runs-on: ubuntu-24.04
+    timeout-minutes: 10
     env:
       CYPRESS_INSTALL_BINARY: '0' # this job doesn't open a browser, so skip the Cypress download
     steps:
@@ -45,6 +50,7 @@ jobs:
   e2e:
     name: End-to-end tests
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -69,6 +75,10 @@ jobs:
   visual:
     name: Screenshot comparison
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      pull-requests: write # to comment the result on the branch's PR
     steps:
       - uses: actions/checkout@v7
         with:
@@ -88,10 +98,27 @@ jobs:
           if [ -z "$base" ] || [ "$base" = "$GITHUB_SHA" ] || ! git cat-file -e "$base^{commit}" 2>/dev/null; then
             echo "Nothing to compare against; skipping." | tee -a "$GITHUB_STEP_SUMMARY"
             echo "sha=" >> "$GITHUB_OUTPUT"
-          else
-            echo "Comparing with $base" | tee -a "$GITHUB_STEP_SUMMARY"
-            echo "sha=$base" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
+          echo "Comparing with $base" | tee -a "$GITHUB_STEP_SUMMARY"
+          echo "sha=$base" >> "$GITHUB_OUTPUT"
+          # The runner image (and so its Chromium) changes every week or two, and a newer Chromium can
+          # render a pixel differently; screenshots are only reused from a run on the same image.
+          # (No image version to go by, no reusing screenshots.)
+          [ -n "$ImageVersion" ] || exit 0
+          echo "image=$ImageOS-$ImageVersion" >> "$GITHUB_OUTPUT"
+          # Screenshots saved from the older commit's own run can stand in for taking them again, as long
+          # as that run took the same screenshots the same way.
+          if git diff --quiet "$base" HEAD -- cypress/visual cypress/support cypress/fixtures cypress.visual.config.ts; then
+            echo "same-specs=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.base.outputs.same-specs
+        name: Reuse the older commit's screenshots
+        id: saved
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ runner.temp }}/visual-baseline
+          key: visual-${{ steps.base.outputs.sha }}-${{ steps.base.outputs.image }}
       - if: steps.base.outputs.sha
         uses: actions/setup-node@v7
         with:
@@ -104,9 +131,15 @@ jobs:
           key: cypress-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
       - if: steps.base.outputs.sha
         run: npm ci
-      # The older commit gets its own folder (a git worktree) and its own node_modules, since its
-      # dependencies may differ. Only its app is used; the specs always come from this push.
-      - if: steps.base.outputs.sha
+      - if: steps.saved.outputs.cache-hit == 'true'
+        name: Use the saved screenshots as the baseline
+        env:
+          SAVED: ${{ runner.temp }}/visual-baseline
+        run: mkdir -p cypress/snapshots/base && cp -r "$SAVED/cypress" cypress/snapshots/base/
+      # No saved screenshots: take them from the older commit now. It gets its own folder (a git worktree)
+      # and its own node_modules, since its dependencies may differ. Only its app is used; the specs always
+      # come from this push.
+      - if: steps.base.outputs.sha && steps.saved.outputs.cache-hit != 'true'
         name: Set up the older commit
         env:
           BASE: ${{ steps.base.outputs.sha }}
@@ -114,7 +147,7 @@ jobs:
         run: |
           git worktree add ../base "$BASE"
           npm ci --prefix ../base
-      - if: steps.base.outputs.sha
+      - if: steps.base.outputs.sha && steps.saved.outputs.cache-hit != 'true'
         name: Screenshot the older commit
         run: |
           # setsid gives the server its own process group, so one kill stops npx, ng, and everything under them.
@@ -126,6 +159,7 @@ jobs:
           timeout 60 bash -c 'while curl -sf http://localhost:4210 > /dev/null; do sleep 1; done'
       - if: steps.base.outputs.sha
         name: Screenshot this push and compare
+        id: compare
         run: npm run visual
       - if: failure() && steps.base.outputs.sha
         name: List what changed
@@ -139,12 +173,101 @@ jobs:
           name: visual-diff
           path: cypress/snapshots
           retention-days: 14
+      # On main, keep this commit's screenshots for the next push to compare against. Only from a clean
+      # run: after a failed one some may be missing, and the next push just takes them again.
+      - if: github.ref == 'refs/heads/main' && steps.compare.outcome == 'success' && steps.base.outputs.image
+        name: Collect this commit's screenshots
+        env:
+          SAVED: ${{ runner.temp }}/visual-baseline
+        run: |
+          mkdir -p "$SAVED"
+          # A compare run writes to actual/<spec file>/cypress/visual/...; a baseline lives at base/cypress/visual/...
+          for spec in cypress/snapshots/actual/*/cypress; do cp -r "$spec" "$SAVED/"; done
+      - if: github.ref == 'refs/heads/main' && steps.compare.outcome == 'success' && steps.base.outputs.image
+        uses: actions/cache/save@v6
+        continue-on-error: true # a re-run finds its key already saved, which is fine
+        with:
+          path: ${{ runner.temp }}/visual-baseline
+          key: visual-${{ github.sha }}-${{ steps.base.outputs.image }}
+      # On a branch with an open PR, say how it went there, updating the same comment on each push.
+      - if: always() && github.ref != 'refs/heads/main' && steps.compare.outcome != 'skipped' && steps.compare.outcome != ''
+        name: Comment on the PR
+        continue-on-error: true # no PR yet, or no permission (Dependabot's runs), isn't a failure
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ github.ref_name }}
+          OUTCOME: ${{ steps.compare.outcome }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          pr=$(gh pr list --head "$BRANCH" --state open --json number -q '.[0].number')
+          [ -n "$pr" ] || { echo "No open PR for this branch."; exit 0; }
+          {
+            echo "### Screenshot comparison"
+            if [ "$OUTCOME" = success ]; then
+              echo "No visual changes: every page looks the same as on main."
+            else
+              echo "These look different from main. Before/after/diff images are in the **visual-diff** artifact of [this run]($RUN_URL)."
+              echo
+              find cypress/snapshots/diff -name '*.png' -printf '- %f\n' 2>/dev/null | sort
+            fi
+          } > "$RUNNER_TEMP/comment.md"
+          gh pr comment "$pr" --edit-last --create-if-none --body-file "$RUNNER_TEMP/comment.md"
+
+  # Every branch but main gets its own preview URL, behind the same Access login as the real site. Not
+  # Dependabot's branches: its runs don't get the repo's secrets, and there's nothing to look at anyway.
+  preview:
+    name: Preview deploy
+    needs: [checks]
+    if: github.ref != 'refs/heads/main' && github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment:
+      name: preview
+      url: ${{ steps.alias.outputs.url }}
+    env:
+      CYPRESS_INSTALL_BINARY: '0'
+    steps:
+      - uses: actions/checkout@v7
+      # Cloudflare's rules for the alias: lowercase letters, numbers, and dashes, starting with a letter,
+      # and at most 63 characters together with "-<worker name>" (it's one part of a hostname).
+      - name: Name the preview after the branch
+        id: alias
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          max=$((63 - 1 - ${#WORKER_NAME}))
+          alias=$(printf '%s' "$BRANCH" | tr 'A-Z' 'a-z' | sed -E 's/[^a-z0-9]+/-/g; s/^[^a-z]+//' | cut -c1-"$max" | sed -E 's/-+$//')
+          [ -n "$alias" ] || alias=branch
+          echo "alias=$alias" >> "$GITHUB_OUTPUT"
+          echo "url=https://$alias-$WORKER_NAME.$WORKERS_SUBDOMAIN" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Build
+        env:
+          REPORT_EMAIL: ${{ secrets.REPORT_EMAIL }}
+        run: npm run build
+      # Uploads a version without deploying it: main's site doesn't change.
+      - uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '4.141.0'
+          command: versions upload --preview-alias ${{ steps.alias.outputs.alias }}
+      - name: Link the preview
+        env:
+          URL: ${{ steps.alias.outputs.url }}
+        run: |
+          echo "Preview (Access login required): $URL" | tee -a "$GITHUB_STEP_SUMMARY"
 
   deploy:
     name: Deploy to Cloudflare
     needs: [checks, e2e]
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
+    timeout-minutes: 10
     # One deploy at a time, and a queued one waits instead of cancelling the one in flight.
     concurrency:
       group: deploy-production
