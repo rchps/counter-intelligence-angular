@@ -59,14 +59,9 @@
       </div>
       <div class="mc-field">
         <label for="vd-gauge">Wire gauge</label>
-        <select
-          id="vd-gauge"
-          data-cy="vdrop-gauge"
-          [value]="gauge()"
-          (change)="onGaugeChange(inputValue($event))"
-        >
+        <select id="vd-gauge" data-cy="vdrop-gauge" (change)="onGaugeChange(inputValue($event))">
           @for (g of gauges; track g) {
-            <option [value]="g">{{ g }} AWG</option>
+            <option [value]="g" [selected]="g === gauge()">{{ g }} AWG</option>
           }
         </select>
       </div>

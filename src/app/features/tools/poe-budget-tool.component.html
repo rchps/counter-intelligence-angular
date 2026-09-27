@@ -65,13 +65,15 @@
             <label [for]="'poe-class-' + row.id">PoE class</label>
             <select
               [id]="'poe-class-' + row.id"
-              [value]="row.classChoice"
+              data-cy="poe-class"
               (change)="setClassChoice(row.id, inputValue($event))"
             >
               @for (option of classOptions; track option) {
-                <option [value]="option">Class {{ option }}</option>
+                <option [value]="option" [selected]="option === row.classChoice">
+                  Class {{ option }}
+                </option>
               }
-              <option value="watts">Known watts</option>
+              <option value="watts" [selected]="row.classChoice === 'watts'">Known watts</option>
             </select>
           </div>
           <div>

@@ -56,11 +56,12 @@
           <select
             id="nvr-res"
             data-cy="nvr-resolution"
-            [value]="resolution()"
             (change)="onResolutionChange(inputValue($event))"
           >
             @for (option of resolutions; track option.key) {
-              <option [value]="option.key">{{ option.label }}</option>
+              <option [value]="option.key" [selected]="option.key === resolution()">
+                {{ option.label }}
+              </option>
             }
           </select>
         </div>

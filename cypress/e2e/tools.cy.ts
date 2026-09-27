@@ -166,15 +166,23 @@ describe('Sizing tools', () => {
     cy.getBySel('nvr-quip').should('have.text', "Ten years of footage. Hope it's a good show.");
   });
 
-  it('gauge and resolution dropdowns start on the option their numbers use', () => {
+  it('dropdowns show the option their numbers use', () => {
+    // Options built by @for must each say whether they're selected: a <select>'s own [value] is set
+    // before they exist, and the browser then shows the first option whatever the value is.
     cy.visit('/tools/vdrop');
+    cy.getBySel('vdrop-gauge').should('have.value', '12');
     fill('vdrop-amps', '1.5');
     fill('vdrop-feet', '600');
     expectShownOptionIsTheOneUsed('vdrop-gauge', () => cy.getBySel('vdrop-drop').invoke('text'));
 
     cy.visit('/tools/nvr');
     cy.getBySel('nvr-mode-estimate').check();
+    cy.getBySel('nvr-resolution').should('have.value', '4MP');
     expectShownOptionIsTheOneUsed('nvr-resolution', () => cy.getBySel('nvr-rate').invoke('text'));
+
+    // Classes 0 and 3 draw the same power, so only the shown value can tell them apart.
+    cy.visit('/tools/poe');
+    cy.getBySel('poe-class').should('have.value', '3');
   });
 });
 
