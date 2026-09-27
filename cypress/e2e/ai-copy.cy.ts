@@ -90,3 +90,36 @@ describe('Use in an AI chat', () => {
     cy.focused().should('have.attr', 'data-cy', 'ai-trigger');
   });
 });
+
+describe('First-visit hint on the AI chat button', () => {
+  // Cypress clears localStorage before every test, so each test starts as a first visit.
+
+  /** Visits the Line Card and waits for its list: the hint is decided when the list loads, and before
+   *  that "no animation" would be true for every visit and prove nothing. */
+  function visitLineCard(options: Partial<Cypress.VisitOptions> = {}): void {
+    cy.visit('/lines', options);
+    cy.getBySel('line-card').should('have.length.greaterThan', 0);
+  }
+
+  it('pulses on the first visit, and not on the next', () => {
+    visitLineCard();
+    cy.getBySel('ai-trigger').should('not.have.css', 'animation-name', 'none');
+
+    visitLineCard();
+    cy.getBySel('ai-trigger').should('have.css', 'animation-name', 'none');
+  });
+
+  it('never pulses for people who asked their computer for less motion', () => {
+    visitLineCard({
+      onBeforeLoad(win) {
+        const realMatchMedia = win.matchMedia.bind(win);
+        cy.stub(win, 'matchMedia').callsFake((query: string) =>
+          query === '(prefers-reduced-motion: reduce)'
+            ? { matches: true, media: query }
+            : realMatchMedia(query),
+        );
+      },
+    });
+    cy.getBySel('ai-trigger').should('have.css', 'animation-name', 'none');
+  });
+});

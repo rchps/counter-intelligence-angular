@@ -4,6 +4,7 @@ import {
   computed,
   effect,
   ElementRef,
+  inject,
   input,
   signal,
   untracked,
@@ -16,6 +17,9 @@ import {
   type AiCopyLine,
   type AiCopyScope,
 } from '../../core/ai-copy';
+import { StorageService } from '../../core/storage.service';
+
+const HINT_SEEN_KEY = 'sds-ai-hint-seen';
 
 // A button beside the Line Card's status line, and the dialog it opens. The sparkles icon is always
 // paired with words saying what happens, the button shows its scope, and the dialog explains the
@@ -35,6 +39,8 @@ export class AiCopyComponent {
   readonly search = input('');
   readonly correctedSearch = input('');
 
+  private readonly storage = inject(StorageService);
+
   private readonly dialog = viewChild.required<ElementRef<HTMLDialogElement>>('dialog');
   private readonly trigger = viewChild.required<ElementRef<HTMLButtonElement>>('trigger');
   private readonly copyButton = viewChild.required<ElementRef<HTMLButtonElement>>('copyButton');
@@ -44,6 +50,8 @@ export class AiCopyComponent {
   protected readonly copied = signal(false);
   protected readonly done = signal('');
   protected readonly previewOpen = signal(false);
+  /** Two soft pulses on the button, played once per browser (see showHintOnce). */
+  protected readonly hint = signal(false);
 
   protected readonly triggerLabel = computed(() =>
     aiTriggerLabel(this.shown().length, this.lines().length),
@@ -91,9 +99,27 @@ export class AiCopyComponent {
         this.done.set('');
       });
     });
+
+    // Waits for the list to load: until then the button is disabled, and pulsing it would point at
+    // something that can't be used yet.
+    effect(() => {
+      if (this.lines().length > 0) untracked(() => this.showHintOnce());
+    });
+  }
+
+  /** Draws the eye to the button on someone's first visit. Only once, since motion that repeats every
+   *  visit turns from helpful to annoying (NN/g), and never for people who've asked their computer for
+   *  less motion. Two pulses take about 3 seconds, under WCAG 2.2.2's 5-second limit for motion
+   *  without a pause control. */
+  private showHintOnce(): void {
+    if (this.storage.get(HINT_SEEN_KEY)) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    this.storage.set(HINT_SEEN_KEY, '1');
+    this.hint.set(true);
   }
 
   protected open(): void {
+    this.hint.set(false);
     // Default to what's on screen when it's a subset: that's usually what they want to ask about.
     this.scope.set('shown');
     this.copied.set(false);
