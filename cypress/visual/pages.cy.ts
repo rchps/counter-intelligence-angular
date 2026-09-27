@@ -202,7 +202,9 @@ const STATES: Record<string, PageState> = {
     setUp: () => {
       lineCardLoaded();
       cy.getBySel('topbar-feedback').click();
-      cy.getBySel('feedback-mode-idea').click();
+      // The switch is already on screen. Cypress's usual scroll-into-view before a click would scroll the
+      // (longer) problem pane, and the shorter idea pane would open part-way down, title cut off on a phone.
+      cy.getBySel('feedback-mode-idea').click({ scrollBehavior: false });
       cy.getBySel('idea-task').should('be.visible');
     },
   },
