@@ -1,0 +1,34 @@
+// The status line, with room on the right for a page tool (Line Card's "Use in an AI chat" button).
+// On narrow screens the tool wraps under the status.
+.status-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 16px;
+  margin-top: 4px;
+}
+.status {
+  display: flex;
+  flex: 1 1 320px;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  align-items: center;
+  min-height: 26px;
+  color: var(--ink-2);
+  font-size: 13px;
+}
+.status strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.fixnote {
+  color: var(--ink-2);
+  font-weight: 400;
+}
+.status-tools {
+  flex: 0 0 auto;
+}
+.status-tools:empty {
+  display: none;
+}

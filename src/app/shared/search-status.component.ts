@@ -33,6 +33,7 @@ import { nounForTotal, type CountNoun } from '../core/feedback';
       </div>
     </div>
   `,
+  styleUrl: './search-status.component.scss',
 })
 export class SearchStatusComponent {
   readonly shownCount = input.required<number>();
