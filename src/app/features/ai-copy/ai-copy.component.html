@@ -83,7 +83,7 @@
       </span>
     </label>
     <details class="ai-preview" [open]="previewOpen()" (toggle)="onPreviewToggle($event)">
-      <summary>
+      <summary data-cy="ai-preview-toggle">
         Preview what gets copied <span class="n">{{ sizeText() }}</span>
       </summary>
       <!-- Focusable so keyboard users can scroll the preview. -->

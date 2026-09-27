@@ -96,7 +96,8 @@
               "src/**/*.html",
               "scripts/**/*.mts",
               "cypress/**/*.ts",
-              "cypress.config.ts"
+              "cypress.config.ts",
+              "cypress.visual.config.ts"
             ]
           }
         },
