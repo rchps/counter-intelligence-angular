@@ -15,7 +15,7 @@ import { FeedbackService } from '../core/feedback.service';
       <span>
         @if (asOfText()) {
           Line list current as of {{ asOfText() }}. Source:
-          <a [href]="data.source()" target="_blank" rel="noopener"
+          <a data-cy="footer-source" [href]="data.source()" target="_blank" rel="noopener"
             >securitydatasupply.com/suppliers</a
           >
         }
