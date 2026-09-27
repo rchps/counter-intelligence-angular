@@ -1,0 +1,49 @@
+# Each push to main records its screenshots of every page state (cypress/visual), as the baseline pull
+# requests compare against (screenshots.yml). Nothing is compared here: a PR already showed its changes
+# before it merged.
+name: Main's screenshots
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# Every push to main is recorded, so none cancels another.
+concurrency:
+  group: screenshots-main
+  cancel-in-progress: false
+
+env:
+  NG_CLI_ANALYTICS: 'false'
+  SNAPSHOTS: cypress/snapshots
+
+jobs:
+  record:
+    name: Record main's screenshots
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      # The runner image (and so its Chromium) changes every week or two, and a newer Chromium can render
+      # a pixel differently, so screenshots are only reused on the image that took them.
+      - name: Name the runner image
+        id: image
+        run: echo "id=$ImageOS-$ImageVersion" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      # npm's cache holds the Cypress package, not the browser-driving app it downloads on install.
+      - uses: actions/cache@v6
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - run: npm ci
+      - run: npm run visual:base
+      - uses: actions/cache/save@v6
+        continue-on-error: true # a re-run finds its key already saved, which is fine
+        with:
+          path: ${{ env.SNAPSHOTS }}/expected
+          key: screenshots-${{ github.sha }}-${{ steps.image.outputs.id }}

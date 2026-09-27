@@ -300,8 +300,9 @@ after a visible change so the README stays true to the app.
   - _End-to-end tests_, with failure screenshots uploaded as an artifact.
   - _Deploy_: `main` deploys to Cloudflare once checks and end-to-end tests pass; other branches get a
     preview.
-- **GitHub Actions** (`.github/workflows/screenshots.yml`): each push to `main` records its screenshots
-  as the next baseline, and each pull request gets the _Screenshot review_ check described above.
+- **GitHub Actions**, screenshots: each push to `main` records its screenshots as the next baseline
+  (`screenshots-main.yml`), and each pull request gets the _Screenshot review_ check described above
+  (`screenshots.yml`).
 
 ### Keeping the data current
 
