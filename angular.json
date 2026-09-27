@@ -53,6 +53,15 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "e2e": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "define": {
+                "BUILD_ID": "'0000000'",
+                "BUILD_DATE": "'2026-01-01'"
+              }
             }
           },
           "defaultConfiguration": "production"
@@ -67,7 +76,7 @@
               "buildTarget": "counter-intelligence-angular:build:development"
             },
             "e2e": {
-              "buildTarget": "counter-intelligence-angular:build:development",
+              "buildTarget": "counter-intelligence-angular:build:e2e",
               "port": 4210
             }
           },
