@@ -23,8 +23,7 @@ describe('DataService', () => {
 
     httpMock.expectOne('data/lines.json').flush({
       asOf: '2026-09-25',
-      source: 'https://securitydatasupply.com/suppliers',
-      logoBase: 'https://securitydatasupply.com/logos/',
+      logoBase: 'logos/',
       cats: { access: 'Access Control' },
       lines: [
         {
@@ -83,7 +82,7 @@ describe('DataService', () => {
 
     httpMock
       .expectOne('data/lines.json')
-      .flush({ asOf: '', source: '', logoBase: '', cats: {}, lines: [], branches: [] });
+      .flush({ asOf: '', logoBase: '', cats: {}, lines: [], branches: [] });
     httpMock.expectOne('data/terms.json').flush({ terms: [] });
     httpMock.expectOne('data/alternatives.json').flush({ brands: [] });
   });

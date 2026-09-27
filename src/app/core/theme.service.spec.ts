@@ -26,7 +26,7 @@ describe('ThemeService', () => {
 
   it('restores a saved theme on construction, overriding the system preference', () => {
     stubMatchMedia(true); // system says dark
-    localStorage.setItem('sds-theme', 'light');
+    localStorage.setItem('counter-intelligence:theme', 'light');
     const theme = TestBed.inject(ThemeService);
     expect(theme.isDark()).toBe(false);
     expect(document.documentElement.dataset['theme']).toBe('light');
@@ -34,7 +34,7 @@ describe('ThemeService', () => {
 
   it('ignores a garbage saved value and falls back to the system preference', () => {
     stubMatchMedia(true);
-    localStorage.setItem('sds-theme', 'blue');
+    localStorage.setItem('counter-intelligence:theme', 'blue');
     const theme = TestBed.inject(ThemeService);
     expect(theme.isDark()).toBe(true);
     expect(document.documentElement.dataset['theme']).toBeUndefined();
@@ -48,11 +48,11 @@ describe('ThemeService', () => {
     theme.toggle();
     expect(theme.isDark()).toBe(true);
     expect(document.documentElement.dataset['theme']).toBe('dark');
-    expect(localStorage.getItem('sds-theme')).toBe('dark');
+    expect(localStorage.getItem('counter-intelligence:theme')).toBe('dark');
 
     theme.toggle();
     expect(theme.isDark()).toBe(false);
     expect(document.documentElement.dataset['theme']).toBe('light');
-    expect(localStorage.getItem('sds-theme')).toBe('light');
+    expect(localStorage.getItem('counter-intelligence:theme')).toBe('light');
   });
 });

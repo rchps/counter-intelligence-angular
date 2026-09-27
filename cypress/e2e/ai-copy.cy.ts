@@ -74,7 +74,7 @@ describe('Use in an AI chat', () => {
     cy.getBySel('ai-instructions').uncheck();
     cy.getBySel('ai-preview')
       .invoke('text')
-      .should('match', /^SDS line card, current as of/)
+      .should('match', /^Line card, current as of/)
       .and('contain', 'all 234 lines');
     cy.getBySel('ai-copy').should('contain.text', 'Copy 234 lines');
   });

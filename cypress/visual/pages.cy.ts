@@ -10,17 +10,17 @@ const SIZES: { name: string; width: number; height: number }[] = [
   { name: 'phone', width: 390, height: 844 },
 ];
 
-/** Opens a page in a fixed theme, with nothing animating. Every manufacturer logo is the same local stand-in image: the real ones come from SDS's
- *  website, and a slow or changed logo shouldn't look like a style change. */
+/** Opens a page in a fixed theme, with nothing animating. Every manufacturer logo is the same local stand-in image,
+ *  so a changed logo doesn't look like a style change. */
 function open(path: string, theme: Theme, width: number, height: number): void {
   cy.viewport(width, height);
-  cy.intercept('GET', 'https://securitydatasupply.com/wp-content/uploads/**', {
+  cy.intercept('GET', '/logos/**', {
     fixture: 'visual-logo.png',
   });
   cy.visit(path, {
     onBeforeLoad(win) {
-      win.localStorage.setItem('sds-theme', theme);
-      win.localStorage.setItem('sds-ai-hint-seen', '1');
+      win.localStorage.setItem('counter-intelligence:theme', theme);
+      win.localStorage.setItem('counter-intelligence:ai-hint-seen', '1');
       // Snapshots compare where things end up, not how they move: without this, a transition that's
       // still running (the theme switch's knob sliding as the saved theme applies) is caught partway.
       win.document.addEventListener('DOMContentLoaded', () => {
@@ -46,7 +46,7 @@ function snapshot(name: string, capture: 'viewport' | 'fullPage'): void {
   // Every page's footer says how current the line list is, from the data file, and that line adds to the
   // page's height, so a page isn't finished until it's there. (Not the feedback card: its address is built
   // in, so it shows before the data arrives.)
-  cy.getBySel('footer-source').should('exist');
+  cy.getBySel('footer-as-of').should('exist');
   cy.document().then((doc) => (doc.activeElement as HTMLElement | null)?.blur());
   cy.window().should((win) => {
     for (const img of Array.from(win.document.images)) {

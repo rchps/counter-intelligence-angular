@@ -23,13 +23,13 @@ describe('SalesStoreService', () => {
   });
 
   it('falls back to an empty store when the saved value is not valid JSON', () => {
-    localStorage.setItem('sds-counter-reference:sales:v1', 'not json');
+    localStorage.setItem('counter-intelligence:sales:v1', 'not json');
     const service = TestBed.inject(SalesStoreService);
     expect(service.load()).toEqual({ months: {} });
   });
 
   it('falls back to an empty store when the saved value has no months property', () => {
-    localStorage.setItem('sds-counter-reference:sales:v1', JSON.stringify({ foo: 'bar' }));
+    localStorage.setItem('counter-intelligence:sales:v1', JSON.stringify({ foo: 'bar' }));
     const service = TestBed.inject(SalesStoreService);
     expect(service.load()).toEqual({ months: {} });
   });

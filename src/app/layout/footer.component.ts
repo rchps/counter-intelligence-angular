@@ -3,8 +3,7 @@ import { BUILD_INFO, buildStamp } from '../core/build-info';
 import { DataService } from '../core/data.service';
 import { FeedbackService } from '../core/feedback.service';
 
-// The footer: the list's as-of
-// date and source, the build stamp (so a screenshot or an emailed copy can be matched to its commit),
+// The footer: the list's as-of date, the build stamp (so a screenshot or an emailed copy can be matched to its commit),
 // and the two feedback links.
 @Component({
   selector: 'app-footer',
@@ -14,10 +13,7 @@ import { FeedbackService } from '../core/feedback.service';
     <div class="wrap">
       <span>
         @if (asOfText()) {
-          Line list current as of {{ asOfText() }}. Source:
-          <a data-cy="footer-source" [href]="data.source()" target="_blank" rel="noopener"
-            >securitydatasupply.com/suppliers</a
-          >
+          <span data-cy="footer-as-of">Line list current as of {{ asOfText() }}.</span>
         }
       </span>
       <span>Links go to each manufacturer's official website and open in a new tab.</span>

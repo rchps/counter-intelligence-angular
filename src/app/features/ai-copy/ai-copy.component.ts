@@ -17,9 +17,10 @@ import {
   type AiCopyLine,
   type AiCopyScope,
 } from '../../core/ai-copy';
+import { STORAGE_KEYS } from '../../core/storage-keys';
 import { StorageService } from '../../core/storage.service';
 
-const HINT_SEEN_KEY = 'sds-ai-hint-seen';
+const HINT_SEEN_KEY = STORAGE_KEYS.aiHintSeen;
 
 // A button beside the Line Card's status line, and the dialog it opens. The sparkles icon is always
 // paired with words saying what happens, the button shows its scope, and the dialog explains the

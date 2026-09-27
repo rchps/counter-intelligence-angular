@@ -2,14 +2,14 @@ import { Component, input, output } from '@angular/core';
 import type { AlternativeBrand } from '../../core/alternatives';
 
 // One box per not-carried brand the search
-// points to, each offering SDS lines as buttons. Picking one searches for that line.
+// points to, each offering lines we carry as buttons. Picking one searches for that line.
 @Component({
   selector: 'app-alternatives-box',
   styleUrl: './alternatives-box.component.scss',
   template: `
     @for (brand of brands(); track brand.brand) {
       <section class="alt-box" [attr.aria-label]="'Alternatives to ' + brand.brand">
-        <h2 data-cy="alternative-heading">Not an SDS line: {{ brand.brand }}</h2>
+        <h2 data-cy="alternative-heading">Not a line we carry: {{ brand.brand }}</h2>
         <p>
           @if (brand.note) {
             <span class="alt-note">{{ brand.note }}</span>

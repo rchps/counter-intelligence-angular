@@ -1,5 +1,5 @@
 // "Use in an AI chat": the plain-text copy of the Line Card, with
-// short instructions, so an AI chat only suggests lines SDS carries. Only public line-card info goes in:
+// short instructions, so an AI chat only suggests lines we carry. Only public line-card info goes in:
 // names, categories, product types, other names, websites. Never pricing, branches, customer info, or
 // the "Try these instead" pairs.
 
@@ -16,8 +16,8 @@ export interface AiCopyLine {
 
 // What the AI is told before the list. Short, and it says what to do when nothing fits.
 export const AI_INSTRUCTIONS = [
-  "You're helping a counter salesperson at Security Data Supply (SDS), a distributor of security and " +
-    "low-voltage products. The list below is SDS's line card: the manufacturers SDS carries.",
+  "You're helping a counter salesperson at a distributor of security and low-voltage products. " +
+    "The list below is the distributor's line card: the manufacturers it carries.",
   "- Only suggest manufacturers from this list. If nothing on it fits, say so plainly. Don't suggest other brands.",
   '- "Makes" is a rough guide to product types, not a full catalog. If you\'re not sure a line makes something, ' +
     "say so and point to that manufacturer's website.",
@@ -74,7 +74,7 @@ export function aiCopyText({
   if (useShown && filterLabel) scopeNote.push(`category: ${filterLabel}`);
   if (useShown && search) scopeNote.push(`search: "${correctedSearch || search}"`);
   const header =
-    `SDS line card, current as of ${listDate(asOf)}: ` +
+    `Line card, current as of ${listDate(asOf)}: ` +
     (useShown && copied.length !== lines.length
       ? `${copied.length} of ${lines.length} lines` +
         (scopeNote.length ? ` (${scopeNote.join(', ')})` : '')

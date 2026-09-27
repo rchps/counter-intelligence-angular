@@ -335,7 +335,7 @@
   "status": "Showing 0 of 234 manufacturers matching “hikvision” (you typed “hickvision”)Clear search & filters",
   "cards": [],
   "alt": [
-   "Not an SDS line: Hikvision"
+   "Not a line we carry: Hikvision"
   ],
   "chips": [
    "All 0*",
@@ -778,7 +778,7 @@
    "SecureCom Wireless|Includes: dmp cellular|https://securecomwireless.com/"
   ],
   "alt": [
-   "Not an SDS line: DMP"
+   "Not a line we carry: DMP"
   ],
   "chips": [
    "All 1*",
@@ -878,7 +878,7 @@
   "status": "Showing 0 of 234 manufacturers matching “ubiquiti” (you typed “ubiquity”)Clear search & filters",
   "cards": [],
   "alt": [
-   "Not an SDS line: Ubiquiti / UniFi"
+   "Not a line we carry: Ubiquiti / UniFi"
   ],
   "chips": [
    "All 0*",

@@ -2,10 +2,12 @@
 // Shared by app.routes.ts (the /tools redirect) and ToolsPage (the nav list + remembering what's
 // chosen).
 
+import { STORAGE_KEYS } from '../../core/storage-keys';
+
 export type SizingToolId = 'battery' | 'vdrop' | 'poe' | 'nvr';
 export type ToolId = 'margin' | SizingToolId | 'sales';
 
-export const TOOL_STORAGE_KEY = 'sds-counter-reference:tool';
+export const TOOL_STORAGE_KEY = STORAGE_KEYS.tool;
 
 export interface ToolNavItem {
   id: ToolId;

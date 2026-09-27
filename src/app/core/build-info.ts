@@ -20,3 +20,8 @@ export function buildStamp(): string {
 // REPORT_EMAIL environment variable (a GitHub secret in CI), and angular.json gives the dev and e2e builds
 // a placeholder. Empty when it isn't passed in, which hides every feedback entry point.
 export const REPORT_EMAIL_TO: string = typeof REPORT_EMAIL === 'string' ? REPORT_EMAIL : '';
+
+// The business name a branch's Maps link searches for along with its address, so Maps opens the store's
+// own listing. Kept out of the repo like the report address (`npm run build` reads MAPS_NAME; a GitHub
+// secret in CI). Empty when it isn't passed in, and the search is by address alone.
+export const MAPS_NAME_PREFIX: string = typeof MAPS_NAME === 'string' ? MAPS_NAME : '';

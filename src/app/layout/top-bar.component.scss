@@ -26,18 +26,26 @@
   min-width: 0;
   margin-right: auto;
 }
+// The favicon's mark: "CI" over a redaction bar. Ink-colored, so it's dark on the light theme and light on
+// the dark one; the bar is the accent color.
 .brandmark .sq {
   flex: 0 0 auto;
   display: grid;
-  place-items: center;
+  place-content: center;
+  justify-items: center;
+  gap: 3px;
   width: 30px;
   height: 30px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #075b99, #2b8fd6);
-  color: #fff;
-  font: 700 10px/1 var(--mono);
-  letter-spacing: 0.02em;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  background: var(--ink);
+  color: var(--bg);
+  font: 700 12px/1 var(--mono);
+}
+.brandmark .sq::after {
+  content: '';
+  width: 18px;
+  height: 3px;
+  background: var(--brand);
 }
 .brandmark .t {
   font: 600 15px/1.1 var(--font);
@@ -49,28 +57,6 @@
   font: 500 11px/1.2 var(--mono);
   color: var(--ink-2);
   letter-spacing: 0.02em;
-}
-
-.pill-internal {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 5px 10px;
-  border-radius: 999px;
-  background: var(--amber-soft);
-  color: var(--amber-ink);
-  font: 600 11px/1 var(--mono);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-.pill-internal::before {
-  content: '';
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--amber);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--amber) 25%, transparent);
 }
 
 // Real navigation now (was role="tablist"), styled the same as a segmented control.

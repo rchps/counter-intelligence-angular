@@ -15,7 +15,6 @@ import { buildKnownWords } from './search/typos';
 
 interface LinesJson {
   asOf: string;
-  source: string;
   cats: Record<string, string>;
   lines: RawLine[];
   branches: RawBranch[];
@@ -48,7 +47,6 @@ export class DataService {
   );
 
   readonly asOf = computed(() => this.linesJson.value()?.asOf ?? '');
-  readonly source = computed(() => this.linesJson.value()?.source ?? '');
   readonly categories = computed(() => this.linesJson.value()?.cats ?? {});
   readonly logoBase = computed(() => this.linesJson.value()?.logoBase ?? '');
 
@@ -63,13 +61,13 @@ export class DataService {
     return branches ? prepareBranches(branches) : [];
   });
 
-  /** Brands SDS doesn't carry, with lines to offer instead (empty when the module is switched off). */
+  /** Brands we don't carry, with lines to offer instead (empty when the module is switched off). */
   readonly alternatives = computed<AlternativeBrand[]>(() =>
     FEATURES.alternatives ? (this.alternativesJson.value()?.brands ?? []) : [],
   );
 
   // The not-carried brands' names are known words too, which lets typo-correction fix e.g. "hickvision"
-  // even though it isn't an SDS line (core/search/match.spec.ts). Switching the alternatives feature off
+  // even though it isn't a line we carry (core/search/match.spec.ts). Switching the alternatives feature off
   // empties alternatives(), so its extra vocabulary goes with it.
   readonly knownWords = computed(() => {
     const extraVocab = this.alternatives().flatMap((brand) => brand.match);

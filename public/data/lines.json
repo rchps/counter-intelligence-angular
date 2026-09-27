@@ -1,6 +1,5 @@
 {
   "asOf": "2026-09-25",
-  "source": "https://securitydatasupply.com/suppliers/",
   "cats": {
     "access": "Access Control",
     "intrusion": "Intrusion",
@@ -26,7 +25,7 @@
         "gc3",
         "edge"
       ],
-      "logo": "2026/05/sds-intrusion-2gig.png"
+      "logo": "2gig.png"
     },
     {
       "name": "3millID",
@@ -38,7 +37,7 @@
         "3mill",
         "prox cards"
       ],
-      "logo": "2026/05/sds-access-control-3millid.png"
+      "logo": "3millid.png"
     },
     {
       "name": "3xLOGIC",
@@ -50,7 +49,7 @@
         "infinias",
         "vigil"
       ],
-      "logo": "2026/05/sds-access-control-3xlogic.png"
+      "logo": "3xlogic.png"
     },
     {
       "name": "777ALARM.com",
@@ -61,7 +60,7 @@
       "aka": [
         "777 alarm"
       ],
-      "logo": "2026/05/sds-intrusion-777-alarm-com.png"
+      "logo": "777alarm-com.png"
     },
     {
       "name": "ABB",
@@ -70,7 +69,7 @@
         "network"
       ],
       "aka": [],
-      "logo": "2026/05/sds-data-networking-abb.png"
+      "logo": "abb.png"
     },
     {
       "name": "Acme Staple",
@@ -83,7 +82,7 @@
         "staples",
         "staple gun"
       ],
-      "logo": "2026/05/sds-tools-acme.png"
+      "logo": "acme-staple.png"
     },
     {
       "name": "Adalet",
@@ -94,7 +93,7 @@
       "aka": [
         "enclosures"
       ],
-      "logo": "2026/05/sds-metal-adalet-300x113.png"
+      "logo": "adalet.png"
     },
     {
       "name": "ADC (Advanced Digital Cable)",
@@ -105,7 +104,7 @@
       "aka": [
         "advanced digital cable"
       ],
-      "logo": "2026/05/sds-wire-cable-adc.png"
+      "logo": "adc-advanced-digital-cable.png"
     },
     {
       "name": "AEM",
@@ -117,7 +116,7 @@
         "cable certifier",
         "tester"
       ],
-      "logo": "2026/06/sds-data-networking-aem-300x127.png"
+      "logo": "aem.png"
     },
     {
       "name": "AES Corporation",
@@ -130,7 +129,7 @@
         "intellinet mesh",
         "mesh radio"
       ],
-      "logo": "2026/05/sds-data-networking-aes-corporation.png"
+      "logo": "aes-corporation.png"
     },
     {
       "name": "Aetek",
@@ -139,7 +138,7 @@
         "network"
       ],
       "aka": [],
-      "logo": "2026/05/sds-data-networking-aeiek.png"
+      "logo": "aetek.png"
     },
     {
       "name": "AFL",
@@ -151,7 +150,7 @@
       "aka": [
         "fiber"
       ],
-      "logo": "2026/05/sds-wire-cable-afl.png"
+      "logo": "afl.png"
     },
     {
       "name": "Aiphone",
@@ -163,7 +162,7 @@
         "intercom",
         "video intercom"
       ],
-      "logo": "2026/06/sds-access-control-aiphone-300x150.png"
+      "logo": "aiphone.png"
     },
     {
       "name": "Ajax",
@@ -175,7 +174,7 @@
         "ajax systems",
         "wireless"
       ],
-      "logo": "2026/05/sds-intrusion-ajax.png"
+      "logo": "ajax.png"
     },
     {
       "name": "Alarm Controls",
@@ -187,7 +186,7 @@
         "request to exit",
         "rex"
       ],
-      "logo": "2026/06/sds-access-control-alarm-controls-300x174.png"
+      "logo": "alarm-controls.png"
     },
     {
       "name": "Alarm Lock",
@@ -200,7 +199,7 @@
         "networx",
         "napco"
       ],
-      "logo": "2026/06/sds-access-control-alarm-lock-300x200.jpg"
+      "logo": "alarm-lock.jpg"
     },
     {
       "name": "Alarm.com",
@@ -213,7 +212,7 @@
       "aka": [
         "adc"
       ],
-      "logo": "2026/05/sds-access-control-alarm-com.png"
+      "logo": "alarm-com.png"
     },
     {
       "name": "Alba Urmet",
@@ -227,7 +226,7 @@
         "alb",
         "urmet"
       ],
-      "logo": "2026/05/sds-wire-cable-alba-urmet.png"
+      "logo": "alba-urmet.png"
     },
     {
       "name": "Aleph",
@@ -239,7 +238,7 @@
         "sensors",
         "contacts"
       ],
-      "logo": "2026/05/sds-intrusion-aleph.png"
+      "logo": "aleph.png"
     },
     {
       "name": "Alta Labs",
@@ -250,7 +249,7 @@
       "aka": [
         "alta"
       ],
-      "logo": "2026/05/sds-av-alta-labs.png"
+      "logo": "alta-labs.png"
     },
     {
       "name": "Altronix",
@@ -266,7 +265,7 @@
         "netway",
         "poe"
       ],
-      "logo": "2026/05/sds-access-control-altronix.png"
+      "logo": "altronix.png"
     },
     {
       "name": "Alula",
@@ -278,7 +277,7 @@
         "communicator",
         "connect+"
       ],
-      "logo": "2026/05/sds-intrusion-alula.png"
+      "logo": "alula.png"
     },
     {
       "name": "American Dynamics",
@@ -291,7 +290,7 @@
         "johnson controls",
         "jci"
       ],
-      "logo": "2026/05/sds-video-surveillance-american-dynamics.png"
+      "logo": "american-dynamics.png"
     },
     {
       "name": "ASSA ABLOY",
@@ -306,7 +305,7 @@
         "hes",
         "securitron"
       ],
-      "logo": "2026/05/sds-access-control-assa-abloy.png"
+      "logo": "assa-abloy.png"
     },
     {
       "name": "Atlas IED",
@@ -319,7 +318,7 @@
         "speakers",
         "paging"
       ],
-      "logo": "2026/05/sds-av-atlas-ied.png"
+      "logo": "atlas-ied.png"
     },
     {
       "name": "ATW",
@@ -328,7 +327,7 @@
         "intrusion"
       ],
       "aka": [],
-      "logo": "2026/05/sds-intrusion-atw.png"
+      "logo": "atw.png"
     },
     {
       "name": "Avycon",
@@ -337,7 +336,7 @@
         "video"
       ],
       "aka": [],
-      "logo": "2026/05/sds-video-surveillance-avycon.png"
+      "logo": "avycon.png"
     },
     {
       "name": "AWID",
@@ -348,7 +347,7 @@
       "aka": [
         "prox"
       ],
-      "logo": "2026/05/sds-access-control-awid.png"
+      "logo": "awid.png"
     },
     {
       "name": "Azco Technologies",
@@ -359,7 +358,7 @@
       "aka": [
         "azco"
       ],
-      "logo": "2026/05/sds-video-surveillance-azco.png"
+      "logo": "azco-technologies.png"
     },
     {
       "name": "BCD",
@@ -372,7 +371,7 @@
         "nvr",
         "servers"
       ],
-      "logo": "2026/05/sds-video-surveillance-bcd.png"
+      "logo": "bcd.png"
     },
     {
       "name": "Beacon",
@@ -381,7 +380,7 @@
         "accessories"
       ],
       "aka": [],
-      "logo": "2026/05/sds-accessories-beacon.png"
+      "logo": "beacon.png"
     },
     {
       "name": "Big Dog Power",
@@ -393,7 +392,7 @@
         "big dog",
         "pdu"
       ],
-      "logo": "2026/06/sds-power-big-dog-300x158.jpg"
+      "logo": "big-dog-power.jpg"
     },
     {
       "name": "Blustream",
@@ -405,7 +404,7 @@
         "hdmi",
         "hdbaset"
       ],
-      "logo": "2026/05/sds-av-blustream.png"
+      "logo": "blustream.png"
     },
     {
       "name": "Bogen",
@@ -417,7 +416,7 @@
         "paging",
         "amplifier"
       ],
-      "logo": "2026/05/sds-av-bogen.png"
+      "logo": "bogen.png"
     },
     {
       "name": "Bolide Technology Group",
@@ -429,7 +428,7 @@
       "aka": [
         "bolide"
       ],
-      "logo": "2026/05/sds-video-surveillance-bolide.png"
+      "logo": "bolide-technology-group.png"
     },
     {
       "name": "Bosch Security",
@@ -442,7 +441,7 @@
         "b series",
         "g series"
       ],
-      "logo": "2026/06/sds-intrusion-bosch-security-300x150.jpg"
+      "logo": "bosch-security.jpg"
     },
     {
       "name": "Bright Way Group",
@@ -455,7 +454,7 @@
         "batteries",
         "continental battery"
       ],
-      "logo": "2026/05/sds-power-bright-way-group-300x166.png"
+      "logo": "bright-way-group.png"
     },
     {
       "name": "Brilliance LED",
@@ -466,7 +465,7 @@
       "aka": [
         "brilliance"
       ],
-      "logo": "2026/05/sds-av-brilliance-led.png"
+      "logo": "brilliance-led.png"
     },
     {
       "name": "Brilliant",
@@ -477,7 +476,7 @@
       "aka": [
         "smart home control"
       ],
-      "logo": "2026/05/sds-av-brilliant.png"
+      "logo": "brilliant.png"
     },
     {
       "name": "Brother",
@@ -490,7 +489,7 @@
         "p-touch",
         "badge printer"
       ],
-      "logo": "2026/05/sds-access-control-brother.png"
+      "logo": "brother.png"
     },
     {
       "name": "Cablecom Inc.",
@@ -501,7 +500,7 @@
       "aka": [
         "cablecom"
       ],
-      "logo": "2026/06/sds-wire-cable-cablecom-inc-300x181.png"
+      "logo": "cablecom-inc.png"
     },
     {
       "name": "CAIG Laboratories",
@@ -513,7 +512,7 @@
         "caig",
         "deoxit"
       ],
-      "logo": "2026/05/sds-accessories-caig.png"
+      "logo": "caig-laboratories.png"
     },
     {
       "name": "Calrad Electronics",
@@ -524,7 +523,7 @@
       "aka": [
         "calrad"
       ],
-      "logo": "2026/05/sds-av-calrad.png"
+      "logo": "calrad-electronics.png"
     },
     {
       "name": "Camden Door Controls",
@@ -537,7 +536,7 @@
         "push button",
         "door operator"
       ],
-      "logo": "2026/05/sds-access-control-camden-door-controls.png"
+      "logo": "camden-door-controls.png"
     },
     {
       "name": "Canadian Flexi Drills",
@@ -549,7 +548,7 @@
         "flexi drill",
         "flex bit"
       ],
-      "logo": "2026/05/sds-tools-canadian-flexi-drills.png"
+      "logo": "canadian-flexi-drills.png"
     },
     {
       "name": "Cap America",
@@ -561,7 +560,7 @@
         "hats",
         "caps"
       ],
-      "logo": "2026/06/sds-accessories-cap-america-300x100.png"
+      "logo": "cap-america.png"
     },
     {
       "name": "CDVI",
@@ -573,7 +572,7 @@
         "atrium",
         "maglock"
       ],
-      "logo": "2026/06/sds-access-control-cdvi-300x120.png"
+      "logo": "cdvi.png"
     },
     {
       "name": "Cisco",
@@ -585,7 +584,7 @@
         "meraki",
         "switch"
       ],
-      "logo": "2026/05/sds-data-networking-cisco.png"
+      "logo": "cisco.png"
     },
     {
       "name": "Cleerline",
@@ -597,7 +596,7 @@
         "fiber",
         "ssf"
       ],
-      "logo": "2026/05/sds-wire-cable-cleerline.png"
+      "logo": "cleerline.png"
     },
     {
       "name": "Clinton Electronics",
@@ -610,7 +609,7 @@
         "public view monitor",
         "pvm"
       ],
-      "logo": "2026/05/sds-video-surveillance-clintonelectronics.png"
+      "logo": "clinton-electronics.png"
     },
     {
       "name": "Comelit",
@@ -621,7 +620,7 @@
       "aka": [
         "intercom"
       ],
-      "logo": "2026/05/sds-access-control-comelit.png"
+      "logo": "comelit.png"
     },
     {
       "name": "Command Access Technologies",
@@ -633,7 +632,7 @@
         "command access",
         "electrified hardware"
       ],
-      "logo": "2026/05/sds-access-control-command-access-technologies.png"
+      "logo": "command-access-technologies.png"
     },
     {
       "name": "Commodity Cables",
@@ -642,7 +641,7 @@
         "wire"
       ],
       "aka": [],
-      "logo": "2026/05/sds-wire-cable-commodity-cables-inc.png"
+      "logo": "commodity-cables.png"
     },
     {
       "name": "Comtran Cable",
@@ -653,7 +652,7 @@
       "aka": [
         "comtran"
       ],
-      "logo": "2026/05/sds-wire-cable-comtran-cable.png"
+      "logo": "comtran-cable.png"
     },
     {
       "name": "Condumex",
@@ -662,7 +661,7 @@
         "wire"
       ],
       "aka": [],
-      "logo": "2026/05/sds-wire-cable-condumex.png"
+      "logo": "condumex.png"
     },
     {
       "name": "Cooper Wheelock",
@@ -675,7 +674,7 @@
         "eaton",
         "horn strobe"
       ],
-      "logo": "2026/06/sds-fire-cooper-wheelock-300x168.png"
+      "logo": "cooper-wheelock.png"
     },
     {
       "name": "CRKT",
@@ -687,7 +686,7 @@
         "knives",
         "columbia river"
       ],
-      "logo": "2026/05/sds-tools-crkt.png"
+      "logo": "crkt.png"
     },
     {
       "name": "Current Audio",
@@ -698,7 +697,7 @@
       "aka": [
         "speakers"
       ],
-      "logo": "2026/05/sds-av-current-audio.png"
+      "logo": "current-audio.png"
     },
     {
       "name": "CyberPower",
@@ -712,7 +711,7 @@
         "battery backup",
         "pdu"
       ],
-      "logo": "2026/07/cyber-power-vector-logo-300x167.png"
+      "logo": "cyberpower.png"
     },
     {
       "name": "D-Line",
@@ -724,7 +723,7 @@
         "raceway",
         "cable management"
       ],
-      "logo": "2026/05/sds-accessories-d-line-300x89.png"
+      "logo": "d-line.png"
     },
     {
       "name": "DataComm Electronics",
@@ -737,7 +736,7 @@
         "data comm",
         "recessed tv box"
       ],
-      "logo": "2026/05/sds-data-networking-data-comm-electronics.png"
+      "logo": "datacomm-electronics.png"
     },
     {
       "name": "Digifort",
@@ -748,7 +747,7 @@
       "aka": [
         "vms"
       ],
-      "logo": "2026/05/sds-video-surveillance-digifort.png"
+      "logo": "digifort.png"
     },
     {
       "name": "Digital Watchdog (DW)",
@@ -761,7 +760,7 @@
         "spectrum",
         "mega pix"
       ],
-      "logo": "2026/05/sds-video-surveillance-digital-watchdog.png"
+      "logo": "digital-watchdog-dw.png"
     },
     {
       "name": "DITEK",
@@ -772,7 +771,7 @@
       "aka": [
         "surge protection"
       ],
-      "logo": "2026/05/sds-power-ditek.png"
+      "logo": "ditek.png"
     },
     {
       "name": "DMSI",
@@ -782,7 +781,7 @@
         "network"
       ],
       "aka": [],
-      "logo": "2026/05/sds-wire-cable-dmsi.png"
+      "logo": "dmsi.png"
     },
     {
       "name": "Dolphin Components",
@@ -794,7 +793,7 @@
         "dolphin",
         "sound camouflage"
       ],
-      "logo": "2026/05/sds-accessories-dolphin-300x95.png"
+      "logo": "dolphin-components.png"
     },
     {
       "name": "DoorKing (DKS)",
@@ -807,7 +806,7 @@
         "gate operator",
         "telephone entry"
       ],
-      "logo": "2026/05/sds-access-control-doorking.png"
+      "logo": "doorking-dks.png"
     },
     {
       "name": "DSC",
@@ -821,7 +820,7 @@
         "neo",
         "tyco"
       ],
-      "logo": "2026/05/sds-intrusion-dsc.png"
+      "logo": "dsc.png"
     },
     {
       "name": "DYMO",
@@ -832,7 +831,7 @@
       "aka": [
         "label maker"
       ],
-      "logo": "2026/05/sds-tools-dymo-300x122.png"
+      "logo": "dymo.png"
     },
     {
       "name": "Dynacom",
@@ -841,7 +840,7 @@
         "network"
       ],
       "aka": [],
-      "logo": "2026/05/sds-data-networking-dynacom.png"
+      "logo": "dynacom.png"
     },
     {
       "name": "DynaLock",
@@ -852,7 +851,7 @@
       "aka": [
         "maglock"
       ],
-      "logo": "2026/05/sds-access-control-dynalock.png"
+      "logo": "dynalock.png"
     },
     {
       "name": "e-LINE",
@@ -864,7 +863,7 @@
         "eline",
         "e line"
       ],
-      "logo": "2026/05/sds-video-surveillance-e-line.png"
+      "logo": "e-line.png"
     },
     {
       "name": "Earthquake Sound",
@@ -875,7 +874,7 @@
       "aka": [
         "earthquake"
       ],
-      "logo": "2026/05/sds-av-earthquake-sound.png"
+      "logo": "earthquake-sound.png"
     },
     {
       "name": "Eaton",
@@ -887,7 +886,7 @@
         "cooper",
         "wheelock"
       ],
-      "logo": "2026/05/sds-fire-eaton.png"
+      "logo": "eaton.png"
     },
     {
       "name": "Ecolink",
@@ -898,7 +897,7 @@
       "aka": [
         "universal electronics"
       ],
-      "logo": "2026/05/sds-intrusion-ecolink.png"
+      "logo": "ecolink.png"
     },
     {
       "name": "Edwards",
@@ -910,7 +909,7 @@
         "est",
         "edwards fire"
       ],
-      "logo": "2026/05/sds-fire-edwards.png"
+      "logo": "edwards.png"
     },
     {
       "name": "eero",
@@ -923,7 +922,7 @@
         "mesh",
         "amazon"
       ],
-      "logo": "2026/05/sds-data-networking-eero.png"
+      "logo": "eero.png"
     },
     {
       "name": "ELK Products",
@@ -935,7 +934,7 @@
         "elk",
         "nice"
       ],
-      "logo": "2026/05/sds-intrusion-elk-products.png"
+      "logo": "elk-products.png"
     },
     {
       "name": "Encore Wire",
@@ -947,7 +946,7 @@
         "encore",
         "prysmian"
       ],
-      "logo": "2026/05/sds-wire-cable-encore-wire.png"
+      "logo": "encore-wire.png"
     },
     {
       "name": "ErgoAV",
@@ -958,7 +957,7 @@
       "aka": [
         "mounts"
       ],
-      "logo": "2026/05/sds-av-ergoav.png"
+      "logo": "ergoav.png"
     },
     {
       "name": "Ethereal",
@@ -970,7 +969,7 @@
         "mccsi",
         "cables"
       ],
-      "logo": "2026/05/sds-av-ethereal.png"
+      "logo": "ethereal.png"
     },
     {
       "name": "ETS",
@@ -982,7 +981,7 @@
         "ets-lan",
         "baluns"
       ],
-      "logo": "2026/05/sds-av-ets.png"
+      "logo": "ets.png"
     },
     {
       "name": "EverFocus",
@@ -991,7 +990,7 @@
         "video"
       ],
       "aka": [],
-      "logo": "2026/05/sds-video-surveillance-everfocus.png"
+      "logo": "everfocus.png"
     },
     {
       "name": "Exacq",
@@ -1004,7 +1003,7 @@
         "johnson controls",
         "vms"
       ],
-      "logo": "2026/05/sds-video-surveillance-exacq.png"
+      "logo": "exacq.png"
     },
     {
       "name": "Fire-Lite Alarms",
@@ -1016,7 +1015,7 @@
         "firelite",
         "honeywell"
       ],
-      "logo": "2026/05/sds-fire-fire-lite-alarms-300x95.png"
+      "logo": "fire-lite-alarms.png"
     },
     {
       "name": "Flair Electronics",
@@ -1027,7 +1026,7 @@
       "aka": [
         "flair"
       ],
-      "logo": "2026/06/sds-intrusion-flair-300x89.jpg"
+      "logo": "flair-electronics.jpg"
     },
     {
       "name": "Freeform",
@@ -1036,7 +1035,7 @@
         "tools"
       ],
       "aka": [],
-      "logo": "2026/05/sds-tools-freeform-300x124.png"
+      "logo": "freeform.png"
     },
     {
       "name": "G.R.I. (George Risk)",
@@ -1050,7 +1049,7 @@
         "contacts",
         "overhead door"
       ],
-      "logo": "2026/05/sds-intrusion-g-r-i.png"
+      "logo": "g-r-i-george-risk.png"
     },
     {
       "name": "Genesis",
@@ -1062,7 +1061,7 @@
         "resideo",
         "honeywell genesis"
       ],
-      "logo": "2026/05/sds-wire-cable-genesis.png"
+      "logo": "genesis.png"
     },
     {
       "name": "Gentex Corporation",
@@ -1074,7 +1073,7 @@
         "gentex",
         "horn strobe"
       ],
-      "logo": "2026/05/sds-fire-gentex-corporation.png"
+      "logo": "gentex-corporation.png"
     },
     {
       "name": "GeoVision",
@@ -1085,7 +1084,7 @@
       "aka": [
         "geo vision"
       ],
-      "logo": "2026/06/sds-video-surveillance-geovision-300x70.png"
+      "logo": "geovision.png"
     },
     {
       "name": "Golden State Instrument",
@@ -1096,7 +1095,7 @@
       "aka": [
         "gsi"
       ],
-      "logo": "2026/05/sds-intrusion-golden-state-instrument-co-300x102.png"
+      "logo": "golden-state-instrument.png"
     },
     {
       "name": "Gopher Galaxy",
@@ -1108,7 +1107,7 @@
         "gopher",
         "galaxy"
       ],
-      "logo": "2026/06/sds-fire-gopher-galaxy-300x98.png"
+      "logo": "gopher-galaxy.png"
     },
     {
       "name": "GS Yuasa",
@@ -1120,7 +1119,7 @@
         "yuasa",
         "batteries"
       ],
-      "logo": "2026/05/sds-power-gs-yuasa.png"
+      "logo": "gs-yuasa.png"
     },
     {
       "name": "Hammond Manufacturing",
@@ -1132,7 +1131,7 @@
         "hammond",
         "enclosures"
       ],
-      "logo": "2026/06/sds-metal-hammond-300x158.jpg"
+      "logo": "hammond-manufacturing.jpg"
     },
     {
       "name": "Hanwha Vision",
@@ -1145,7 +1144,7 @@
         "wisenet",
         "samsung techwin"
       ],
-      "logo": "2026/06/sds-video-surveillance-hanwha-vision-300x79.png"
+      "logo": "hanwha-vision.png"
     },
     {
       "name": "HellermannTyton",
@@ -1159,7 +1158,7 @@
         "cable ties",
         "zip ties"
       ],
-      "logo": "2026/05/sds-data-networking-hellermanntyton.png"
+      "logo": "hellermanntyton.png"
     },
     {
       "name": "HES",
@@ -1171,7 +1170,7 @@
         "electric strike",
         "assa abloy"
       ],
-      "logo": "2026/05/sds-access-control-hes.png"
+      "logo": "hes.png"
     },
     {
       "name": "HID",
@@ -1186,7 +1185,7 @@
         "readers",
         "credentials"
       ],
-      "logo": "2026/05/sds-access-control-hid.png"
+      "logo": "hid.png"
     },
     {
       "name": "Homaxi",
@@ -1195,7 +1194,7 @@
         "video"
       ],
       "aka": [],
-      "logo": "2026/05/sds-video-surveillance-homaxi.png"
+      "logo": "homaxi.png"
     },
     {
       "name": "Home8",
@@ -1206,7 +1205,7 @@
       "aka": [
         "home 8"
       ],
-      "logo": "2026/05/sds-access-control-home8.png"
+      "logo": "home8.png"
     },
     {
       "name": "Honeywell",
@@ -1222,7 +1221,7 @@
         "honeywell fire",
         "honeywell video"
       ],
-      "logo": "2026/05/sds-video-surveillance-honeywell.png"
+      "logo": "honeywell.png"
     },
     {
       "name": "Honeywell StreetSmart Security",
@@ -1237,7 +1236,7 @@
         "remote",
         "key fob"
       ],
-      "logo": "2026/06/sds-intrusion-honeywell-streetsmart-security.png"
+      "logo": "honeywell-streetsmart-security.png"
     },
     {
       "name": "HSI Fire & Safety Group",
@@ -1248,7 +1247,7 @@
       "aka": [
         "hsi"
       ],
-      "logo": "2026/05/sds-fire-hsi-fire-safety-group-llc.png"
+      "logo": "hsi-fire-safety-group.png"
     },
     {
       "name": "ICC",
@@ -1260,7 +1259,7 @@
         "jacks",
         "patch panel"
       ],
-      "logo": "2026/05/sds-data-networking-icc.png"
+      "logo": "icc.png"
     },
     {
       "name": "IDIS",
@@ -1271,7 +1270,7 @@
       "aka": [
         "directip"
       ],
-      "logo": "2026/05/sds-video-surveillance-idis.png"
+      "logo": "idis.png"
     },
     {
       "name": "ifp (IFP Connect)",
@@ -1283,7 +1282,7 @@
         "ifp connect",
         "fiber"
       ],
-      "logo": "2026/05/sds-data-networking-ifp.png"
+      "logo": "ifp-ifp-connect.png"
     },
     {
       "name": "Iluminar",
@@ -1295,7 +1294,7 @@
         "ir illuminator",
         "lighting"
       ],
-      "logo": "2026/05/sds-video-surveillance-iluminar.png"
+      "logo": "iluminar.png"
     },
     {
       "name": "Inovonics",
@@ -1307,7 +1306,7 @@
         "wireless",
         "echostream"
       ],
-      "logo": "2026/05/sds-intrusion-inovonics.png"
+      "logo": "inovonics.png"
     },
     {
       "name": "Intellinet",
@@ -1318,7 +1317,7 @@
       "aka": [
         "ic intracom"
       ],
-      "logo": "2026/05/sds-data-networking-intellinet.png"
+      "logo": "intellinet.png"
     },
     {
       "name": "Interstate Batteries",
@@ -1329,7 +1328,7 @@
       "aka": [
         "interstate"
       ],
-      "logo": "2026/05/sds-power-interstate-batteries.png"
+      "logo": "interstate-batteries.png"
     },
     {
       "name": "InVid Tech",
@@ -1340,7 +1339,7 @@
       "aka": [
         "invid"
       ],
-      "logo": "2026/05/sds-video-surveillance-invid-tech.png"
+      "logo": "invid-tech.png"
     },
     {
       "name": "Island",
@@ -1354,7 +1353,7 @@
         "perftech",
         "business router"
       ],
-      "logo": "https://images.squarespace-cdn.com/content/v1/65f1c20dc218c27620473d0f/1710342705560-XGKXHNC050FNSQUBGYJS/ISLAND_SEP+2022_%C2%AE__RGB_rev.png?format=500w"
+      "logo": "island.png"
     },
     {
       "name": "Jewell Instruments",
@@ -1366,7 +1365,7 @@
         "jewell",
         "triplett"
       ],
-      "logo": "2026/05/sds-tools-jewell-instruments.png"
+      "logo": "jewell-instruments.png"
     },
     {
       "name": "Jonard Tools",
@@ -1377,7 +1376,7 @@
       "aka": [
         "jonard"
       ],
-      "logo": "2026/06/sds-tools-jonard-tools-300x60.jpg"
+      "logo": "jonard-tools.jpg"
     },
     {
       "name": "Juke Audio",
@@ -1388,7 +1387,7 @@
       "aka": [
         "juke"
       ],
-      "logo": "2026/05/sds-av-juke-audio.png"
+      "logo": "juke-audio.png"
     },
     {
       "name": "Kantech",
@@ -1401,7 +1400,7 @@
         "johnson controls",
         "jci"
       ],
-      "logo": "2026/05/sds-access-control-kantech.png"
+      "logo": "kantech.png"
     },
     {
       "name": "Keri Systems",
@@ -1412,7 +1411,7 @@
       "aka": [
         "keri"
       ],
-      "logo": "2026/06/sds-access-control-keri-systems-300x79.png"
+      "logo": "keri-systems.png"
     },
     {
       "name": "Keyscan",
@@ -1423,7 +1422,7 @@
       "aka": [
         "dormakaba"
       ],
-      "logo": "2026/05/sds-access-control-keyscan.png"
+      "logo": "keyscan.png"
     },
     {
       "name": "Kidde",
@@ -1435,7 +1434,7 @@
         "kidde commercial",
         "fenwal"
       ],
-      "logo": "2026/05/sds-fire-kidde.png"
+      "logo": "kidde.png"
     },
     {
       "name": "Klein Tools",
@@ -1446,7 +1445,7 @@
       "aka": [
         "klein"
       ],
-      "logo": "2026/05/sds-tools-klein-tools-300x124.png"
+      "logo": "klein-tools.png"
     },
     {
       "name": "KwikMounts",
@@ -1458,7 +1457,7 @@
         "kwik mounts",
         "mounts"
       ],
-      "logo": "2026/05/sds-metal-kwikmounts.png"
+      "logo": "kwikmounts.png"
     },
     {
       "name": "Kwikset",
@@ -1470,7 +1469,7 @@
         "locks",
         "smart lock"
       ],
-      "logo": "2026/05/sds-access-control-kwikset.png"
+      "logo": "kwikset.png"
     },
     {
       "name": "L.E.D. (Light Engineered Displays)",
@@ -1487,7 +1486,7 @@
         "message display",
         "mass notification display"
       ],
-      "logo": "2026/05/sds-video-surveillance-l-e-d.png"
+      "logo": "l-e-d-light-engineered-displays.png"
     },
     {
       "name": "L.H. Dottie",
@@ -1500,7 +1499,7 @@
         "anchors",
         "fasteners"
       ],
-      "logo": "2026/05/sds-metal-l-h-dottie.png"
+      "logo": "l-h-dottie.png"
     },
     {
       "name": "LEA Professional",
@@ -1512,7 +1511,7 @@
         "lea",
         "amplifier"
       ],
-      "logo": "2026/06/sds-av-lea-professional.png"
+      "logo": "lea-professional.png"
     },
     {
       "name": "Legrand",
@@ -1525,7 +1524,7 @@
         "ortronics",
         "on-q"
       ],
-      "logo": "2026/06/sds-accessories-legrand-300x75.png"
+      "logo": "legrand.png"
     },
     {
       "name": "Legrand AV",
@@ -1539,7 +1538,7 @@
         "vaddio",
         "da-lite"
       ],
-      "logo": "2026/06/sds-av-legrand-av-300x61.png"
+      "logo": "legrand-av.png"
     },
     {
       "name": "Leviton",
@@ -1552,7 +1551,7 @@
         "patch panel",
         "structured media"
       ],
-      "logo": "2026/05/sds-data-networking-leviton.png"
+      "logo": "leviton.png"
     },
     {
       "name": "LiftMaster",
@@ -1565,7 +1564,7 @@
         "chamberlain",
         "garage"
       ],
-      "logo": "2026/05/sds-access-control-liftmaster.png"
+      "logo": "liftmaster.png"
     },
     {
       "name": "Linear",
@@ -1578,7 +1577,7 @@
         "gate operator",
         "telephone entry"
       ],
-      "logo": "2026/05/sds-access-control-linear.png"
+      "logo": "linear.png"
     },
     {
       "name": "Lockly Pro",
@@ -1590,7 +1589,7 @@
         "lockly",
         "smart lock"
       ],
-      "logo": "2026/05/sds-access-control-lockly-pro.png"
+      "logo": "lockly-pro.png"
     },
     {
       "name": "Louroe Electronics",
@@ -1603,7 +1602,7 @@
         "audio monitoring",
         "microphone"
       ],
-      "logo": "2026/05/sds-intrusion-louroe-electronics.png"
+      "logo": "louroe-electronics.png"
     },
     {
       "name": "LSD (Labor Saving Devices)",
@@ -1617,7 +1616,7 @@
         "fish tape",
         "wet noodle"
       ],
-      "logo": "2026/06/sds-tools-lsd-300x121.jpg"
+      "logo": "lsd-labor-saving-devices.jpg"
     },
     {
       "name": "Luminys",
@@ -1626,7 +1625,7 @@
         "video"
       ],
       "aka": [],
-      "logo": "2026/05/sds-video-surveillance-luminys.png"
+      "logo": "luminys.png"
     },
     {
       "name": "Lynn",
@@ -1638,7 +1637,7 @@
       "aka": [
         "lynn electronics"
       ],
-      "logo": "2026/05/sds-wire-cable-lynn.png"
+      "logo": "lynn.png"
     },
     {
       "name": "M2M Services",
@@ -1650,7 +1649,7 @@
         "m2m",
         "communicator"
       ],
-      "logo": "2026/06/sds-intrusion-m2m-300x300.png"
+      "logo": "m2m-services.png"
     },
     {
       "name": "Macurco",
@@ -1662,7 +1661,7 @@
         "gas detection",
         "co detector"
       ],
-      "logo": "2026/05/sds-fire-macurco.png"
+      "logo": "macurco.png"
     },
     {
       "name": "Mag Daddy",
@@ -1673,7 +1672,7 @@
       "aka": [
         "magdaddy"
       ],
-      "logo": "2026/05/sds-accessories-mag-daddy-300x129.png"
+      "logo": "mag-daddy.png"
     },
     {
       "name": "Magnepull",
@@ -1684,7 +1683,7 @@
       "aka": [
         "wire fishing"
       ],
-      "logo": "2026/06/sds-tools-magnepull-300x75.png"
+      "logo": "magnepull.png"
     },
     {
       "name": "Manhattan",
@@ -1695,7 +1694,7 @@
       "aka": [
         "ic intracom"
       ],
-      "logo": "2026/05/sds-av-manhattan.png"
+      "logo": "manhattan.png"
     },
     {
       "name": "MaxOut",
@@ -1704,7 +1703,7 @@
         "intrusion"
       ],
       "aka": [],
-      "logo": "2026/05/sds-intrusion-maxout.png"
+      "logo": "maxout.png"
     },
     {
       "name": "MG Electronics",
@@ -1715,7 +1714,7 @@
       "aka": [
         "mg"
       ],
-      "logo": "2026/05/sds-power-mg-electronics.png"
+      "logo": "mg-electronics.png"
     },
     {
       "name": "Middle Atlantic Products",
@@ -1728,7 +1727,7 @@
         "rack",
         "legrand"
       ],
-      "logo": "2026/05/sds-video-surveillance-middle-atlantic-products.png"
+      "logo": "middle-atlantic-products.png"
     },
     {
       "name": "Mier Products",
@@ -1740,7 +1739,7 @@
         "mier",
         "enclosures"
       ],
-      "logo": "2026/05/sds-metal-mier.png"
+      "logo": "mier-products.png"
     },
     {
       "name": "Milesight",
@@ -1751,7 +1750,7 @@
       "aka": [
         "lpr"
       ],
-      "logo": "2026/05/sds-video-surveillance-milesight.png"
+      "logo": "milesight.png"
     },
     {
       "name": "Minuteman Power",
@@ -1764,7 +1763,7 @@
         "ups",
         "para systems"
       ],
-      "logo": "2026/05/sds-power-minuteman.png"
+      "logo": "minuteman-power.png"
     },
     {
       "name": "Mircom",
@@ -1775,7 +1774,7 @@
       "aka": [
         "enclosures"
       ],
-      "logo": "2026/05/sds-metal-mircom.png"
+      "logo": "mircom.png"
     },
     {
       "name": "Mongotel",
@@ -1784,7 +1783,7 @@
         "accessories"
       ],
       "aka": [],
-      "logo": "2026/05/sds-accessories-mongotel-300x127.png"
+      "logo": "mongotel.png"
     },
     {
       "name": "NAPCO",
@@ -1800,7 +1799,7 @@
         "marks usa",
         "continental"
       ],
-      "logo": "2026/05/sds-access-control-napco.png"
+      "logo": "napco.png"
     },
     {
       "name": "Nedap",
@@ -1811,7 +1810,7 @@
       "aka": [
         "aeos"
       ],
-      "logo": "2026/05/sds-access-control-nedap.png"
+      "logo": "nedap.png"
     },
     {
       "name": "NetworkIntegrity Systems",
@@ -1823,7 +1822,7 @@
         "network integrity",
         "interceptor"
       ],
-      "logo": "2026/05/sds-data-networking-networkintegrity-systems.png"
+      "logo": "networkintegrity-systems.png"
     },
     {
       "name": "Nuuo",
@@ -1834,7 +1833,7 @@
       "aka": [
         "nvr"
       ],
-      "logo": "2026/05/sds-video-surveillance-nuuo.png"
+      "logo": "nuuo.png"
     },
     {
       "name": "nVent CADDY",
@@ -1847,7 +1846,7 @@
         "j-hook",
         "erico"
       ],
-      "logo": "2026/06/sds-metal-nvent-caddy-300x289.png"
+      "logo": "nvent-caddy.png"
     },
     {
       "name": "OCC (Optical Cable Corp)",
@@ -1861,7 +1860,7 @@
         "optical cable",
         "fiber"
       ],
-      "logo": "2026/05/sds-wire-cable-occ.png"
+      "logo": "occ-optical-cable-corp.png"
     },
     {
       "name": "Omada by TP-Link",
@@ -1875,7 +1874,7 @@
         "tplink",
         "sdn"
       ],
-      "logo": "2026/07/tp-link_omada_logo_rgb_black-300x172.png"
+      "logo": "omada-by-tp-link.png"
     },
     {
       "name": "OmniCable",
@@ -1886,7 +1885,7 @@
       "aka": [
         "omni cable"
       ],
-      "logo": "2026/05/sds-wire-cable-omnicable.png"
+      "logo": "omnicable.png"
     },
     {
       "name": "OmniMount",
@@ -1899,7 +1898,7 @@
         "mounts",
         "legrand"
       ],
-      "logo": "2026/05/sds-av-omni-mount.png"
+      "logo": "omnimount.png"
     },
     {
       "name": "Onkyo",
@@ -1910,7 +1909,7 @@
       "aka": [
         "receiver"
       ],
-      "logo": "2026/05/sds-av-onkyo.png"
+      "logo": "onkyo.png"
     },
     {
       "name": "Optex",
@@ -1923,7 +1922,7 @@
         "redscan",
         "beam"
       ],
-      "logo": "2026/06/sds-intrusion-optex-300x48.png"
+      "logo": "optex.png"
     },
     {
       "name": "Ortronics",
@@ -1934,7 +1933,7 @@
       "aka": [
         "legrand"
       ],
-      "logo": "2026/05/sds-data-networking-ortronics.png"
+      "logo": "ortronics.png"
     },
     {
       "name": "OSD Audio",
@@ -1946,7 +1945,7 @@
         "osd",
         "speakers"
       ],
-      "logo": "2026/05/sds-av-osd-audio.png"
+      "logo": "osd-audio.png"
     },
     {
       "name": "pdk (ProdataKey)",
@@ -1959,7 +1958,7 @@
         "prodatakey",
         "cloud access"
       ],
-      "logo": "2026/05/sds-access-control-pdk.png"
+      "logo": "pdk-prodatakey.png"
     },
     {
       "name": "Petroflex",
@@ -1971,7 +1970,7 @@
         "innerduct",
         "conduit"
       ],
-      "logo": "2026/05/sds-accessories-petroflex.png"
+      "logo": "petroflex.png"
     },
     {
       "name": "Platinum Tools",
@@ -1983,7 +1982,7 @@
         "ez-rj45",
         "crimper"
       ],
-      "logo": "2026/05/sds-tools-platinum-tools-300x110.png"
+      "logo": "platinum-tools.png"
     },
     {
       "name": "Potter",
@@ -1994,7 +1993,7 @@
       "aka": [
         "potter signal"
       ],
-      "logo": "2026/05/sds-fire-potter.png"
+      "logo": "potter.png"
     },
     {
       "name": "Power-Sonic",
@@ -2006,7 +2005,7 @@
         "powersonic",
         "batteries"
       ],
-      "logo": "2026/06/sds-power-power-sonic-300x55.png"
+      "logo": "power-sonic.png"
     },
     {
       "name": "PPG",
@@ -2015,7 +2014,7 @@
         "accessories"
       ],
       "aka": [],
-      "logo": "2026/07/PPG_Logo.svg_-300x233.webp"
+      "logo": "ppg.webp"
     },
     {
       "name": "Proficient Audio",
@@ -2027,7 +2026,7 @@
         "proficient",
         "speakers"
       ],
-      "logo": "2026/05/sds-av-proficient-audio.png"
+      "logo": "proficient-audio.png"
     },
     {
       "name": "Proterial",
@@ -2039,7 +2038,7 @@
         "hitachi cable",
         "hitachi"
       ],
-      "logo": "2026/05/sds-wire-cable-proterial.png"
+      "logo": "proterial.png"
     },
     {
       "name": "PureNet",
@@ -2050,7 +2049,7 @@
       "aka": [
         "pure net"
       ],
-      "logo": "2026/05/sds-wire-cable-purenet.png"
+      "logo": "purenet.png"
     },
     {
       "name": "Qolsys",
@@ -2062,7 +2061,7 @@
         "iq panel",
         "johnson controls"
       ],
-      "logo": "2026/05/sds-intrusion-qolsys.png"
+      "logo": "qolsys.png"
     },
     {
       "name": "Rack-A-Tiers",
@@ -2074,7 +2073,7 @@
         "rackatiers",
         "wire spool"
       ],
-      "logo": "2026/05/sds-tools-rack-a-tiers-300x108.png"
+      "logo": "rack-a-tiers.png"
     },
     {
       "name": "Rapid Video Mounts",
@@ -2086,7 +2085,7 @@
         "rapid",
         "mounts"
       ],
-      "logo": "2026/05/sds-av-rapid-video-mounts.png"
+      "logo": "rapid-video-mounts.png"
     },
     {
       "name": "Ring",
@@ -2098,7 +2097,7 @@
         "doorbell",
         "amazon"
       ],
-      "logo": "2026/06/sds-video-surveillance-ring-300x188.png"
+      "logo": "ring.png"
     },
     {
       "name": "Rosslare Security Products",
@@ -2109,7 +2108,7 @@
       "aka": [
         "rosslare"
       ],
-      "logo": "2026/09/Rosslare-Logo.png"
+      "logo": "rosslare-security-products.png"
     },
     {
       "name": "Russound",
@@ -2120,7 +2119,7 @@
       "aka": [
         "whole home audio"
       ],
-      "logo": "2026/05/sds-av-russound.png"
+      "logo": "russound.png"
     },
     {
       "name": "Rutherford Controls (RCI)",
@@ -2133,7 +2132,7 @@
         "dormakaba",
         "maglock"
       ],
-      "logo": "2026/05/sds-access-control-rutherford-controls.png"
+      "logo": "rutherford-controls-rci.png"
     },
     {
       "name": "SDi",
@@ -2146,7 +2145,7 @@
         "testifire",
         "detector testers"
       ],
-      "logo": "2026/05/sds-fire-sdi.png"
+      "logo": "sdi.png"
     },
     {
       "name": "SECO-LARM / Enforcer",
@@ -2160,7 +2159,7 @@
         "enforcer",
         "secolarm"
       ],
-      "logo": "2026/05/sds-intrusion-seco-larm-enforcer.png"
+      "logo": "seco-larm-enforcer.png"
     },
     {
       "name": "SecureCom Wireless",
@@ -2174,7 +2173,7 @@
         "dmp cellular",
         "cellular communicator"
       ],
-      "logo": "2026/06/sds-intrusion-secure-wireless-300x174.jpg"
+      "logo": "securecom-wireless.jpg"
     },
     {
       "name": "Selecta",
@@ -2186,7 +2185,7 @@
         "selecta products",
         "switches"
       ],
-      "logo": "2026/06/sds-accessories-selecta.jpg"
+      "logo": "selecta.jpg"
     },
     {
       "name": "Shaxon",
@@ -2195,7 +2194,7 @@
         "network"
       ],
       "aka": [],
-      "logo": "2026/05/sds-data-networking-shaxon.png"
+      "logo": "shaxon.png"
     },
     {
       "name": "Sigcom",
@@ -2204,7 +2203,7 @@
         "fire"
       ],
       "aka": [],
-      "logo": "2026/06/sds-fire-sigcom-300x78.png"
+      "logo": "sigcom.png"
     },
     {
       "name": "Signamax",
@@ -2213,7 +2212,7 @@
         "network"
       ],
       "aka": [],
-      "logo": "2026/05/sds-data-networking-signamax.png"
+      "logo": "signamax.png"
     },
     {
       "name": "Silent Knight",
@@ -2225,7 +2224,7 @@
         "farenhyt",
         "honeywell"
       ],
-      "logo": "2026/05/sds-fire-silent-knight.png"
+      "logo": "silent-knight.png"
     },
     {
       "name": "Simply45",
@@ -2237,7 +2236,7 @@
         "simply 45",
         "rj45"
       ],
-      "logo": "2026/05/sds-tools-simply45-300x116.png"
+      "logo": "simply45.png"
     },
     {
       "name": "Snake Tray",
@@ -2249,7 +2248,7 @@
         "snaketray",
         "cable tray"
       ],
-      "logo": "2026/05/sds-metal-snaketray.png"
+      "logo": "snake-tray.png"
     },
     {
       "name": "Southwire",
@@ -2259,7 +2258,7 @@
         "metal"
       ],
       "aka": [],
-      "logo": "2026/06/sds-wire-cable-southwire-300x150.png"
+      "logo": "southwire.png"
     },
     {
       "name": "Speco Technologies",
@@ -2270,7 +2269,7 @@
       "aka": [
         "speco"
       ],
-      "logo": "2026/05/sds-video-surveillance-speco-technologies.png"
+      "logo": "speco-technologies.png"
     },
     {
       "name": "STI (Safety Technology International)",
@@ -2284,7 +2283,7 @@
         "pull station cover",
         "safety technology"
       ],
-      "logo": "2026/06/sds-fire-sti-300x76.png"
+      "logo": "sti-safety-technology-international.png"
     },
     {
       "name": "STI (Specified Technologies Inc.)",
@@ -2298,7 +2297,7 @@
         "specseal",
         "ez path"
       ],
-      "logo": "2026/06/sds-fire-sti-1-300x89.png"
+      "logo": "sti-specified-technologies-inc.png"
     },
     {
       "name": "Structured Cable Products (SCP)",
@@ -2309,7 +2308,7 @@
       "aka": [
         "scp"
       ],
-      "logo": "2026/05/sds-wire-cable-structured-cable-products.png"
+      "logo": "structured-cable-products-scp.png"
     },
     {
       "name": "SwiftFusion",
@@ -2321,7 +2320,7 @@
         "swift fusion",
         "fiber splicer"
       ],
-      "logo": "2026/06/sds-tools-swift-fusion-300x182.png"
+      "logo": "swiftfusion.png"
     },
     {
       "name": "System Sensor",
@@ -2334,7 +2333,7 @@
         "smoke detector",
         "horn strobe"
       ],
-      "logo": "2026/06/sds-fire-system-sensor-300x79.jpg"
+      "logo": "system-sensor.jpg"
     },
     {
       "name": "Takex",
@@ -2346,7 +2345,7 @@
         "beam",
         "photoelectric"
       ],
-      "logo": "2026/05/sds-intrusion-takex.png"
+      "logo": "takex.png"
     },
     {
       "name": "Tane Alarm Products",
@@ -2357,7 +2356,7 @@
       "aka": [
         "tane"
       ],
-      "logo": "2026/05/sds-intrusion-tane-alarm-products-300x102.png"
+      "logo": "tane-alarm-products.png"
     },
     {
       "name": "TCL",
@@ -2369,7 +2368,7 @@
         "tv",
         "display"
       ],
-      "logo": "2026/05/sds-av-tcl.png"
+      "logo": "tcl.png"
     },
     {
       "name": "TDG Audio",
@@ -2381,7 +2380,7 @@
         "tdg",
         "speakers"
       ],
-      "logo": "2026/05/sds-av-tdg-audio.png"
+      "logo": "tdg-audio.png"
     },
     {
       "name": "Telular",
@@ -2393,7 +2392,7 @@
         "telguard",
         "communicator"
       ],
-      "logo": "2026/06/sds-intrusion-telular-300x68.png"
+      "logo": "telular.png"
     },
     {
       "name": "ToughDog Security",
@@ -2405,7 +2404,7 @@
         "tough dog",
         "td security systems"
       ],
-      "logo": "2026/05/sds-video-surveillance-tough-dog-security.png"
+      "logo": "toughdog-security.png"
     },
     {
       "name": "TP-Link",
@@ -2418,7 +2417,7 @@
         "switch",
         "wifi"
       ],
-      "logo": "2026/06/sds-data-networking-tp-link-300x114.png"
+      "logo": "tp-link.png"
     },
     {
       "name": "Trans Cable",
@@ -2429,7 +2428,7 @@
       "aka": [
         "transcable"
       ],
-      "logo": "2026/06/sds-wire-cable-trans-cable-300x66.png"
+      "logo": "trans-cable.png"
     },
     {
       "name": "Trend Networks",
@@ -2443,7 +2442,7 @@
         "tester",
         "certifier"
       ],
-      "logo": "2026/06/sds-data-networking-trend-networks-300x43.png"
+      "logo": "trend-networks.png"
     },
     {
       "name": "TRENDnet",
@@ -2455,7 +2454,7 @@
       "aka": [
         "trend net"
       ],
-      "logo": "2026/05/sds-data-networking-trendnet.png"
+      "logo": "trendnet.png"
     },
     {
       "name": "Trine",
@@ -2466,7 +2465,7 @@
       "aka": [
         "electric strike"
       ],
-      "logo": "2026/05/sds-access-control-trine.png"
+      "logo": "trine.png"
     },
     {
       "name": "Triplett",
@@ -2479,7 +2478,7 @@
         "tester",
         "cctv tester"
       ],
-      "logo": "2026/05/sds-tools-triplett.png"
+      "logo": "triplett.png"
     },
     {
       "name": "United Security Products",
@@ -2492,7 +2491,7 @@
         "holdup",
         "panic button"
       ],
-      "logo": "2026/05/sds-intrusion-united-security-products-inc.png"
+      "logo": "united-security-products.png"
     },
     {
       "name": "UNV (Uniview)",
@@ -2504,7 +2503,7 @@
         "uniview",
         "unv"
       ],
-      "logo": "2026/06/sds-video-surveillance-unv-300x172.png"
+      "logo": "unv-uniview.png"
     },
     {
       "name": "UPG (Universal Power Group)",
@@ -2517,7 +2516,7 @@
         "universal power",
         "batteries"
       ],
-      "logo": "2026/06/sds-power-upg.png"
+      "logo": "upg-universal-power-group.png"
     },
     {
       "name": "Uplink",
@@ -2529,7 +2528,7 @@
         "communicator",
         "cellular"
       ],
-      "logo": "2026/05/sds-intrusion-uplink.png"
+      "logo": "uplink.png"
     },
     {
       "name": "Vanco",
@@ -2540,7 +2539,7 @@
       "aka": [
         "hdmi"
       ],
-      "logo": "2026/06/sds-data-networking-vanco.png"
+      "logo": "vanco.png"
     },
     {
       "name": "Vertical Cable",
@@ -2549,7 +2548,7 @@
         "wire"
       ],
       "aka": [],
-      "logo": "2026/05/sds-wire-cable-vertical-cable.png"
+      "logo": "vertical-cable.png"
     },
     {
       "name": "Veto Pro Pac",
@@ -2561,7 +2560,7 @@
         "veto",
         "tool bag"
       ],
-      "logo": "2026/05/sds-tools-veto-pro-pac-300x131.png"
+      "logo": "veto-pro-pac.png"
     },
     {
       "name": "Videofied",
@@ -2574,7 +2573,7 @@
         "motionviewer",
         "resideo"
       ],
-      "logo": "2026/05/sds-video-surveillance-videofied.png"
+      "logo": "videofied.png"
     },
     {
       "name": "VIGI by TP-Link",
@@ -2587,7 +2586,7 @@
         "tp-link",
         "tplink"
       ],
-      "logo": "2026/07/VIGI-by-tp-link-Logo_black-300x169.png"
+      "logo": "vigi-by-tp-link.png"
     },
     {
       "name": "Vitek",
@@ -2596,7 +2595,7 @@
         "video"
       ],
       "aka": [],
-      "logo": "2026/05/sds-video-surveillance-vitek.png"
+      "logo": "vitek.png"
     },
     {
       "name": "Vivotek",
@@ -2605,7 +2604,7 @@
         "video"
       ],
       "aka": [],
-      "logo": "2026/05/sds-video-surveillance-vivotek.png"
+      "logo": "vivotek.png"
     },
     {
       "name": "VMP (Video Mount Products)",
@@ -2618,7 +2617,7 @@
         "video mount",
         "mounts"
       ],
-      "logo": "2026/05/sds-video-surveillance-vmp.png"
+      "logo": "vmp-video-mount-products.png"
     },
     {
       "name": "Vosker",
@@ -2630,7 +2629,7 @@
         "cellular camera",
         "solar camera"
       ],
-      "logo": "2026/06/sds-video-surveillance-vosker-300x74.png"
+      "logo": "vosker.png"
     },
     {
       "name": "Wavenet",
@@ -2639,7 +2638,7 @@
         "wire"
       ],
       "aka": [],
-      "logo": "2026/05/sds-wire-cable-wavenet.png"
+      "logo": "wavenet.png"
     },
     {
       "name": "weBoost",
@@ -2651,7 +2650,7 @@
         "cell booster",
         "wilson"
       ],
-      "logo": "2026/06/sds-data-networking-weboost-300x100.png"
+      "logo": "weboost.png"
     },
     {
       "name": "West Penn Wire",
@@ -2663,7 +2662,7 @@
         "west penn",
         "wpw"
       ],
-      "logo": "2026/05/sds-wire-cable-west-penn-wire-300x83.png"
+      "logo": "west-penn-wire.png"
     },
     {
       "name": "WiiM",
@@ -2674,7 +2673,7 @@
       "aka": [
         "streamer"
       ],
-      "logo": "2026/06/sds-av-wiim.png"
+      "logo": "wiim.png"
     },
     {
       "name": "Wilson Electronics",
@@ -2687,7 +2686,7 @@
         "cell booster",
         "weboost"
       ],
-      "logo": "2026/06/sds-accessories-wilson-300x167.png"
+      "logo": "wilson-electronics.png"
     },
     {
       "name": "Winland Electronics",
@@ -2701,7 +2700,7 @@
         "water sensor",
         "temperature"
       ],
-      "logo": "2026/05/sds-intrusion-winland-electronics-inc.png"
+      "logo": "winland-electronics.png"
     },
     {
       "name": "Wiremold",
@@ -2713,7 +2712,7 @@
         "legrand",
         "raceway"
       ],
-      "logo": "2026/05/sds-accessories-wiremold.png"
+      "logo": "wiremold.png"
     },
     {
       "name": "WyreStorm",
@@ -2725,7 +2724,7 @@
         "hdmi",
         "hdbaset"
       ],
-      "logo": "2026/05/sds-av-wyrestorm.png"
+      "logo": "wyrestorm.png"
     },
     {
       "name": "Yale",
@@ -2737,7 +2736,7 @@
       "aka": [
         "smart lock"
       ],
-      "logo": "2026/05/sds-access-control-yale.png"
+      "logo": "yale.png"
     },
     {
       "name": "Z-Wave",
@@ -2749,7 +2748,7 @@
         "zwave",
         "home automation"
       ],
-      "logo": "2026/05/sds-intrusion-z-wave.png"
+      "logo": "z-wave.png"
     },
     {
       "name": "Zebra Technologies",
@@ -2762,7 +2761,7 @@
         "label printer",
         "badge printer"
       ],
-      "logo": "2026/06/sds-tools-zebra-technologies-300x99.png"
+      "logo": "zebra-technologies.png"
     },
     {
       "name": "ZKTeco",
@@ -2774,7 +2773,7 @@
         "zk",
         "biometric"
       ],
-      "logo": "2026/05/sds-access-control-zkteco.png"
+      "logo": "zkteco.png"
     },
     {
       "name": "Zuum",
@@ -2786,7 +2785,7 @@
       "aka": [
         "zuum media"
       ],
-      "logo": "2026/05/sds-video-surveillance-zuum.png"
+      "logo": "zuum.png"
     },
     {
       "name": "Zyxel",
@@ -2798,7 +2797,7 @@
         "switch",
         "firewall"
       ],
-      "logo": "2026/06/sds-data-networking-zyxel.png"
+      "logo": "zyxel.png"
     }
   ],
   "branches": [
@@ -2935,5 +2934,5 @@
       "phone": "(509) 624-5943"
     }
   ],
-  "logoBase": "https://securitydatasupply.com/wp-content/uploads/"
+  "logoBase": "logos/"
 }

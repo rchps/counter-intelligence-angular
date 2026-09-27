@@ -1,13 +1,13 @@
 import { normalize } from './search/normalize';
 
-// "Try these instead": which brands SDS doesn't carry a search
-// points to, so the Line Card can offer SDS lines that cover the same ground.
+// "Try these instead": which brands we don't carry a search
+// points to, so the Line Card can offer lines we do carry that cover the same ground.
 
 export interface AlternativeBrand {
   brand: string;
   /** What a rep might type. */
   match: string[];
-  /** SDS lines to offer instead (names match lines.json exactly; validate-data checks). */
+  /** Lines we carry to offer instead (names match lines.json exactly; validate-data checks). */
   offer: string[];
   /** Optional, factual (e.g. NDAA Section 889). */
   note?: string;
@@ -36,7 +36,7 @@ export function brandsForSearch({
   const partialGuessAllowed = !carried.some((name) => name.startsWith(typed));
 
   return brands.filter((brand) => {
-    if (carried.includes(normalize(brand.brand))) return false; // SDS carries it now
+    if (carried.includes(normalize(brand.brand))) return false; // we carry it now
     return brand.match.some((spelling) => {
       const term = normalize(spelling);
       const exact = typed === term;

@@ -11,7 +11,7 @@ import {
 const recorded = baseline as unknown as Record<string, unknown>;
 
 /** Waits for the page to finish the search (its status line says what the baseline says), then compares
- *  everything visible: status, cards, "Not an SDS line" boxes, chips, suggestions and highlights. */
+ *  everything visible: status, cards, "Not a line we carry" boxes, chips, suggestions and highlights. */
 function expectMatchesBaseline(key: string): void {
   const expected = squashLineCardState(recorded[key] as LineCardState);
   cy.getBySel('search-status').should(($status) =>

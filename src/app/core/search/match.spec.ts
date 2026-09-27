@@ -27,7 +27,7 @@ const CATEGORY_LABELS = linesData.cats;
 const LINES: Line[] = prepareLines(linesData.lines, termsData.terms, CATEGORY_LABELS);
 const BRANCHES: Branch[] = prepareBranches(linesData.branches as RawBranch[]);
 // The same extra vocabulary DataService adds (the not-carried brands' names), which
-// is what lets "hickvision"/"ubiquity" correct even though neither brand is an SDS line.
+// is what lets "hickvision"/"ubiquity" correct even though we don't carry either brand.
 const EXTRA_VOCAB = alternativesData.brands.flatMap((brand) => brand.match);
 const KNOWN_WORDS = buildKnownWords(LINES, EXTRA_VOCAB);
 
