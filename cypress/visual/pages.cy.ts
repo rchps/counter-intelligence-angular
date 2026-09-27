@@ -90,8 +90,10 @@ const STATES: Record<string, PageState> = {
     capture: 'viewport',
     setUp: () => {
       lineCardLoaded();
-      // Clears the sticky top bar and search toolbar, which cy.scrollIntoView doesn't know about.
-      cy.getBySel('recent-lines').scrollIntoView({ offset: { top: -280, left: 0 } });
+      // Scrolls to the results, not to the pinned/recent sections themselves: CI also runs these specs
+      // against the commit before a change (see the visual job in ci.yml), where a new element doesn't
+      // exist yet. The offset clears the sticky top bar and search toolbar.
+      cy.getBySel('results').scrollIntoView({ offset: { top: -280, left: 0 } });
     },
     storage: {
       'counter-intelligence:pinned-lines:v1': JSON.stringify(['Altronix', 'HID', 'ASSA ABLOY']),
