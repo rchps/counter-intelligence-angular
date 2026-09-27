@@ -121,6 +121,21 @@ describe('Line Card', () => {
     cy.getBySel('empty-quip').should('not.exist');
   });
 
+  it('leaves focus where it is while searching and filtering', () => {
+    // One key at a time, waiting for the page to catch up in between, the way a person types: .type()
+    // alone finishes a whole word inside the search's debounce, before the page reacts at all.
+    cy.getBySel('search-input').type('h');
+    cy.location('search').should('contain', 'q=h');
+    cy.focused().should('have.attr', 'data-cy', 'search-input');
+    cy.getBySel('search-input').type('o');
+    cy.location('search').should('contain', 'q=ho');
+    cy.focused().should('have.attr', 'data-cy', 'search-input');
+
+    cy.getBySel('filter-chip-fire').click();
+    cy.location('search').should('contain', 'cat=fire');
+    cy.focused().should('have.attr', 'data-cy', 'filter-chip-fire');
+  });
+
   it('focuses the search box with Ctrl+K and with /', () => {
     // The shortcuts work from anywhere on the page, so the keys go to the page itself. <body> has no
     // data-cy and needs none: it can't be restyled or renamed out from under the test.
