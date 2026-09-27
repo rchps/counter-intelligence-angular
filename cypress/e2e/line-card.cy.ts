@@ -149,4 +149,78 @@ describe('Line Card', () => {
     cy.press('/');
     cy.focused().should('have.attr', 'data-cy', 'search-input');
   });
+
+  it('slides the cards to their new places when the filter changes', () => {
+    // A transition the browser skips (say, because a navigation started another) rejects its `ready`
+    // promise, so waiting on it proves the cards really animated.
+    const started: ViewTransition[] = [];
+    cy.document().then((doc) => {
+      const start = doc.startViewTransition.bind(doc);
+      cy.stub(doc, 'startViewTransition').callsFake((update: ViewTransitionUpdateCallback) => {
+        const transition = start(update);
+        started.push(transition);
+        return transition;
+      });
+    });
+    cy.getBySel('filter-chip-fire').click();
+    cy.wrap(started).should('have.length', 1);
+    cy.then(() => started[0].ready);
+    cy.location('search').should('contain', 'cat=fire');
+  });
+});
+
+describe('Pinned and recently opened manufacturers', () => {
+  beforeEach(() => {
+    cy.visit('/lines');
+    cy.getBySel('line-card').should('have.length.greaterThan', 0);
+  });
+
+  function firstCardName(): Cypress.Chainable<string> {
+    return cy.getBySel('line-name').first().invoke('text');
+  }
+
+  it('pins a manufacturer to the top of the page, and remembers it', () => {
+    cy.getBySel('pinned-lines').should('not.exist');
+    firstCardName().then((name) => {
+      cy.getBySel('pin-line').first().click();
+      cy.getBySel('pinned-lines').find('[data-cy="line-name"]').should('have.text', name);
+
+      cy.reload();
+      cy.getBySel('pinned-lines').find('[data-cy="line-name"]').should('have.text', name);
+
+      cy.getBySel('pinned-lines').find('[data-cy="pin-line"]').click();
+      cy.getBySel('pinned-lines').should('not.exist');
+    });
+  });
+
+  it('keeps pins out of the way while searching or filtering', () => {
+    cy.getBySel('pin-line').first().click();
+    cy.getBySel('search-input').type('altronix');
+    cy.getBySel('pinned-lines').should('not.exist');
+    cy.getBySel('search-input').clear();
+    cy.getBySel('filter-chip-fire').click();
+    cy.getBySel('pinned-lines').should('not.exist');
+    cy.getBySel('filter-chip-all').click();
+    cy.getBySel('pinned-lines').should('exist');
+  });
+
+  it('lists the manufacturers opened most recently, newest first', () => {
+    // Keep the links from opening real sites in new tabs; the page's own click handling still runs.
+    cy.document().then((doc) =>
+      doc.addEventListener('click', (event) => event.preventDefault(), { capture: true }),
+    );
+    cy.getBySel('recent-lines').should('not.exist');
+    cy.getBySel('line-name').eq(0).invoke('text').as('first');
+    cy.getBySel('line-name').eq(1).invoke('text').as('second');
+    cy.getBySel('line-card').eq(0).click();
+    cy.getBySel('line-card').eq(1).click();
+
+    cy.then(function () {
+      cy.getBySel('recent-line').then(($links) =>
+        expect(
+          [...$links].map((link) => link.textContent?.replace(' (opens in new tab)', '')),
+        ).to.deep.equal([this['second'], this['first']]),
+      );
+    });
+  });
 });

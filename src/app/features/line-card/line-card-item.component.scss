@@ -1,5 +1,9 @@
+// The host holds the card and its pin button, so it's the box the button is positioned in and the one
+// that reacts to hover: moving from the card onto the pin shouldn't drop the card's hover lift.
 :host {
-  display: contents;
+  position: relative;
+  display: block;
+  height: 100%;
 }
 
 .line {
@@ -22,7 +26,7 @@
     transform 0.2s,
     box-shadow 0.2s;
 }
-a.line:hover {
+:host(:hover) a.line {
   border-color: var(--line-strong);
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
@@ -38,16 +42,18 @@ a.line:hover {
   background: var(--plate);
   border-radius: 10px;
 }
-// A set size (the box's) lets the browser lay the card out before the logo arrives. scale-down then
-// shrinks big logos to fit without enlarging small ones, which would blur them.
+// A set size (the box's) lets the browser lay the card out before the logo arrives. Once it loads, the
+// component sets a height that gives every logo about the same visual weight (core/logo-size.ts);
+// contain keeps a logo wider than the card from stretching.
 .logo img {
-  width: 100%;
+  width: auto;
+  max-width: 100%;
   height: 100%;
-  object-fit: scale-down;
+  object-fit: contain;
   mix-blend-mode: multiply;
   transition: transform 0.25s;
 }
-a.line:hover .logo img {
+:host(:hover) a.line .logo img {
   transform: scale(1.04);
 }
 .txt {
@@ -97,7 +103,7 @@ a.line:hover .logo img {
     opacity 0.2s,
     transform 0.2s;
 }
-a.line:hover .go {
+:host(:hover) a.line .go {
   opacity: 1;
   color: var(--brand);
   transform: translate(2px, -2px);
@@ -105,4 +111,57 @@ a.line:hover .go {
 .line.nolink {
   border-style: dashed;
   box-shadow: none;
+}
+// Without a logo plate, the pin would sit on the name: keep the text clear of it.
+.line.nologo {
+  padding-right: 48px;
+}
+
+// Shown on hover or keyboard focus, and always once pinned. Touch screens have no hover, so there it's
+// always shown.
+.pin {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink-2);
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity 0.15s,
+    color 0.15s,
+    transform 0.2s;
+}
+.pin svg {
+  width: 16px;
+  height: 16px;
+}
+:host(:hover) .pin,
+.pin:focus-visible,
+.pin[aria-pressed='true'] {
+  opacity: 1;
+}
+:host(:hover) a.line ~ .pin {
+  transform: translateY(-2px);
+}
+.pin:hover {
+  color: var(--ink);
+}
+.pin[aria-pressed='true'] {
+  color: var(--brand);
+}
+.pin[aria-pressed='true'] svg {
+  fill: currentColor;
+}
+@media (hover: none) {
+  .pin {
+    opacity: 1;
+  }
 }

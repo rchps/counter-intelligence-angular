@@ -2,6 +2,14 @@
 // The copied text's exact wording is covered by src/app/core/ai-copy.spec.ts; these check the button,
 // the dialog, and that what lands on the clipboard is exactly the preview and nothing private.
 
+/** Filters to Fire and waits for the page to apply it: the cards change a frame after the click, once the
+ *  browser has captured the old ones to animate from. (The chip itself shows as pressed at once, so it
+ *  can't be what the wait watches; the address is updated along with the cards.) */
+function filterByFire(): void {
+  cy.getBySel('filter-chip-fire').click();
+  cy.location('search').should('contain', 'cat=fire');
+}
+
 describe('Use in an AI chat', () => {
   beforeEach(() => {
     cy.visit('/lines', {
@@ -16,7 +24,7 @@ describe('Use in an AI chat', () => {
 
   it('names what it will copy, and is off when there is nothing to copy', () => {
     cy.getBySel('ai-trigger').should('have.text', 'Use all 234 in an AI chat…');
-    cy.getBySel('filter-chip-fire').click();
+    filterByFire();
     cy.getBySel('line-card')
       .its('length')
       .then((fireCount) =>
@@ -27,7 +35,7 @@ describe('Use in an AI chat', () => {
   });
 
   it('copies exactly the preview: only our lines, instructions included, nothing private', () => {
-    cy.getBySel('filter-chip-fire').click();
+    filterByFire();
     cy.getBySel('line-card')
       .its('length')
       .then((fireCount) => {
@@ -68,7 +76,7 @@ describe('Use in an AI chat', () => {
   });
 
   it('switches to every line and drops the instructions on request', () => {
-    cy.getBySel('filter-chip-fire').click();
+    filterByFire();
     cy.getBySel('ai-trigger').click();
     cy.getBySel('ai-scope-all').check();
     cy.getBySel('ai-instructions').uncheck();

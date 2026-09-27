@@ -12,7 +12,13 @@ const SIZES: { name: string; width: number; height: number }[] = [
 
 /** Opens a page in a fixed theme, with nothing animating. Every manufacturer logo is the same local stand-in image,
  *  so a changed logo doesn't look like a style change. */
-function open(path: string, theme: Theme, width: number, height: number): void {
+function open(
+  path: string,
+  theme: Theme,
+  width: number,
+  height: number,
+  storage: Record<string, string> = {},
+): void {
   cy.viewport(width, height);
   cy.intercept('GET', '/logos/**', {
     fixture: 'visual-logo.png',
@@ -21,6 +27,7 @@ function open(path: string, theme: Theme, width: number, height: number): void {
     onBeforeLoad(win) {
       win.localStorage.setItem('counter-intelligence:theme', theme);
       win.localStorage.setItem('counter-intelligence:ai-hint-seen', '1');
+      for (const [key, value] of Object.entries(storage)) win.localStorage.setItem(key, value);
       // Snapshots compare where things end up, not how they move: without this, a transition that's
       // still running (the theme switch's knob sliding as the saved theme applies) is caught partway.
       win.document.addEventListener('DOMContentLoaded', () => {
@@ -29,6 +36,9 @@ function open(path: string, theme: Theme, width: number, height: number): void {
           '*, *::before, *::after { transition: none !important; animation: none !important; }';
         win.document.head.append(noMotion);
       });
+      // Without view transitions the page applies a filter or page change at once, as it does in
+      // browsers that lack them, instead of a frame later once the old view has been captured.
+      Reflect.deleteProperty(win.Document.prototype, 'startViewTransition');
     },
   });
 }
@@ -69,10 +79,29 @@ interface PageState {
   /** The Line Card lists 234 logos, so it's compared by what's on screen rather than the whole page. */
   capture: 'viewport' | 'fullPage';
   setUp: () => void;
+  /** Saved browser state to start from, like pinned lines. */
+  storage?: Record<string, string>;
 }
 
 const STATES: Record<string, PageState> = {
   'line-card': { path: '/lines', capture: 'viewport', setUp: lineCardLoaded },
+  'line-card-pinned-and-recent': {
+    path: '/lines',
+    capture: 'viewport',
+    setUp: () => {
+      lineCardLoaded();
+      // Clears the sticky top bar and search toolbar, which cy.scrollIntoView doesn't know about.
+      cy.getBySel('recent-lines').scrollIntoView({ offset: { top: -280, left: 0 } });
+    },
+    storage: {
+      'counter-intelligence:pinned-lines:v1': JSON.stringify(['Altronix', 'HID', 'ASSA ABLOY']),
+      'counter-intelligence:recent-lines:v1': JSON.stringify([
+        'Cooper Wheelock',
+        'Altronix',
+        'Brother',
+      ]),
+    },
+  },
   'line-card-one-category': {
     path: '/lines',
     capture: 'fullPage',
@@ -241,7 +270,7 @@ describe('How pages look', () => {
         it(`${name}, ${theme}, ${size.name}`, () => {
           if (state.path === '/tools/sales')
             openSalesTrackerOnSep10(theme, size.width, size.height);
-          else open(state.path, theme, size.width, size.height);
+          else open(state.path, theme, size.width, size.height, state.storage);
           state.setUp();
           snapshot(`${name}-${theme}-${size.name}`, state.capture);
         });

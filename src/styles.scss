@@ -804,6 +804,35 @@ mark {
   }
 }
 
+/* View transitions: pages cross-fade (withViewTransitions in app.config.ts), and cards glide to their new
+   places when the Line Card's filter, view or pins change (CardTransitionService, which sets .vt-cards
+   for the length of one change). Styled here because component styles can't reach these pseudo-elements.
+   The sticky top bar and toolbar get names too, so gliding cards pass under them, not over. */
+::view-transition-group(*) {
+  animation-duration: 260ms;
+  animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 180ms;
+}
+.vt-cards app-line-card-item {
+  view-transition-name: match-element;
+}
+.vt-cards app-top-bar {
+  view-transition-name: top-bar;
+}
+.vt-cards .toolbar {
+  view-transition-name: toolbar;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
 /* Quoting-tool shell: the "mc" (Margin Calculator) card pattern, shared by the Margin calculator and all
    four sizing tools, which reuse its card, input and results styles; each tool's own stylesheet keeps
    only what's actually specific to it. */

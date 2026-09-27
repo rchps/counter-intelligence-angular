@@ -1,11 +1,15 @@
 import { Component, computed, effect, inject, signal, viewChild } from '@angular/core';
+import { Location } from '@angular/common';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { debounceTime } from 'rxjs';
 import { brandsForSearch } from '../../core/alternatives';
+import { CardTransitionService } from '../../core/card-transition.service';
 import { DataService } from '../../core/data.service';
 import { searchStatusText, type CountNoun } from '../../core/feedback';
 import { FeedbackService } from '../../core/feedback.service';
+import { linesByName } from '../../core/saved-lines';
+import { SavedLinesService } from '../../core/saved-lines.service';
 import { normalize, searchWordsOf } from '../../core/search/normalize';
 import { searchLines, type Line } from '../../core/search/match';
 import { isExactName, sortByBestMatch } from '../../core/search/rank';
@@ -19,6 +23,7 @@ import { AlternativesBoxComponent } from '../alternatives/alternatives-box.compo
 import { AzJumpBarComponent, azAnchorId } from './az-jump-bar.component';
 import { CategoryGroupComponent } from './category-group.component';
 import { EmptyStateComponent } from './empty-state.component';
+import { RecentLinesComponent } from './recent-lines.component';
 
 type LineCardView = 'cat' | 'az';
 
@@ -45,14 +50,18 @@ interface CategoryLineGroup {
     CategoryGroupComponent,
     AzJumpBarComponent,
     EmptyStateComponent,
+    RecentLinesComponent,
   ],
   templateUrl: './line-card.page.html',
   styleUrl: './line-card.page.scss',
 })
 export class LineCardPage {
   protected readonly data = inject(DataService);
+  private readonly saved = inject(SavedLinesService);
+  private readonly cardTransition = inject(CardTransitionService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly location = inject(Location);
 
   // Initial state comes from the address bar (?q=&cat=&view=az), so a search can be bookmarked or shared;
   // the effect below writes back to it as state changes.
@@ -93,17 +102,20 @@ export class LineCardPage {
     );
 
     // Replaces the current history entry rather than pushing a new one on every keystroke or filter
-    // click, so Back leaves the page instead of undoing one letter at a time.
+    // click, so Back leaves the page instead of undoing one letter at a time. It rewrites the address
+    // directly instead of navigating: a router navigation starts a view transition of its own, which
+    // would cut short the cards' transition (the browser runs one at a time), and nothing else reads
+    // these params after the page first opens.
     effect(() => {
-      void this.router.navigate([], {
+      const url = this.router.createUrlTree([], {
         relativeTo: this.route,
         queryParams: {
           q: this.debounced() || null,
           cat: this.filter() === 'all' ? null : this.filter(),
           view: this.view() === 'az' ? 'az' : null,
         },
-        replaceUrl: true,
       });
+      this.location.replaceState(this.router.serializeUrl(url));
     });
   }
 
@@ -170,6 +182,18 @@ export class LineCardPage {
     }));
   });
 
+  // Pinned and recent lines show only while browsing everything: a search or a category filter is
+  // someone looking for something else.
+  private readonly browsing = computed(() => !this.search().trim() && this.filter() === 'all');
+  protected readonly pinnedLines = computed(() =>
+    this.browsing() ? linesByName(this.data.lines(), this.saved.pinned()) : [],
+  );
+  protected readonly recentLines = computed(() =>
+    this.browsing()
+      ? linesByName(this.data.lines(), this.saved.recent()).filter((line) => line.url)
+      : [],
+  );
+
   protected readonly filterLabel = computed(() =>
     this.filter() === 'all' ? null : (this.data.categories()[this.filter()] ?? null),
   );
@@ -205,6 +229,14 @@ export class LineCardPage {
 
   protected readonly azAnchorId = azAnchorId;
   protected readonly features = FEATURES;
+
+  protected setFilter(key: string): void {
+    this.cardTransition.run(() => this.filter.set(key));
+  }
+
+  protected setView(view: LineCardView): void {
+    this.cardTransition.run(() => this.view.set(view));
+  }
 
   protected clearSearch(): void {
     this.search.set('');
