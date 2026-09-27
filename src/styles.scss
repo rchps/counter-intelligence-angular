@@ -761,9 +761,10 @@ mark {
   max-width: 30ch;
   text-wrap: balance;
 }
-.hero h1 .dim,
-.page-h .dim {
-  color: var(--ink-2);
+// Every page heading's second half, in the brand color.
+.hero h1 .accent,
+.page-h .accent {
+  color: var(--brand);
 }
 .hero .sub {
   margin: 14px 0 0;
