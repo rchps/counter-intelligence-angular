@@ -1,0 +1,2 @@
+# Formats and lints just the files being committed (see lint-staged.config.mjs).
+npx lint-staged

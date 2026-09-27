@@ -13,7 +13,8 @@
     "validate-data": "node scripts/validate-data.mts",
     "test:scripts": "vitest run scripts",
     "e2e": "ng run counter-intelligence-angular:cypress-run",
-    "e2e:open": "ng e2e"
+    "e2e:open": "ng e2e",
+    "prepare": "husky"
   },
   "private": true,
   "packageManager": "npm@11.19.0",
@@ -38,7 +39,9 @@
     "cypress": "16.1.0",
     "eslint": "^10.9.1",
     "eslint-plugin-cypress": "^7.0.2",
+    "husky": "^9.1.7",
     "jsdom": "^30.0.0",
+    "lint-staged": "^17.6.0",
     "prettier": "^3.8.1",
     "typescript": "~6.0.2",
     "typescript-eslint": "8.69.0",
