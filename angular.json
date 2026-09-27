@@ -54,7 +54,7 @@
               "extractLicenses": false,
               "sourceMap": true,
               "define": {
-                "REPORT_EMAIL": "'reports@example.com'"
+                "TURNSTILE_SITE_KEY": "'1x00000000000000000000AA'"
               }
             },
             "e2e": {
@@ -64,7 +64,7 @@
               "define": {
                 "BUILD_ID": "'0000000'",
                 "BUILD_DATE": "'2026-01-01'",
-                "REPORT_EMAIL": "'reports@example.com'"
+                "TURNSTILE_SITE_KEY": "'1x00000000000000000000AA'"
               }
             }
           },
@@ -99,6 +99,7 @@
               "src/**/*.ts",
               "src/**/*.html",
               "scripts/**/*.mts",
+              "worker/**/*.ts",
               "cypress/**/*.ts",
               "cypress.config.ts",
               "cypress.visual.config.ts"

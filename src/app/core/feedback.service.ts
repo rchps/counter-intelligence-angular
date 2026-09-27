@@ -1,5 +1,5 @@
 import { computed, DestroyRef, inject, Service, signal, type Signal } from '@angular/core';
-import { buildStamp, REPORT_EMAIL_TO } from './build-info';
+import { buildStamp, FEEDBACK_SITE_KEY } from './build-info';
 import { pageDetailLines, type ProblemKindKey, type SearchPageDetails } from './feedback';
 
 /** What the page on screen tells the feedback dialog about itself. */
@@ -19,13 +19,13 @@ export interface FeedbackRequest {
 }
 
 // Opens the one feedback dialog from any entry point (top bar, end-of-page card, footer, empty states),
-// and knows which page is on screen for the email's "Page details". Pages register their context
+// and knows which page is on screen for the report's "Page details". Pages register their context
 // instead of the dialog reading it back out of the DOM.
 @Service()
 export class FeedbackService {
-  /** No REPORT_EMAIL at build time = no entry points anywhere (core/build-info.ts). */
-  readonly reportEmail = signal(REPORT_EMAIL_TO).asReadonly();
-  readonly available = computed(() => !!this.reportEmail());
+  /** No TURNSTILE_SITE_KEY at build time = no entry points anywhere (core/build-info.ts). */
+  readonly siteKey = signal(FEEDBACK_SITE_KEY).asReadonly();
+  readonly available = computed(() => !!this.siteKey());
 
   private readonly pageContextSource = signal<Signal<FeedbackPageContext> | null>(null);
   readonly pageContext = computed<FeedbackPageContext>(

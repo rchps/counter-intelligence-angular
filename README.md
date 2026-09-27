@@ -33,8 +33,8 @@ calculator, on a desktop or a phone.
   lines it does carry that cover the same ground.
 - **Six quoting and sizing tools** whose math cites its sources: NFPA 72 for battery standby, NEC
   Chapter 9 for voltage drop, IEEE 802.3af/at/bt for PoE budgets.
-- **No backend.** Static JSON data, a static site, and build-time configuration. Feedback goes out
-  through the rep's own email app.
+- **Almost no backend.** Static JSON data, a static site, and build-time configuration. The one bit of
+  server code files feedback as GitHub issues, anonymously, behind a Turnstile bot check.
 - **Tested at three levels,** and every pull request is compared pixel by pixel against `main` in light and dark
   mode, on desktop and phone.
 - **Accessible by default:** WCAG AA as the target, native dialogs, ARIA patterns where HTML falls
@@ -100,8 +100,8 @@ lists that state's branches.
 - **Built for phones too.** The same pages, laid out for a narrow screen, with dialogs that become
   bottom sheets.
 - **Smooth, not flashy.** Pages cross-fade, and cards glide to their new places when a filter changes.
-- **Feedback from any page.** A "report a problem or suggest an idea" dialog opens the rep's email app
-  with a message that already names the page, the search, and the exact build.
+- **Feedback from any page.** A "report a problem or suggest an idea" dialog files a GitHub issue,
+  without the rep's name, that already names the page, the search, and the exact build.
 
 <p>
   <img src="docs/screenshots/line-card-dark.png" alt="The Line Card in dark mode" width="66%">

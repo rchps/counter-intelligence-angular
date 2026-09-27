@@ -55,7 +55,7 @@ function openSalesTrackerOnSep10(theme: Theme, width: number, height: number): v
  *  load handler, so a moment after loading). */
 function snapshot(name: string, capture: 'viewport' | 'fullPage'): void {
   // Every page's footer says how current the line list is, from the data file, and that line adds to the
-  // page's height, so a page isn't finished until it's there. (Not the feedback card: its address is built
+  // page's height, so a page isn't finished until it's there. (Not the feedback card: its site key is built
   // in, so it shows before the data arrives.)
   cy.getBySel('footer-as-of').should('exist');
   cy.document().then((doc) => {

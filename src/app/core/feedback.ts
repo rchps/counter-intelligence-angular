@@ -1,6 +1,7 @@
-// The "Report a problem" / "Suggest an idea" choices and copy, and the email each one builds. Pure, so
-// the subjects and bodies can be checked directly (feedback.spec.ts). Nothing is ever sent by the page: the
-// dialog's link is a mailto: that opens the person's email app, and they press Send.
+// The "Report a problem" / "Suggest an idea" choices and copy, and the report each one builds. Pure, so
+// the titles and bodies can be checked directly (feedback.spec.ts). The dialog posts the report to
+// /api/feedback, and the Worker (worker/index.ts) files it as a GitHub issue under the site's own account,
+// without the sender's name.
 
 export type FeedbackMode = 'problem' | 'idea';
 export type ProblemKindKey = 'link' | 'logo' | 'missing' | 'search' | 'branch' | 'tool' | 'other';
@@ -69,17 +70,18 @@ export interface ModeCopy {
 export const MODE_COPY: Record<FeedbackMode, ModeCopy> = {
   problem: {
     title: 'Report a problem',
-    lede: "Pick what's wrong and add a note. Your email app opens with it filled in, ready to send. Takes about a minute.",
-    thanks:
-      'Thanks. You just made this better for the whole counter. Finish sending it in your email app.',
+    lede:
+      "Pick what's wrong and add a note. Takes about a minute. It's posted publicly on the project's " +
+      'GitHub, without your name, so leave out anything private.',
+    thanks: 'Sent. Thanks, you just made this better for the whole counter.',
     nudge: "Pick what's wrong first.",
   },
   idea: {
     title: 'Suggest an idea',
     lede:
       "Start with what you were trying to do. The job matters more than the feature, and it's how good ideas " +
-      'get built right. Takes about a minute.',
-    thanks: 'Thanks. The best ideas come from the counter. Finish sending it in your email app.',
+      "get built right. It's posted publicly on the project's GitHub, without your name.",
+    thanks: 'Sent. Thanks, the best ideas come from the counter.',
     nudge: 'Tell us what you were trying to do first.',
   },
 };
@@ -154,12 +156,22 @@ export function searchStatusText({
   return text;
 }
 
-export interface FeedbackEmail {
-  subject: string;
+/** Sending, and the ways it can go. */
+export const SEND_COPY = {
+  sending: 'Sending…',
+  checking: 'One moment, checking this browser first. Try Send again in a few seconds.',
+  blocked:
+    "This browser couldn't be checked, so it can't send. Reload the page, or turn off a blocker for it.",
+  failed: "It didn't go through. Try again in a minute.",
+};
+
+/** A GitHub issue's two parts. */
+export interface FeedbackReport {
+  title: string;
   body: string;
 }
 
-export interface ProblemEmailInput {
+export interface ProblemReportInput {
   kind: ProblemKind;
   line: string;
   details: string;
@@ -167,25 +179,25 @@ export interface ProblemEmailInput {
   pageLines: string[];
 }
 
-export function problemEmail({
+export function problemReport({
   kind,
   line,
   details,
   tabName,
   pageLines,
-}: ProblemEmailInput): FeedbackEmail {
+}: ProblemReportInput): FeedbackReport {
   const lineName = line.trim();
   const includeLine = kind.line && !!lineName;
-  const subject =
+  const title =
     `Counter Intelligence: ${kind.label}` + (includeLine ? ` (${lineName})` : ` (${tabName})`);
   const body = [`What's wrong: ${kind.label}`];
   if (includeLine) body.push(`Manufacturer: ${lineName}`);
   body.push(`Details: ${details.trim() || '(none)'}`);
   body.push('', 'Page details:', ...pageLines);
-  return { subject, body: body.join('\n') };
+  return { title, body: body.join('\n') };
 }
 
-export interface IdeaEmailInput {
+export interface IdeaReportInput {
   task: string;
   wish: string;
   often: string | null;
@@ -193,7 +205,12 @@ export interface IdeaEmailInput {
 }
 
 /** The task is the one required answer (at least 3 characters); null until it's given. */
-export function ideaEmail({ task, wish, often, pageLines }: IdeaEmailInput): FeedbackEmail | null {
+export function ideaReport({
+  task,
+  wish,
+  often,
+  pageLines,
+}: IdeaReportInput): FeedbackReport | null {
   const taskText = task.trim();
   if (taskText.length < 3) return null;
   const short = taskText.length > 60 ? taskText.slice(0, 57).trimEnd() + '…' : taskText;
@@ -206,9 +223,5 @@ export function ideaEmail({ task, wish, often, pageLines }: IdeaEmailInput): Fee
     'Page details:',
     ...pageLines,
   ];
-  return { subject: `Counter Intelligence idea: ${short}`, body: body.join('\n') };
-}
-
-export function mailtoHref(to: string, email: FeedbackEmail): string {
-  return `mailto:${to}?subject=${encodeURIComponent(email.subject)}&body=${encodeURIComponent(email.body)}`;
+  return { title: `Counter Intelligence idea: ${short}`, body: body.join('\n') };
 }

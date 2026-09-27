@@ -16,10 +16,13 @@ export function buildStamp(): string {
   return BUILD_INFO ? `${BUILD_INFO.date} · ${BUILD_INFO.id}` : 'unknown';
 }
 
-// Where "Report a problem" emails go. It's kept out of the repo: `npm run build` reads it from the
-// REPORT_EMAIL environment variable (a GitHub secret in CI), and angular.json gives the dev and e2e builds
-// a placeholder. Empty when it isn't passed in, which hides every feedback entry point.
-export const REPORT_EMAIL_TO: string = typeof REPORT_EMAIL === 'string' ? REPORT_EMAIL : '';
+// The Turnstile widget's site key, for the feedback dialog's bot check. It's public (the browser needs it to
+// draw the widget; the matching secret stays in the Worker): `npm run build` reads it from the
+// TURNSTILE_SITE_KEY environment variable (a GitHub variable in CI), and angular.json gives the dev and e2e
+// builds Cloudflare's always-passes test key. Empty when it isn't passed in, which hides every feedback
+// entry point.
+export const FEEDBACK_SITE_KEY: string =
+  typeof TURNSTILE_SITE_KEY === 'string' ? TURNSTILE_SITE_KEY : '';
 
 // The business name a branch's Maps link searches for along with its address, so Maps opens the store's
 // own listing. Kept out of the repo like the report address (`npm run build` reads MAPS_NAME; a GitHub

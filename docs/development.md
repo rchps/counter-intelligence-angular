@@ -18,21 +18,22 @@ npm start          # http://localhost:4200
 
 `npm run build` reads two optional environment variables:
 
-| Variable       | What it does                                                                   |
-| -------------- | ------------------------------------------------------------------------------ |
-| `REPORT_EMAIL` | Where feedback emails go. Without it, the feedback button and card are hidden. |
-| `MAPS_NAME`    | Text put in front of a branch's address in its Google Maps search.             |
+| Variable             | What it does                                                                                                                      |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `TURNSTILE_SITE_KEY` | The feedback dialog's bot check ([Feedback setup](ci-cd.md#feedback-setup)). Without it, the feedback button and card are hidden. |
+| `MAPS_NAME`          | Text put in front of a branch's address in its Google Maps search.                                                                |
 
 ## Scripts
 
-| Script                                   | What it does                                                          |
-| ---------------------------------------- | --------------------------------------------------------------------- |
-| `npm start`                              | Dev server with live reload                                           |
-| `npm run build`                          | Production build, stamped with the date and commit                    |
-| `npm test`                               | Unit tests (Vitest) in watch mode; add `-- --watch=false` to run once |
-| `npm run test:scripts`                   | Tests for the data validator                                          |
-| `npm run e2e` / `npm run e2e:open`       | End-to-end tests, headless or in the Cypress app                      |
-| `npm run visual:base` / `npm run visual` | Record screenshot baselines / compare against them                    |
-| `npm run readme:screenshots`             | Retake the README's screenshots into `docs/screenshots/`              |
-| `npm run validate-data`                  | Check the data files                                                  |
-| `npm run lint` / `npm run format`        | ESLint / Prettier (`format:check` to check without writing)           |
+| Script                                             | What it does                                                          |
+| -------------------------------------------------- | --------------------------------------------------------------------- |
+| `npm start`                                        | Dev server with live reload                                           |
+| `npm run build`                                    | Production build, stamped with the date and commit                    |
+| `npm test`                                         | Unit tests (Vitest) in watch mode; add `-- --watch=false` to run once |
+| `npm run test:scripts`                             | Tests for the data validator                                          |
+| `npm run test:worker` / `npm run typecheck:worker` | Tests / type-check for the feedback Worker                            |
+| `npm run e2e` / `npm run e2e:open`                 | End-to-end tests, headless or in the Cypress app                      |
+| `npm run visual:base` / `npm run visual`           | Record screenshot baselines / compare against them                    |
+| `npm run readme:screenshots`                       | Retake the README's screenshots into `docs/screenshots/`              |
+| `npm run validate-data`                            | Check the data files                                                  |
+| `npm run lint` / `npm run format`                  | ESLint / Prettier (`format:check` to check without writing)           |

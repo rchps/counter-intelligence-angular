@@ -162,17 +162,21 @@
       <summary>Also included, so it can be checked</summary>
       <pre data-cy="feedback-page-details">{{ pageText() }}</pre>
     </details>
+    @if (open()) {
+      <app-turnstile [siteKey]="siteKey()" action="feedback" />
+    }
   </div>
   <div class="dlg-foot">
-    <a
+    <button
+      type="button"
       class="dlg-primary"
       id="report-send"
       data-cy="feedback-send"
-      [href]="href()"
       [attr.aria-disabled]="!ready()"
-      (click)="onSend($event)"
-      >Open email to send</a
+      (click)="onSend()"
     >
+      {{ sendLabel() }}
+    </button>
     <p class="dlg-done" data-cy="feedback-done" role="status" aria-live="polite">{{ done() }}</p>
     <button type="button" class="dlg-cancel" data-cy="feedback-close" (click)="close()">
       Close
