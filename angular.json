@@ -52,7 +52,10 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "define": {
+                "REPORT_EMAIL": "'reports@example.com'"
+              }
             },
             "e2e": {
               "optimization": false,
@@ -60,7 +63,8 @@
               "sourceMap": true,
               "define": {
                 "BUILD_ID": "'0000000'",
-                "BUILD_DATE": "'2026-01-01'"
+                "BUILD_DATE": "'2026-01-01'",
+                "REPORT_EMAIL": "'reports@example.com'"
               }
             }
           },

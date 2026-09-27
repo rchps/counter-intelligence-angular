@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { FeedbackService } from '../core/feedback.service';
 
 // The end-of-page feedback card (GOV.UK pattern: after the content,
-// one clear action). The app shell only renders it when there's a reportEmail to send to.
+// one clear action). The app shell only renders it when there's a report email to send to.
 @Component({
   selector: 'app-feedback-card',
   styleUrl: './feedback-card.component.scss',

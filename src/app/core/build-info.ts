@@ -15,3 +15,8 @@ export const BUILD_INFO: BuildInfo | null =
 export function buildStamp(): string {
   return BUILD_INFO ? `${BUILD_INFO.date} · ${BUILD_INFO.id}` : 'unknown';
 }
+
+// Where "Report a problem" emails go. It's kept out of the repo: `npm run build` reads it from the
+// REPORT_EMAIL environment variable (a GitHub secret in CI), and angular.json gives the dev and e2e builds
+// a placeholder. Empty when it isn't passed in, which hides every feedback entry point.
+export const REPORT_EMAIL_TO: string = typeof REPORT_EMAIL === 'string' ? REPORT_EMAIL : '';

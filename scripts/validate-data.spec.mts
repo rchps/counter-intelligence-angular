@@ -19,7 +19,6 @@ function baseData(overrides: Partial<LinesData> = {}): LinesData {
   return {
     asOf: '2026-09-25',
     cats: { power: 'Power' },
-    reportEmail: 'reports@example.com',
     lines: [validLine],
     branches: [validBranch],
     ...overrides,
@@ -36,21 +35,6 @@ describe('checkData: top level', () => {
   it('requires "asOf" to be a YYYY-MM-DD date', () => {
     const { problems } = checkData(baseData({ asOf: 'September 25' }), [], NO_MODULES);
     expect(problems).toContain('lines.json "asOf" must be a date like 2026-09-25.');
-  });
-
-  it('warns (not a problem) when reportEmail is missing', () => {
-    const { problems, warnings } = checkData(baseData({ reportEmail: undefined }), [], NO_MODULES);
-    expect(problems).toEqual([]);
-    expect(warnings).toContain(
-      'lines.json has no "reportEmail", so the "Report a problem" link is hidden.',
-    );
-  });
-
-  it('flags a malformed reportEmail as a problem', () => {
-    const { problems } = checkData(baseData({ reportEmail: 'not-an-email' }), [], NO_MODULES);
-    expect(problems).toContain(
-      'lines.json "reportEmail" doesn\'t look like an email address: "not-an-email"',
-    );
   });
 });
 

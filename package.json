@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build --define \"BUILD_ID='$(git rev-parse --short=7 HEAD)'\" --define \"BUILD_DATE='$(date +%F)'\"",
+    "build": "ng build --define \"BUILD_ID='$(git rev-parse --short=7 HEAD)'\" --define \"BUILD_DATE='$(date +%F)'\" --define \"REPORT_EMAIL='${REPORT_EMAIL:-}'\"",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",

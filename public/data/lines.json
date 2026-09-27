@@ -1,7 +1,6 @@
 {
   "asOf": "2026-09-25",
   "source": "https://securitydatasupply.com/suppliers/",
-  "reportEmail": "reports@example.com",
   "cats": {
     "access": "Access Control",
     "intrusion": "Intrusion",

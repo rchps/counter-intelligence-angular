@@ -1,6 +1,5 @@
 import { computed, DestroyRef, inject, Service, signal, type Signal } from '@angular/core';
-import { buildStamp } from './build-info';
-import { DataService } from './data.service';
+import { buildStamp, REPORT_EMAIL_TO } from './build-info';
 import { pageDetailLines, type ProblemKindKey, type SearchPageDetails } from './feedback';
 
 /** What the page on screen tells the feedback dialog about itself. */
@@ -24,11 +23,9 @@ export interface FeedbackRequest {
 // instead of the dialog reading it back out of the DOM.
 @Service()
 export class FeedbackService {
-  private readonly data = inject(DataService);
-
-  /** No reportEmail in lines.json = no entry points anywhere (README: "delete it to hide the link"). */
-  readonly available = computed(() => !!this.data.reportEmail());
-  readonly reportEmail = this.data.reportEmail;
+  /** No REPORT_EMAIL at build time = no entry points anywhere (core/build-info.ts). */
+  readonly reportEmail = signal(REPORT_EMAIL_TO).asReadonly();
+  readonly available = computed(() => !!this.reportEmail());
 
   private readonly pageContextSource = signal<Signal<FeedbackPageContext> | null>(null);
   readonly pageContext = computed<FeedbackPageContext>(

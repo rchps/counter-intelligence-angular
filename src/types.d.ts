@@ -3,3 +3,4 @@
 // absent in any build that doesn't pass them (ng serve, tests) — read them via core/build-info.ts.
 declare const BUILD_ID: string;
 declare const BUILD_DATE: string;
+declare const REPORT_EMAIL: string;

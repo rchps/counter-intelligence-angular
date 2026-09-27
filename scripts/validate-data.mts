@@ -11,7 +11,6 @@ type JsonRecord = Record<string, unknown>;
 export interface LinesData {
   asOf?: unknown;
   cats?: Record<string, string>;
-  reportEmail?: unknown;
   lines?: JsonRecord[];
   branches?: JsonRecord[];
 }
@@ -37,7 +36,6 @@ export interface CheckResult {
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const PHONE = /^\(\d{3}\) \d{3}-\d{4}$/;
 const STATE = /^[A-Z]{2}$/;
-const EMAIL = /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i;
 const LINE_FIELDS = new Set(['name', 'url', 'cats', 'aka', 'logo']);
 const BRANCH_FIELDS = new Set(['st', 'city', 'addr', 'phone']);
 
@@ -66,14 +64,6 @@ export function checkData(
     problems.push('lines.json "asOf" must be a date like 2026-09-25.');
   }
   const categories = data.cats ?? {};
-  const reportEmail = data.reportEmail;
-  if (!reportEmail) {
-    warnings.push('lines.json has no "reportEmail", so the "Report a problem" link is hidden.');
-  } else if (typeof reportEmail !== 'string' || !EMAIL.test(reportEmail)) {
-    problems.push(
-      `lines.json "reportEmail" doesn't look like an email address: "${String(reportEmail)}"`,
-    );
-  }
 
   // Manufacturers
   const seen = new Set<string>();

@@ -1,0 +1,183 @@
+# Runs on every push: the same checks as the pre-push hook (.husky/pre-push), which `--no-verify` can skip
+# but this can't. A push to main that passes them is deployed to Cloudflare Pages, where Cloudflare Access
+# decides who can see it. The screenshot comparison runs alongside and reports changes, but doesn't hold
+# back a deploy: a style change on purpose shows up there too.
+name: CI
+
+on:
+  push:
+  workflow_dispatch:
+
+# A newer push to the same branch cancels the run it replaces, except on main, where every push deploys.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
+env:
+  NG_CLI_ANALYTICS: 'false'
+  CLOUDFLARE_PROJECT: counter-intelligence
+
+jobs:
+  checks:
+    name: Lint, unit tests, data, build
+    runs-on: ubuntu-24.04
+    env:
+      CYPRESS_INSTALL_BINARY: '0' # this job doesn't open a browser, so skip the Cypress download
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm test -- --watch=false
+      - run: npm run test:scripts
+      - run: npm run validate-data
+      - run: npm run build
+
+  e2e:
+    name: End-to-end tests
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      # npm's cache holds the Cypress package, not the browser-driving app it downloads on install.
+      - uses: actions/cache@v6
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - run: npm ci
+      - run: npm run e2e
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: e2e-screenshots
+          path: cypress/screenshots
+          if-no-files-found: ignore
+          retention-days: 14
+
+  visual:
+    name: Screenshot comparison
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # the whole history, so the commit to compare against is here
+      # What this push is compared with: on main, where main was before the push; on any other branch,
+      # where it split off main. Nothing to compare on a branch's first push to a brand-new repo.
+      - name: Pick the commit to compare against
+        id: base
+        env:
+          BEFORE: ${{ github.event.before }}
+        run: |
+          if [ "$GITHUB_REF" = refs/heads/main ]; then
+            base="$BEFORE"
+          else
+            base=$(git merge-base origin/main HEAD 2>/dev/null || true)
+          fi
+          if [ -z "$base" ] || [ "$base" = "$GITHUB_SHA" ] || ! git cat-file -e "$base^{commit}" 2>/dev/null; then
+            echo "Nothing to compare against; skipping." | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "sha=" >> "$GITHUB_OUTPUT"
+          else
+            echo "Comparing with $base" | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "sha=$base" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.base.outputs.sha
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - if: steps.base.outputs.sha
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - if: steps.base.outputs.sha
+        run: npm ci
+      # The older commit gets its own folder (a git worktree) and its own node_modules, since its
+      # dependencies may differ. Only its app is used; the specs always come from this push.
+      - if: steps.base.outputs.sha
+        name: Set up the older commit
+        env:
+          BASE: ${{ steps.base.outputs.sha }}
+          CYPRESS_INSTALL_BINARY: '0'
+        run: |
+          git worktree add ../base "$BASE"
+          npm ci --prefix ../base
+      - if: steps.base.outputs.sha
+        name: Screenshot the older commit
+        run: |
+          # setsid gives the server its own process group, so one kill stops npx, ng, and everything under them.
+          (cd ../base && exec setsid npx ng serve --configuration e2e > ../base-serve.log 2>&1) &
+          server=$!
+          timeout 300 bash -c 'until curl -sf http://localhost:4210 > /dev/null; do sleep 2; done'
+          VISUAL_BASE=1 npx cypress run --config-file cypress.visual.config.ts --browser chromium
+          kill -- -"$server"
+          timeout 60 bash -c 'while curl -sf http://localhost:4210 > /dev/null; do sleep 1; done'
+      - if: steps.base.outputs.sha
+        name: Screenshot this push and compare
+        run: npm run visual
+      - if: failure() && steps.base.outputs.sha
+        name: List what changed
+        run: |
+          echo "### Pages that look different" >> "$GITHUB_STEP_SUMMARY"
+          echo "Download the **visual-diff** artifact below for before/after/diff images." >> "$GITHUB_STEP_SUMMARY"
+          find cypress/snapshots/diff -name '*.png' -printf '- %f\n' >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+      - if: failure() && steps.base.outputs.sha
+        uses: actions/upload-artifact@v7
+        with:
+          name: visual-diff
+          path: cypress/snapshots
+          retention-days: 14
+
+  deploy:
+    name: Deploy to Cloudflare Pages
+    needs: [checks, e2e]
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    # One deploy at a time, and a queued one waits instead of cancelling the one in flight.
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      deployments: write # lets the Cloudflare action show the deploy on GitHub
+    env:
+      CYPRESS_INSTALL_BINARY: '0'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      # Without the secret the build still succeeds, just with the feedback button hidden, so stop here
+      # instead of shipping that by accident.
+      - name: Build
+        env:
+          REPORT_EMAIL: ${{ secrets.REPORT_EMAIL }}
+        run: |
+          if [ -z "$REPORT_EMAIL" ]; then
+            echo "::error::The REPORT_EMAIL secret isn't set (repo Settings > Secrets and variables > Actions)."
+            exit 1
+          fi
+          npm run build
+      - uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '4.141.0'
+          command: >-
+            pages deploy dist/counter-intelligence-angular/browser
+            --project-name=${{ env.CLOUDFLARE_PROJECT }}
+            --branch=main
+            --commit-hash=${{ github.sha }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

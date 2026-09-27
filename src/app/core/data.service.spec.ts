@@ -24,7 +24,6 @@ describe('DataService', () => {
     httpMock.expectOne('data/lines.json').flush({
       asOf: '2026-09-25',
       source: 'https://securitydatasupply.com/suppliers',
-      reportEmail: 'reports@example.com',
       logoBase: 'https://securitydatasupply.com/logos/',
       cats: { access: 'Access Control' },
       lines: [
@@ -55,7 +54,6 @@ describe('DataService', () => {
 
     expect(service.isLoading()).toBe(false);
     expect(service.asOf()).toBe('2026-09-25');
-    expect(service.reportEmail()).toBe('reports@example.com');
     expect(service.categories()).toEqual({ access: 'Access Control' });
 
     const [line] = service.lines();
