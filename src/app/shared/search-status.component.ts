@@ -1,4 +1,5 @@
 import { Component, computed, input, output } from '@angular/core';
+import { nounForTotal, type CountNoun } from '../core/feedback';
 
 // "Showing N of M ..." under a search box. aria-live so the count
 // change is read out as the user types or picks a filter (NN/g: visibility of system status).
@@ -36,15 +37,13 @@ import { Component, computed, input, output } from '@angular/core';
 export class SearchStatusComponent {
   readonly shownCount = input.required<number>();
   readonly totalCount = input.required<number>();
-  readonly noun = input.required<{ one: string; many: string }>();
+  readonly noun = input.required<CountNoun>();
   readonly filterLabel = input<string | null>(null);
   readonly search = input('');
   readonly correctedSearch = input('');
 
   readonly clear = output<void>();
 
-  protected readonly nounWord = computed(() =>
-    this.shownCount() === 1 ? this.noun().one : this.noun().many,
-  );
+  protected readonly nounWord = computed(() => nounForTotal(this.totalCount(), this.noun()));
   protected readonly anythingFiltered = computed(() => !!this.search() || !!this.filterLabel());
 }

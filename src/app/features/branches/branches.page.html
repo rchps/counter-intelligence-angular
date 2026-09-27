@@ -30,7 +30,7 @@
     <app-search-status
       [shownCount]="shown().length"
       [totalCount]="data.branches().length"
-      [noun]="{ one: 'branch', many: 'branches' }"
+      [noun]="noun"
       [filterLabel]="filterLabel()"
       [search]="search()"
       (clear)="clearSearch()"

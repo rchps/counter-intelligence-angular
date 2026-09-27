@@ -2,6 +2,7 @@ import {
   countText,
   ideaEmail,
   mailtoHref,
+  nounForTotal,
   pageDetailLines,
   problemEmail,
   problemKind,
@@ -129,7 +130,7 @@ describe('countText / mailtoHref / searchStatusText', () => {
       searchStatusText({
         shownCount: 2,
         totalCount: 180,
-        noun: 'manufacturers',
+        noun: { one: 'manufacturer', many: 'manufacturers' },
         filterLabel: 'Access Control',
         search: 'maglok',
         correctedSearch: 'maglock',
@@ -137,5 +138,20 @@ describe('countText / mailtoHref / searchStatusText', () => {
     ).toBe(
       'Showing 2 of 180 manufacturers in Access Control matching “maglock” (you typed “maglok”)',
     );
+  });
+
+  it('counts the total, not what is shown: "1 of 22 branches"', () => {
+    const branch = { one: 'branch', many: 'branches' };
+    expect(nounForTotal(22, branch)).toBe('branches');
+    expect(nounForTotal(1, branch)).toBe('branch');
+    const status = searchStatusText({
+      shownCount: 1,
+      totalCount: 22,
+      noun: branch,
+      filterLabel: null,
+      search: 'spokane',
+      correctedSearch: '',
+    });
+    expect(status).toBe('Showing 1 of 22 branches matching “spokane”');
   });
 });

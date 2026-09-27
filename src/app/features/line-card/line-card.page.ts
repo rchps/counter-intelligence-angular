@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { debounceTime } from 'rxjs';
 import { brandsForSearch } from '../../core/alternatives';
 import { DataService } from '../../core/data.service';
-import { searchStatusText } from '../../core/feedback';
+import { searchStatusText, type CountNoun } from '../../core/feedback';
 import { FeedbackService } from '../../core/feedback.service';
 import { normalize, searchWordsOf } from '../../core/search/normalize';
 import { searchLines, type Line } from '../../core/search/match';
@@ -57,6 +57,7 @@ export class LineCardPage {
   // Initial state comes from the address bar (?q=&cat=&view=az), so a search can be bookmarked or shared;
   // the effect below writes back to it as state changes.
   private readonly initialParams = this.route.snapshot.queryParamMap;
+  protected readonly noun: CountNoun = { one: 'manufacturer', many: 'manufacturers' };
   protected readonly search = signal(this.initialParams.get('q') ?? '');
   protected readonly filter = signal(this.initialParams.get('cat') ?? 'all');
   protected readonly view = signal<LineCardView>(
@@ -82,7 +83,7 @@ export class LineCardPage {
           status: searchStatusText({
             shownCount: this.shown().length,
             totalCount: this.data.lines().length,
-            noun: this.shown().length === 1 ? 'manufacturer' : 'manufacturers',
+            noun: this.noun,
             filterLabel: this.filterLabel(),
             search: this.debounced(),
             correctedSearch: this.correctedSearch(),

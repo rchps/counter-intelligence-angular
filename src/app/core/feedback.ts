@@ -117,10 +117,21 @@ export function pageDetailLines({ build, tabName, search }: PageDetailsInput): s
   return lines;
 }
 
+/** A noun's two forms, e.g. { one: 'branch', many: 'branches' }. */
+export interface CountNoun {
+  one: string;
+  many: string;
+}
+
+/** The noun in "Showing N of <total> …" counts the total, so it's "1 of 22 branches". */
+export function nounForTotal(totalCount: number, noun: CountNoun): string {
+  return totalCount === 1 ? noun.one : noun.many;
+}
+
 export interface SearchStatusInput {
   shownCount: number;
   totalCount: number;
-  noun: string;
+  noun: CountNoun;
   filterLabel: string | null;
   search: string;
   correctedSearch: string;
@@ -136,7 +147,7 @@ export function searchStatusText({
   search,
   correctedSearch,
 }: SearchStatusInput): string {
-  let text = `Showing ${shownCount} of ${totalCount} ${noun}`;
+  let text = `Showing ${shownCount} of ${totalCount} ${nounForTotal(totalCount, noun)}`;
   if (filterLabel) text += ` in ${filterLabel}`;
   if (search && correctedSearch) text += ` matching “${correctedSearch}” (you typed “${search}”)`;
   else if (search) text += ` matching “${search}”`;

@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal, viewChild } from '@angular/core';
 import { DataService } from '../../core/data.service';
-import { searchStatusText } from '../../core/feedback';
+import { searchStatusText, type CountNoun } from '../../core/feedback';
 import { FeedbackService } from '../../core/feedback.service';
 import { searchBranches, STATE_NAMES } from '../../core/search/match';
 import { FilterChipsComponent, type FilterChip } from '../../shared/filter-chips.component';
@@ -25,6 +25,7 @@ import { BranchCardComponent } from './branch-card.component';
 export class BranchesPage {
   protected readonly data = inject(DataService);
 
+  protected readonly noun: CountNoun = { one: 'branch', many: 'branches' };
   protected readonly search = signal('');
   protected readonly filter = signal('all');
 
@@ -72,7 +73,7 @@ export class BranchesPage {
           status: searchStatusText({
             shownCount: this.shown().length,
             totalCount: this.data.branches().length,
-            noun: this.shown().length === 1 ? 'branch' : 'branches',
+            noun: this.noun,
             filterLabel: this.filterLabel(),
             search: this.search(),
             correctedSearch: '',

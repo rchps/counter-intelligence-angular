@@ -44,7 +44,7 @@
     <app-search-status
       [shownCount]="shown().length"
       [totalCount]="data.lines().length"
-      [noun]="{ one: 'manufacturer', many: 'manufacturers' }"
+      [noun]="noun"
       [filterLabel]="filterLabel()"
       [search]="debounced()"
       [correctedSearch]="correctedSearch()"
