@@ -23,12 +23,13 @@ import { FeedbackService } from '../core/feedback.service';
       <span>Links go to each manufacturer's official website and open in a new tab.</span>
       <span>
         @if (build) {
-          <span>Build {{ build }}</span>
+          <span data-cy="build-stamp">Build {{ build }}</span>
         }
         @if (feedback.available()) {
           <button
             type="button"
             class="footer-report"
+            data-cy="footer-report"
             (click)="feedback.open({}, $event.currentTarget)"
           >
             Report a problem
@@ -36,6 +37,7 @@ import { FeedbackService } from '../core/feedback.service';
           <button
             type="button"
             class="footer-report"
+            data-cy="footer-idea"
             (click)="feedback.open({ kind: 'idea' }, $event.currentTarget)"
           >
             Suggest an idea

@@ -24,6 +24,7 @@ interface Piece {
 export function launchConfetti(): void {
   const canvas = document.createElement('canvas');
   canvas.setAttribute('aria-hidden', 'true');
+  canvas.dataset['cy'] = 'confetti';
   canvas.style.cssText =
     'position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:60';
   document.body.appendChild(canvas);

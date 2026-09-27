@@ -24,11 +24,18 @@
           </button>
           <input
             type="month"
+            data-cy="sales-month"
             aria-labelledby="sl-month-label"
             [value]="month()"
             (change)="onMonthInputChange(inputValue($event))"
           />
-          <button type="button" class="sl-iconbtn" aria-label="Next month" (click)="shiftMonth(1)">
+          <button
+            type="button"
+            class="sl-iconbtn"
+            data-cy="sales-next-month"
+            aria-label="Next month"
+            (click)="shiftMonth(1)"
+          >
             ›
           </button>
         </div>
@@ -39,6 +46,7 @@
           <input
             type="text"
             id="sl-goal"
+            data-cy="sales-goal"
             inputmode="decimal"
             autocomplete="off"
             placeholder="50,000"
@@ -50,12 +58,13 @@
         </div>
       </div>
       @if (isThisMonth()) {
-        <div class="sl-today">
-          <label for="sl-today">{{ todayLabel() }}</label>
+        <div class="sl-today" data-cy="sales-today-box">
+          <label for="sl-today" data-cy="sales-today-label">{{ todayLabel() }}</label>
           <div class="sl-money">
             <input
               type="text"
               id="sl-today"
+              data-cy="sales-today"
               inputmode="decimal"
               autocomplete="off"
               placeholder="0.00"
@@ -78,11 +87,13 @@
       <h2>This month</h2>
       <div class="sl-hero">
         <span class="k">{{ hero().label }}</span>
-        <span class="v">{{ hero().value }}</span>
-        <span class="sub">{{ hero().sub }}</span>
+        <span class="v" data-cy="sales-hero-value">{{ hero().value }}</span>
+        <span class="sub" data-cy="sales-hero-sub">{{ hero().sub }}</span>
         @if (hero().status; as status) {
           <div>
-            <span class="sl-status" [class]="status.kind">{{ status.text }}</span>
+            <span class="sl-status" data-cy="sales-status" [class]="status.kind">{{
+              status.text
+            }}</span>
           </div>
         }
       </div>
@@ -108,10 +119,10 @@
       }
       <div class="sl-kpis">
         @for (kpi of kpis(); track kpi.label) {
-          <div class="sl-kpi">
+          <div class="sl-kpi" data-cy="sales-kpi">
             <span class="k">{{ kpi.label }}</span>
-            <span class="v">{{ kpi.value }}</span>
-            <span class="d">{{ kpi.detail }}</span>
+            <span class="v" data-cy="sales-kpi-value">{{ kpi.value }}</span>
+            <span class="d" data-cy="sales-kpi-detail">{{ kpi.detail }}</span>
           </div>
         }
       </div>
@@ -129,6 +140,7 @@
       <button
         type="button"
         class="sl-linkbtn"
+        data-cy="sales-table-toggle"
         aria-controls="sl-daytable"
         [attr.aria-expanded]="showDayTable()"
         (click)="showDayTable.set(!showDayTable())"
@@ -155,7 +167,7 @@
         </thead>
         <tbody>
           @for (p of summary().series; track p.date) {
-            <tr>
+            <tr data-cy="sales-day-table-row">
               <td>{{ dayFullLabel(p.date) }}</td>
               <td>{{ p.sales === null ? '—' : formatDollarsAndCents(p.sales) }}</td>
               <td>{{ p.showActual ? formatWholeDollars(p.sold) : '—' }}</td>
@@ -187,6 +199,7 @@
             <button
               type="button"
               class="sl-toggle"
+              [attr.data-cy]="'sales-toggle-' + day.date"
               [attr.aria-pressed]="day.selling"
               [attr.aria-label]="
                 dayFullLabel(day.date) +
@@ -205,6 +218,7 @@
           <input
             type="text"
             [id]="'sl-day-' + day.date"
+            [attr.data-cy]="'sales-day-' + day.date"
             inputmode="decimal"
             autocomplete="off"
             placeholder="—"
@@ -301,10 +315,13 @@
       <p class="sl-empty">Stats show up once you enter a day's sales.</p>
     }
     <div class="sl-tools">
-      <button type="button" class="sl-btn" (click)="exportCsv()">Export CSV (all months)</button>
+      <button type="button" class="sl-btn" data-cy="sales-export" (click)="exportCsv()">
+        Export CSV (all months)
+      </button>
       <button type="button" class="sl-btn" (click)="importFile.click()">Import CSV</button>
       <input
         #importFile
+        data-cy="sales-import-file"
         type="file"
         accept=".csv,text/csv"
         hidden
@@ -313,12 +330,15 @@
       <button
         type="button"
         class="sl-btn danger"
+        data-cy="sales-clear"
         [attr.data-armed]="clearArmed()"
         (click)="onClearClick()"
       >
         {{ clearArmed() ? 'Click again to clear this month' : 'Clear this month' }}
       </button>
-      <span role="status" aria-live="polite">{{ toolsMessage() }}</span>
+      <span role="status" data-cy="sales-tools-message" aria-live="polite">{{
+        toolsMessage()
+      }}</span>
     </div>
   </div>
 </section>

@@ -19,6 +19,7 @@
           <input
             type="radio"
             name="nvr-mode"
+            data-cy="nvr-mode-estimate"
             [checked]="mode() === 'estimate'"
             (change)="mode.set('estimate')"
           />
@@ -34,6 +35,7 @@
           <input
             type="text"
             id="nvr-kbps"
+            data-cy="nvr-kbps"
             class="tl-plain"
             inputmode="decimal"
             autocomplete="off"
@@ -53,6 +55,7 @@
           <label for="nvr-res">Resolution</label>
           <select
             id="nvr-res"
+            data-cy="nvr-resolution"
             [value]="resolution()"
             (change)="onResolutionChange(inputValue($event))"
           >
@@ -101,6 +104,7 @@
           <input
             type="text"
             id="nvr-cams"
+            data-cy="nvr-cameras"
             class="tl-plain"
             inputmode="numeric"
             autocomplete="off"
@@ -116,6 +120,7 @@
           <input
             type="text"
             id="nvr-days"
+            data-cy="nvr-days"
             class="tl-plain"
             inputmode="numeric"
             autocomplete="off"
@@ -153,6 +158,7 @@
           <input
             type="text"
             id="nvr-drive"
+            data-cy="nvr-drive"
             class="tl-plain"
             inputmode="decimal"
             autocomplete="off"
@@ -165,7 +171,12 @@
       </div>
       <div class="mc-field">
         <label for="nvr-raid">Drive setup</label>
-        <select id="nvr-raid" [value]="raid()" (change)="onRaidChange(inputValue($event))">
+        <select
+          id="nvr-raid"
+          data-cy="nvr-raid"
+          [value]="raid()"
+          (change)="onRaidChange(inputValue($event))"
+        >
           <option value="none">No RAID</option>
           <option value="raid5">RAID 5</option>
           <option value="raid6">RAID 6</option>
@@ -181,10 +192,10 @@
 
   <ng-container resultHero>
     <span class="k">{{ heroLabel() }}</span>
-    <span class="v">{{ tbDisplay() }}</span>
-    <span class="sub">{{ lowEndDisplay() }}</span>
-    <span class="sub tl-quip">{{ quip() }}</span>
-    <span class="sub">{{ drivesDisplay() }}</span>
+    <span class="v" data-cy="nvr-total">{{ tbDisplay() }}</span>
+    <span class="sub" data-cy="nvr-low-end">{{ lowEndDisplay() }}</span>
+    <span class="sub tl-quip" data-cy="nvr-quip">{{ quip() }}</span>
+    <span class="sub" data-cy="nvr-drives">{{ drivesDisplay() }}</span>
   </ng-container>
 
   <ng-container resultDetails>
@@ -196,7 +207,7 @@
       <dt>Recording bandwidth into the NVR</dt>
       <dd>{{ bandwidthDisplay() }}</dd>
       <dt>Bitrate used per camera</dt>
-      <dd>{{ rateDisplay() }}</dd>
+      <dd data-cy="nvr-rate">{{ rateDisplay() }}</dd>
     </dl>
   </ng-container>
 

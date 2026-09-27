@@ -12,7 +12,14 @@ import { matchReason, type Line } from '../../core/search/match';
   styleUrl: './line-card-item.component.scss',
   template: `
     @if (line().url) {
-      <a class="line" [href]="line().url!" target="_blank" rel="noopener" [title]="linkTitle()">
+      <a
+        class="line"
+        data-cy="line-card"
+        [href]="line().url!"
+        target="_blank"
+        rel="noopener"
+        [title]="linkTitle()"
+      >
         <ng-container [ngTemplateOutlet]="cardBody" />
         <svg
           class="go"
@@ -31,7 +38,7 @@ import { matchReason, type Line } from '../../core/search/match';
         <span class="sr-only"> (opens in new tab)</span>
       </a>
     } @else {
-      <div class="line nolink" title="No verified manufacturer website on file">
+      <div class="line nolink" data-cy="line-card" title="No verified manufacturer website on file">
         <ng-container [ngTemplateOutlet]="cardBody" />
       </div>
     }
@@ -43,8 +50,8 @@ import { matchReason, type Line } from '../../core/search/match';
         </span>
       }
       <span class="txt">
-        <span class="name" [innerHTML]="highlightedName()"></span>
-        <span class="meta">
+        <span class="name" data-cy="line-name" [innerHTML]="highlightedName()"></span>
+        <span class="meta" data-cy="line-meta">
           @if (reason(); as reason) {
             {{ reason }}
           } @else if (showsCategories()) {

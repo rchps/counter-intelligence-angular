@@ -20,6 +20,7 @@ export interface FilterChip {
       <button
         type="button"
         class="chip"
+        data-cy="filter-chip-all"
         [attr.aria-pressed]="selected() === 'all'"
         (click)="selected.set('all')"
       >
@@ -29,6 +30,7 @@ export interface FilterChip {
         <button
           type="button"
           class="chip"
+          [attr.data-cy]="'filter-chip-' + chip.key"
           [attr.data-cat]="chip.colored ? chip.key : null"
           [attr.data-empty]="!chip.count"
           [attr.title]="chip.title ?? null"

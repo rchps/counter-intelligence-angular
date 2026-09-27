@@ -13,7 +13,7 @@ import { emptySearchQuip } from '../../core/search/quips';
     <div class="empty">
       <h2>No manufacturers match{{ searchedFor() }}{{ inCategory() }}</h2>
       @if (matchingCount() === 0) {
-        <p class="quip">{{ quip() }}</p>
+        <p class="quip" data-cy="empty-quip">{{ quip() }}</p>
       }
       @if (filterActive() && matchingCount() > 0) {
         <p>
@@ -26,7 +26,12 @@ import { emptySearchQuip } from '../../core/search/quips';
         @if (suggestion()) {
           <p>
             Did you mean
-            <button type="button" class="linkbtn" (click)="useSuggestion.emit(suggestion())">
+            <button
+              type="button"
+              class="linkbtn"
+              data-cy="did-you-mean"
+              (click)="useSuggestion.emit(suggestion())"
+            >
               {{ suggestion() }}</button
             >?
           </p>
@@ -40,6 +45,7 @@ import { emptySearchQuip } from '../../core/search/quips';
           <button
             type="button"
             class="linkbtn"
+            data-cy="report-missing-line"
             (click)="
               feedback.open({ kind: 'missing', line: search().trim() }, $event.currentTarget)
             "

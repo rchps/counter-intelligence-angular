@@ -13,7 +13,7 @@ export function azAnchorId(letter: string): string {
     @if (letters().length > 3) {
       <nav class="letters" aria-label="Jump to letter">
         @for (letter of letters(); track letter) {
-          <a [href]="'#' + azAnchorId(letter)">{{ letter }}</a>
+          <a data-cy="az-letter" [href]="'#' + azAnchorId(letter)">{{ letter }}</a>
         }
       </nav>
     }

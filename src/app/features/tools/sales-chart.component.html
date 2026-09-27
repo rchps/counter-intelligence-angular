@@ -1,6 +1,7 @@
 @if (layout(); as chart) {
   <div
     class="sl-chart"
+    data-cy="sales-chart"
     tabindex="0"
     role="img"
     [attr.aria-labelledby]="labelledBy() + ' sl-chart-desc'"
@@ -37,7 +38,7 @@
         }
       </g>
       @if (chart.pacePath) {
-        <path class="pace-line" [attr.d]="chart.pacePath" />
+        <path class="pace-line" data-cy="chart-pace-line" [attr.d]="chart.pacePath" />
       }
       @if (chart.goalLabel; as goalLabel) {
         <text class="goal-label" [attr.x]="goalLabel.x" [attr.y]="goalLabel.y">
@@ -46,7 +47,7 @@
       }
       @if (chart.actualPath) {
         <path class="actual-area" [attr.d]="chart.areaPath" />
-        <path class="actual-line" [attr.d]="chart.actualPath" />
+        <path class="actual-line" data-cy="chart-actual-line" [attr.d]="chart.actualPath" />
       }
       @if (chart.endDot; as dot) {
         <circle class="end-dot" [attr.cx]="dot.x" [attr.cy]="dot.y" r="4.5" />
@@ -67,7 +68,11 @@
       }
     </svg>
     @if (tip(); as t) {
-      <div class="sl-tip" [style.left]="'calc(' + tipLeftPercent() + '% + 12px)'">
+      <div
+        class="sl-tip"
+        data-cy="sales-chart-tip"
+        [style.left]="'calc(' + tipLeftPercent() + '% + 12px)'"
+      >
         <b>{{ t.title }}</b>
         <div class="row">
           <span>That day</span><strong>{{ t.thatDay }}</strong>

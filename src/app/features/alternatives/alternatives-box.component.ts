@@ -9,7 +9,7 @@ import type { AlternativeBrand } from '../../core/alternatives';
   template: `
     @for (brand of brands(); track brand.brand) {
       <section class="alt-box" [attr.aria-label]="'Alternatives to ' + brand.brand">
-        <h2>Not an SDS line: {{ brand.brand }}</h2>
+        <h2 data-cy="alternative-heading">Not an SDS line: {{ brand.brand }}</h2>
         <p>
           @if (brand.note) {
             <span class="alt-note">{{ brand.note }}</span>

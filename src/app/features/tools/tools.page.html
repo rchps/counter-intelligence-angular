@@ -5,6 +5,7 @@
       @for (item of group.items; track item.id) {
         <a
           [routerLink]="['/tools', item.id]"
+          [attr.data-cy]="'tool-link-' + item.id"
           routerLinkActive="current"
           ariaCurrentWhenActive="page"
         >

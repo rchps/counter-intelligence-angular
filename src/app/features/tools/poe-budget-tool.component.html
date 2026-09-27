@@ -10,6 +10,7 @@
         <input
           type="text"
           id="poe-budget"
+          data-cy="poe-budget"
           class="tl-plain"
           inputmode="decimal"
           autocomplete="off"
@@ -36,6 +37,7 @@
           <input
             type="radio"
             name="poe-basis"
+            data-cy="poe-basis-device"
             [checked]="basis() === 'pd'"
             (change)="basis.set('pd')"
           />
@@ -51,6 +53,7 @@
             <input
               type="text"
               [id]="'poe-qty-' + row.id"
+              data-cy="poe-quantity"
               inputmode="numeric"
               autocomplete="off"
               placeholder="1"
@@ -102,8 +105,8 @@
 
   <ng-container resultHero>
     <span class="k">Estimated power needed</span>
-    <span class="v">{{ totalWattsDisplay() }}</span>
-    <span class="sub">
+    <span class="v" data-cy="poe-total">{{ totalWattsDisplay() }}</span>
+    <span class="sub" data-cy="poe-verdict">
       @if (!hasBudget()) {
         Enter the switch's PoE budget to check it.
       } @else if (result(); as result) {

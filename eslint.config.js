@@ -3,6 +3,7 @@ const eslint = require('@eslint/js');
 const { defineConfig } = require('eslint/config');
 const tseslint = require('typescript-eslint');
 const angular = require('angular-eslint');
+const pluginCypress = require('eslint-plugin-cypress');
 
 module.exports = defineConfig([
   {
@@ -31,6 +32,16 @@ module.exports = defineConfig([
           style: 'kebab-case',
         },
       ],
+    },
+  },
+  {
+    // Cypress's own lint rules for its best-practices guide (on.cypress.io/best-practices). Selectors
+    // must use data-* attributes, as an error rather than the plugin's suggested warning: every element
+    // the specs touch has a data-cy hook, so a class or tag selector is a mistake, not a necessity.
+    files: ['cypress/**/*.ts'],
+    extends: [pluginCypress.configs.recommended],
+    rules: {
+      'cypress/require-data-selectors': 'error',
     },
   },
   {

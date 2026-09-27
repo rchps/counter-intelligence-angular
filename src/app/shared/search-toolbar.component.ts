@@ -36,6 +36,7 @@ let nextId = 0;
       <label class="sr-only" [for]="inputId">{{ inputLabel() }}</label>
       <input
         #searchInput
+        data-cy="search-input"
         [id]="inputId"
         type="search"
         autocomplete="off"

@@ -8,9 +8,27 @@
   </div>
 
   <nav class="nav" aria-label="Sections">
-    <a routerLink="/lines" routerLinkActive="active" ariaCurrentWhenActive="page">Line Card</a>
-    <a routerLink="/branches" routerLinkActive="active" ariaCurrentWhenActive="page">Branches</a>
-    <a routerLink="/tools" routerLinkActive="active" ariaCurrentWhenActive="page">Tools</a>
+    <a
+      routerLink="/lines"
+      data-cy="nav-lines"
+      routerLinkActive="active"
+      ariaCurrentWhenActive="page"
+      >Line Card</a
+    >
+    <a
+      routerLink="/branches"
+      data-cy="nav-branches"
+      routerLinkActive="active"
+      ariaCurrentWhenActive="page"
+      >Branches</a
+    >
+    <a
+      routerLink="/tools"
+      data-cy="nav-tools"
+      routerLinkActive="active"
+      ariaCurrentWhenActive="page"
+      >Tools</a
+    >
   </nav>
 
   <span class="pill-internal" role="note" title="Internal use only. Do not send to customers.">
@@ -22,6 +40,7 @@
     <button
       type="button"
       class="topbar-report"
+      data-cy="topbar-feedback"
       title="Report a problem or suggest an idea"
       aria-label="Feedback"
       (click)="feedback.open({}, $event.currentTarget)"
@@ -45,6 +64,7 @@
   <button
     type="button"
     class="theme-switch"
+    data-cy="theme-toggle"
     role="switch"
     [attr.aria-checked]="theme.isDark()"
     aria-label="Dark mode"

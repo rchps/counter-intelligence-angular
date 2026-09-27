@@ -11,6 +11,7 @@
           <input
             type="text"
             id="vd-supply"
+            data-cy="vdrop-supply"
             class="tl-plain"
             inputmode="decimal"
             autocomplete="off"
@@ -26,6 +27,7 @@
           <input
             type="text"
             id="vd-amps"
+            data-cy="vdrop-amps"
             class="tl-plain"
             inputmode="decimal"
             autocomplete="off"
@@ -44,6 +46,7 @@
           <input
             type="text"
             id="vd-feet"
+            data-cy="vdrop-feet"
             class="tl-plain"
             inputmode="decimal"
             autocomplete="off"
@@ -56,7 +59,12 @@
       </div>
       <div class="mc-field">
         <label for="vd-gauge">Wire gauge</label>
-        <select id="vd-gauge" [value]="gauge()" (change)="onGaugeChange(inputValue($event))">
+        <select
+          id="vd-gauge"
+          data-cy="vdrop-gauge"
+          [value]="gauge()"
+          (change)="onGaugeChange(inputValue($event))"
+        >
           @for (g of gauges; track g) {
             <option [value]="g">{{ g }} AWG</option>
           }
@@ -92,6 +100,7 @@
         <input
           type="text"
           id="vd-min"
+          data-cy="vdrop-min"
           class="tl-plain"
           inputmode="decimal"
           autocomplete="off"
@@ -109,9 +118,9 @@
 
   <ng-container resultHero>
     <span class="k">Estimated voltage at the device</span>
-    <span class="v">{{ endVoltsDisplay() }}</span>
+    <span class="v" data-cy="vdrop-end-volts">{{ endVoltsDisplay() }}</span>
     @if (result(); as result) {
-      <span class="sub">
+      <span class="sub" data-cy="vdrop-verdict">
         @if (result.passes === null) {
           Enter the device's minimum voltage to check it.
         } @else {
@@ -122,13 +131,13 @@
         }
       </span>
     }
-    <span class="sub tl-quip">{{ quip() }}</span>
+    <span class="sub tl-quip" data-cy="vdrop-quip">{{ quip() }}</span>
   </ng-container>
 
   <ng-container resultDetails>
     <dl>
       <dt>Voltage drop</dt>
-      <dd>{{ dropVoltsDisplay() }}</dd>
+      <dd data-cy="vdrop-drop">{{ dropVoltsDisplay() }}</dd>
       <dt>Drop %</dt>
       <dd>{{ dropPercentDisplay() }}</dd>
       <dt>Longest run that works</dt>
@@ -146,7 +155,7 @@
         </thead>
         <tbody>
           @for (row of table(); track row.gauge) {
-            <tr [class.current]="row.current">
+            <tr data-cy="vdrop-gauge-row" [class.current]="row.current">
               <td>{{ row.gauge }} AWG</td>
               <td>{{ row.endVolts.toFixed(2) }} V</td>
               <td>{{ row.dropPercent.toFixed(1) }}%</td>

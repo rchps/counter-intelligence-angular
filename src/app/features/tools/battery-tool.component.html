@@ -11,6 +11,7 @@
           <input
             type="radio"
             name="bat-preset"
+            data-cy="battery-preset-fire"
             [checked]="preset() === 'fire'"
             (change)="applyPreset('fire')"
           />
@@ -29,6 +30,7 @@
           <input
             type="radio"
             name="bat-preset"
+            data-cy="battery-preset-custom"
             [checked]="preset() === 'custom'"
             (change)="applyPreset('custom')"
           />
@@ -43,6 +45,7 @@
           <input
             type="text"
             id="bat-standby-a"
+            data-cy="battery-standby-amps"
             class="tl-plain"
             inputmode="decimal"
             autocomplete="off"
@@ -59,6 +62,7 @@
           <input
             type="text"
             id="bat-alarm-a"
+            data-cy="battery-alarm-amps"
             class="tl-plain"
             inputmode="decimal"
             autocomplete="off"
@@ -77,6 +81,7 @@
           <input
             type="text"
             id="bat-standby-h"
+            data-cy="battery-standby-hours"
             class="tl-plain"
             inputmode="decimal"
             autocomplete="off"
@@ -92,6 +97,7 @@
           <input
             type="text"
             id="bat-alarm-m"
+            data-cy="battery-alarm-minutes"
             class="tl-plain"
             inputmode="decimal"
             autocomplete="off"
@@ -129,15 +135,21 @@
       >Enter amps: 110 mA = 0.110 A. Use the panel's battery worksheet totals if you have
       them.</span
     >
-    <div class="mc-msg" role="status" aria-live="polite" [class.err]="message()">
+    <div
+      class="mc-msg"
+      data-cy="battery-message"
+      role="status"
+      aria-live="polite"
+      [class.err]="message()"
+    >
       {{ message() }}
     </div>
   </ng-container>
 
   <ng-container resultHero>
     <span class="k">Estimated battery needed</span>
-    <span class="v">{{ ahDisplay() }}</span>
-    <span class="sub">{{ sizeDisplay() }}</span>
+    <span class="v" data-cy="battery-amp-hours">{{ ahDisplay() }}</span>
+    <span class="sub" data-cy="battery-size">{{ sizeDisplay() }}</span>
   </ng-container>
 
   <ng-container resultDetails>

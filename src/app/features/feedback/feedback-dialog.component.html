@@ -4,6 +4,7 @@
 <dialog
   #dialog
   class="dlg report-dialog"
+  data-cy="feedback-dialog"
   aria-labelledby="report-title"
   [attr.data-mode]="mode()"
   (click)="onDialogClick($event)"
@@ -20,7 +21,7 @@
             <ng-container *ngTemplateOutlet="flagIcon" />
           }
         </span>
-        <span id="report-heading">{{ copy().title }}</span>
+        <span id="report-heading" data-cy="feedback-heading">{{ copy().title }}</span>
       </h2>
       <button type="button" class="dlg-close" aria-label="Close" (click)="close()">×</button>
     </div>
@@ -33,6 +34,7 @@
             type="radio"
             name="report-mode"
             value="problem"
+            data-cy="feedback-mode-problem"
             [checked]="mode() === 'problem'"
             (change)="setMode('problem')"
           />
@@ -43,6 +45,7 @@
             type="radio"
             name="report-mode"
             value="idea"
+            data-cy="feedback-mode-idea"
             [checked]="mode() === 'idea'"
             (change)="setMode('idea')"
           />
@@ -63,6 +66,7 @@
                   type="radio"
                   name="report-kind"
                   [value]="option.key"
+                  [attr.data-cy]="'feedback-kind-' + option.key"
                   [checked]="kind() === option.key"
                   (change)="setKind(option.key)"
                 />
@@ -72,13 +76,14 @@
           </div>
         </fieldset>
         @if (kindInfo()?.line) {
-          <div class="dlg-field" id="report-line-field">
+          <div class="dlg-field" id="report-line-field" data-cy="feedback-line-field">
             <label class="dlg-label" for="report-line"
               >Which manufacturer? <small>(optional)</small></label
             >
             <input
               type="text"
               id="report-line"
+              data-cy="feedback-line"
               list="report-line-names"
               autocomplete="off"
               [value]="line()"
@@ -95,12 +100,15 @@
           <label class="dlg-label" for="report-details">Details <small>(optional)</small></label>
           <textarea
             id="report-details"
+            data-cy="feedback-details"
             [maxLength]="textLimit"
             [placeholder]="detailsHint()"
             [value]="details()"
             (input)="details.set(inputValue($event))"
           ></textarea>
-          <span class="dlg-count" aria-live="polite">{{ countText(details()) }}</span>
+          <span class="dlg-count" data-cy="feedback-details-count" aria-live="polite">{{
+            countText(details())
+          }}</span>
         </div>
       </div>
     } @else {
@@ -109,6 +117,7 @@
           <label class="dlg-label" for="idea-task">What were you trying to do?</label>
           <textarea
             id="idea-task"
+            data-cy="idea-task"
             [maxLength]="textLimit"
             placeholder="e.g. Quote a 16-camera job and figure out which switch could power it"
             [value]="task()"
@@ -122,6 +131,7 @@
           >
           <textarea
             id="idea-wish"
+            data-cy="idea-wish"
             [maxLength]="textLimit"
             placeholder="Your idea, however rough"
             [value]="wish()"
@@ -132,7 +142,7 @@
           <legend>How often does this come up? <small>(optional)</small></legend>
           <div class="segmented">
             @for (label of howOften; track label) {
-              <label>
+              <label [attr.data-cy]="'idea-often-' + label">
                 <input
                   type="radio"
                   name="idea-often"
@@ -150,20 +160,23 @@
 
     <details class="report-context">
       <summary>Also included, so it can be checked</summary>
-      <pre>{{ pageText() }}</pre>
+      <pre data-cy="feedback-page-details">{{ pageText() }}</pre>
     </details>
   </div>
   <div class="dlg-foot">
     <a
       class="dlg-primary"
       id="report-send"
+      data-cy="feedback-send"
       [href]="href()"
       [attr.aria-disabled]="!ready()"
       (click)="onSend($event)"
       >Open email to send</a
     >
-    <p class="dlg-done" role="status" aria-live="polite">{{ done() }}</p>
-    <button type="button" class="dlg-cancel" (click)="close()">Close</button>
+    <p class="dlg-done" data-cy="feedback-done" role="status" aria-live="polite">{{ done() }}</p>
+    <button type="button" class="dlg-cancel" data-cy="feedback-close" (click)="close()">
+      Close
+    </button>
   </div>
 </dialog>
 

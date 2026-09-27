@@ -8,8 +8,8 @@ import { highlightMatches } from '../../core/search/normalize';
   selector: 'app-branch-card',
   styleUrl: './branch-card.component.scss',
   template: `
-    <div class="branch">
-      <h2>
+    <div class="branch" data-cy="branch-card">
+      <h2 data-cy="branch-name">
         <span [innerHTML]="highlightedCity()"></span>
         <span class="st">{{ branch().st }}</span>
       </h2>

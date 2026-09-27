@@ -6,7 +6,7 @@ import { Component, computed, input, output } from '@angular/core';
   selector: 'app-search-status',
   template: `
     <div class="status-row">
-      <div class="status" aria-live="polite">
+      <div class="status" data-cy="search-status" aria-live="polite">
         <span>
           Showing <strong>{{ shownCount() }}</strong> of {{ totalCount() }} {{ nounWord() }}
           @if (filterLabel()) {

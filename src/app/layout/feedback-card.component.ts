@@ -33,6 +33,7 @@ import { FeedbackService } from '../core/feedback.service';
           <button
             type="button"
             class="feedback-btn secondary"
+            data-cy="feedback-card-idea"
             (click)="feedback.open({ kind: 'idea' }, $event.currentTarget)"
           >
             <svg
@@ -55,6 +56,7 @@ import { FeedbackService } from '../core/feedback.service';
           <button
             type="button"
             class="feedback-btn"
+            data-cy="feedback-card-report"
             (click)="feedback.open({}, $event.currentTarget)"
           >
             Report a problem
