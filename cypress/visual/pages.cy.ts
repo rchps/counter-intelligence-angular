@@ -1,6 +1,6 @@
 // How every page and state looks, in light and dark, on a desktop and a phone. Record with
-// `npm run visual:base`, then after a style change run `npm run visual`: any pixel that moved fails, with a
-// diff image in cypress/snapshots/diff.
+// `npm run visual:base`, then after a style change run `npm run visual`: reg-cli compares the two sets and
+// writes cypress/snapshots/report.html, with before, after, and diff for every page that changed.
 import { fill } from '../support/actions';
 
 type Theme = 'light' | 'dark';
@@ -51,22 +51,39 @@ function openSalesTrackerOnSep10(theme: Theme, width: number, height: number): v
 }
 
 /** Takes the screenshot once nothing is still changing: the data loaded, no text cursor blinking in a
- *  focused field, and every image on screen finished loading. */
+ *  focused field, and every image finished loading, logos resized to their balanced height (set by their
+ *  load handler, so a moment after loading). */
 function snapshot(name: string, capture: 'viewport' | 'fullPage'): void {
   // Every page's footer says how current the line list is, from the data file, and that line adds to the
   // page's height, so a page isn't finished until it's there. (Not the feedback card: its address is built
   // in, so it shows before the data arrives.)
   cy.getBySel('footer-as-of').should('exist');
-  cy.document().then((doc) => (doc.activeElement as HTMLElement | null)?.blur());
+  cy.document().then((doc) => {
+    (doc.activeElement as HTMLElement | null)?.blur();
+    // Logos load lazily, as they near the screen, and a full-page screenshot scrolls: without this, one
+    // coming into view mid-capture could be pictured before or after it's sized, depending on the run.
+    for (const img of Array.from(doc.images)) img.loading = 'eager';
+  });
   cy.window().should((win) => {
     for (const img of Array.from(win.document.images)) {
-      const rect = img.getBoundingClientRect();
-      if (rect.width && rect.bottom > 0 && rect.top < win.innerHeight) {
-        expect(img.complete && img.naturalWidth > 0, img.src).to.equal(true);
-      }
+      if (!img.getBoundingClientRect().width) continue; // not displayed
+      expect(img.complete && img.naturalWidth > 0, img.src).to.equal(true);
+      if (img.closest('app-line-card-item')) expect(img.style.height, img.src).not.to.equal('');
     }
   });
-  cy.compareSnapshot(name, { capture });
+  // Loaded isn't drawn: the browser still has to decode each image, then paint it on a later frame. With
+  // 234 logos loading at once, a screenshot could otherwise catch the plates empty.
+  cy.window().then(
+    (win) =>
+      new Cypress.Promise<void>((resolve) => {
+        // allSettled: an image that can't be decoded (a broken logo) doesn't hold up the others.
+        const decoded = Array.from(win.document.images).map((img) => img.decode());
+        void Promise.allSettled(decoded).then(() =>
+          win.requestAnimationFrame(() => win.requestAnimationFrame(() => resolve())),
+        );
+      }),
+  );
+  cy.screenshot(name, { capture, overwrite: true });
 }
 
 function lineCardLoaded(): void {
@@ -90,9 +107,7 @@ const STATES: Record<string, PageState> = {
     capture: 'viewport',
     setUp: () => {
       lineCardLoaded();
-      // Scrolls to the results, not to the pinned/recent sections themselves: CI also runs these specs
-      // against the commit before a change (see the visual job in ci.yml), where a new element doesn't
-      // exist yet. The offset clears the sticky top bar and search toolbar.
+      // Scrolls to the results, the offset clearing the sticky top bar and search toolbar.
       cy.getBySel('results').scrollIntoView({ offset: { top: -280, left: 0 } });
     },
     storage: {
@@ -110,6 +125,8 @@ const STATES: Record<string, PageState> = {
     setUp: () => {
       lineCardLoaded();
       cy.getBySel('filter-chip-metal').click();
+      // The address changes once the filtered cards have rendered, a frame after the click.
+      cy.location('search').should('contain', 'cat=metal');
       cy.scrollTo('bottom');
     },
   },
@@ -119,6 +136,7 @@ const STATES: Record<string, PageState> = {
     setUp: () => {
       lineCardLoaded();
       cy.getBySel('view-az').click();
+      cy.location('search').should('contain', 'view=az');
     },
   },
   'line-card-no-results': {

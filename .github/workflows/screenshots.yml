@@ -1,0 +1,206 @@
+# Screenshots of every page state (cypress/visual), for catching changes to how the site looks.
+#
+# On main, each push records its screenshots as the baseline later PRs compare against. Nothing is
+# compared there: a PR already showed its changes before it merged.
+#
+# On a pull request, "Screenshot review" takes the same screenshots of the PR and of the main commit it
+# branched from, and reg-cli compares them. No changes: it passes. Changes: it fails, with the pages listed
+# on the PR and a before/after/diff report in the run's screenshot-report artifact, until someone who has
+# looked adds the visual-ok label. A later push removes the label, since it may change more. The check is
+# required on main (branch protection), so auto-merge waits for it too.
+name: Screenshots
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+# A new push to a PR replaces the run it outdates. A label change waits for the run in progress instead,
+# then reuses its screenshots (see "Reuse this comparison").
+concurrency:
+  group: screenshots-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event.action == 'synchronize' }}
+
+env:
+  NG_CLI_ANALYTICS: 'false'
+  SNAPSHOTS: cypress/snapshots
+
+jobs:
+  record:
+    name: Record main's screenshots
+    if: github.event_name == 'push'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      # The runner image (and so its Chromium) changes every week or two, and a newer Chromium can render
+      # a pixel differently, so screenshots are only reused on the image that took them.
+      - name: Name the runner image
+        id: image
+        run: echo "id=$ImageOS-$ImageVersion" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      # npm's cache holds the Cypress package, not the browser-driving app it downloads on install.
+      - uses: actions/cache@v6
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - run: npm ci
+      - run: npm run visual:base
+      - uses: actions/cache/save@v6
+        continue-on-error: true # a re-run finds its key already saved, which is fine
+        with:
+          path: ${{ env.SNAPSHOTS }}/expected
+          key: screenshots-${{ github.sha }}-${{ steps.image.outputs.id }}
+
+  review:
+    name: Screenshot review
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      pull-requests: write # to comment the result and remove a stale visual-ok label
+    env:
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      PR: ${{ github.event.pull_request.number }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }} # the branch itself, not a test merge with main
+          fetch-depth: 0 # the whole history, so the commit to compare against is here
+      - name: Pick the commit to compare against
+        id: base
+        run: |
+          base=$(git merge-base origin/main HEAD)
+          echo "sha=$base" >> "$GITHUB_OUTPUT"
+          echo "image=$ImageOS-$ImageVersion" >> "$GITHUB_OUTPUT"
+          echo "Comparing with main at $base" | tee -a "$GITHUB_STEP_SUMMARY"
+          # main's recorded screenshots stand in for taking them again only if they were taken the same
+          # way: the same specs, and the same Cypress.
+          if git diff --quiet "$base" HEAD -- cypress/visual cypress/support cypress/fixtures cypress.visual.config.ts package-lock.json; then
+            echo "same-specs=true" >> "$GITHUB_OUTPUT"
+          fi
+      # A label change runs this job again for the same commits; the comparison is already done.
+      - name: Reuse this comparison
+        id: done
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ env.SNAPSHOTS }}
+          key: screenshots-review-${{ env.HEAD_SHA }}-${{ steps.base.outputs.sha }}-${{ steps.base.outputs.image }}
+      - if: steps.done.outputs.cache-hit != 'true'
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - if: steps.done.outputs.cache-hit != 'true'
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - if: steps.done.outputs.cache-hit != 'true'
+        run: npm ci
+      - if: steps.done.outputs.cache-hit != 'true' && steps.base.outputs.same-specs
+        name: Reuse main's recorded screenshots
+        id: saved
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ env.SNAPSHOTS }}/expected
+          key: screenshots-${{ steps.base.outputs.sha }}-${{ steps.base.outputs.image }}
+      # None recorded: take them from main now. It gets its own folder (a git worktree) and its own
+      # node_modules, since its dependencies may differ. Only its app is used; the specs come from this PR,
+      # so a page state the PR adds fails there (it doesn't exist yet) and shows up as new, not as a failure.
+      - if: steps.done.outputs.cache-hit != 'true' && steps.saved.outputs.cache-hit != 'true'
+        name: Screenshot main
+        env:
+          BASE: ${{ steps.base.outputs.sha }}
+        run: |
+          CYPRESS_INSTALL_BINARY=0 git worktree add ../base "$BASE"
+          CYPRESS_INSTALL_BINARY=0 npm ci --prefix ../base
+          # setsid gives the server its own process group, so one kill stops npx, ng, and everything under them.
+          (cd ../base && exec setsid npx ng serve --configuration e2e > ../base-serve.log 2>&1) &
+          server=$!
+          timeout 300 bash -c 'until curl -sf http://localhost:4210 > /dev/null; do sleep 2; done'
+          VISUAL_BASE=1 npx cypress run --config-file cypress.visual.config.ts --browser chromium \
+            || echo "::notice::Some page states couldn't be pictured on main; the report lists them as new."
+          kill -- -"$server"
+          timeout 60 bash -c 'while curl -sf http://localhost:4210 > /dev/null; do sleep 1; done'
+      - if: steps.done.outputs.cache-hit != 'true'
+        name: Screenshot this PR and compare
+        run: |
+          npm run visual:shoot
+          npm run visual:compare -- --ignoreChange
+      - if: steps.done.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        continue-on-error: true
+        with:
+          path: ${{ env.SNAPSHOTS }}
+          key: screenshots-review-${{ env.HEAD_SHA }}-${{ steps.base.outputs.sha }}-${{ steps.base.outputs.image }}
+
+      - name: Read the result
+        id: result
+        run: |
+          node -e '
+            const reg = require("./" + process.env.SNAPSHOTS + "/reg.json");
+            const list = (title, items) =>
+              items.length ? `**${title}**\n${items.map((i) => "- " + i.split("/").pop()).join("\n")}\n` : "";
+            const count = reg.failedItems.length + reg.newItems.length + reg.deletedItems.length;
+            const body = count
+              ? [list("Changed", reg.failedItems), list("New", reg.newItems), list("Removed", reg.deletedItems)].join("\n")
+              : `No visual changes: all ${reg.passedItems.length} screenshots match main.`;
+            require("fs").writeFileSync(process.env.RUNNER_TEMP + "/pages.md", body);
+            require("fs").appendFileSync(process.env.GITHUB_OUTPUT, `count=${count}\n`);
+          '
+      - if: steps.result.outputs.count != '0'
+        uses: actions/upload-artifact@v7
+        with:
+          name: screenshot-report
+          path: ${{ env.SNAPSHOTS }}
+          retention-days: 14
+      - name: Check for approval
+        id: approval
+        env:
+          ACTION: ${{ github.event.action }}
+          LABELED: ${{ contains(github.event.pull_request.labels.*.name, 'visual-ok') }}
+        run: |
+          # An approval covers the pages someone looked at. A new push may change more, so it's cleared.
+          if [ "$LABELED" = true ] && [ "$ACTION" = synchronize ]; then
+            gh pr edit "$PR" --remove-label visual-ok || echo "Couldn't remove the label (no permission)."
+            echo "approved=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "approved=$LABELED" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Comment on the PR
+        continue-on-error: true # Dependabot's runs can't comment, which isn't a failure
+        env:
+          COUNT: ${{ steps.result.outputs.count }}
+          APPROVED: ${{ steps.approval.outputs.approved }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          {
+            echo "### Screenshot review"
+            if [ "$COUNT" != 0 ]; then
+              if [ "$APPROVED" = true ]; then
+                echo "$COUNT screenshots differ from main. **Approved** (visual-ok label)."
+              else
+                echo "$COUNT screenshots differ from main. Download **screenshot-report** from [this run]($RUN_URL), open \`report.html\`, and if the changes are intended, add the **visual-ok** label to let this merge."
+              fi
+              echo
+            fi
+            cat "$RUNNER_TEMP/pages.md"
+          } | tee -a "$GITHUB_STEP_SUMMARY" > "$RUNNER_TEMP/comment.md"
+          gh pr comment "$PR" --edit-last --create-if-none --body-file "$RUNNER_TEMP/comment.md"
+      - name: Wait for approval
+        if: steps.result.outputs.count != '0' && steps.approval.outputs.approved != 'true'
+        env:
+          COUNT: ${{ steps.result.outputs.count }}
+        run: |
+          echo "::error::$COUNT screenshots differ from main. Look at the screenshot-report artifact, then add the visual-ok label if they're intended."
+          exit 1
