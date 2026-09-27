@@ -1,0 +1,17 @@
+// How Cloudflare serves the site: a Worker with only static assets (no script of its own), deployed by
+// `wrangler deploy` in CI (.github/workflows/ci.yml). Who can see it is set in the Cloudflare dashboard
+// (the Worker's Access tab), not here.
+// developers.cloudflare.com/workers/static-assets/routing/single-page-application/
+{
+  "name": "counter-intelligence",
+  "compatibility_date": "2026-09-26",
+  "assets": {
+    "directory": "./dist/counter-intelligence-angular/browser",
+    // Any path that isn't a file gets index.html, so Angular's router can handle /branches, /tools, etc.
+    "not_found_handling": "single-page-application",
+  },
+  // Serve the site on its workers.dev address, but don't give every uploaded version a public URL of its
+  // own: the pipeline only ever deploys main, so there's nothing to preview.
+  "workers_dev": true,
+  "preview_urls": false,
+}

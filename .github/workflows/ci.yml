@@ -1,7 +1,10 @@
 # Runs on every push: the same checks as the pre-push hook (.husky/pre-push), which `--no-verify` can skip
-# but this can't. A push to main that passes them is deployed to Cloudflare Pages, where Cloudflare Access
+# but this can't. A push to main that passes them is deployed to Cloudflare, where Cloudflare Access
 # decides who can see it. The screenshot comparison runs alongside and reports changes, but doesn't hold
 # back a deploy: a style change on purpose shows up there too.
+#
+# Cloudflare serves the site as a Worker with static assets only (wrangler.jsonc), so `wrangler deploy`
+# uploads the build and nothing runs on the server.
 name: CI
 
 on:
@@ -18,7 +21,6 @@ permissions:
 
 env:
   NG_CLI_ANALYTICS: 'false'
-  CLOUDFLARE_PROJECT: counter-intelligence
 
 jobs:
   checks:
@@ -139,7 +141,7 @@ jobs:
           retention-days: 14
 
   deploy:
-    name: Deploy to Cloudflare Pages
+    name: Deploy to Cloudflare
     needs: [checks, e2e]
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
@@ -147,9 +149,6 @@ jobs:
     concurrency:
       group: deploy-production
       cancel-in-progress: false
-    permissions:
-      contents: read
-      deployments: write # lets the Cloudflare action show the deploy on GitHub
     env:
       CYPRESS_INSTALL_BINARY: '0'
     steps:
@@ -175,9 +174,4 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           wranglerVersion: '4.141.0'
-          command: >-
-            pages deploy dist/counter-intelligence-angular/browser
-            --project-name=${{ env.CLOUDFLARE_PROJECT }}
-            --branch=main
-            --commit-hash=${{ github.sha }}
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          command: deploy
