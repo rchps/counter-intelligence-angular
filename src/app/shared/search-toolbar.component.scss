@@ -87,8 +87,13 @@
 .search.has-value .kbd {
   display: none;
 }
+// A phone-width box has no room for the shortcut hint next to the placeholder (and a phone has no Ctrl
+// key), so the hint goes and the placeholder gets the space.
 @media (max-width: 640px) {
   .search:not(.has-value) input {
     padding-right: 14px;
+  }
+  .search .kbd {
+    display: none;
   }
 }
