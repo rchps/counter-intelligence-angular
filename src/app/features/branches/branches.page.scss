@@ -20,3 +20,8 @@
 .bgrid > li {
   display: flex; // lets each card stretch to its grid row's height
 }
+
+// The heading's second half in the brand color here, instead of the dimmed ink the other pages use.
+h1 .dim {
+  color: var(--brand);
+}
