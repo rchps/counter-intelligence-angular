@@ -50,7 +50,7 @@ export class AiCopyComponent {
   protected readonly copied = signal(false);
   protected readonly done = signal('');
   protected readonly previewOpen = signal(false);
-  /** Two soft pulses on the button, played once per browser (see showHintOnce). */
+  /** Rings spreading out from the button, played once per browser (see showHintOnce). */
   protected readonly hint = signal(false);
 
   protected readonly triggerLabel = computed(() =>
@@ -109,8 +109,8 @@ export class AiCopyComponent {
 
   /** Draws the eye to the button on someone's first visit. Only once, since motion that repeats every
    *  visit turns from helpful to annoying (NN/g), and never for people who've asked their computer for
-   *  less motion. Two pulses take about 3 seconds, under WCAG 2.2.2's 5-second limit for motion
-   *  without a pause control. */
+   *  less motion. The rings finish under 4 seconds after the list appears, inside WCAG 2.2.2's
+   *  5-second limit for motion without a pause control. */
   private showHintOnce(): void {
     if (this.storage.get(HINT_SEEN_KEY)) return;
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;

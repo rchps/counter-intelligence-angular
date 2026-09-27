@@ -96,6 +96,16 @@ describe('First-visit hint on the AI chat button', () => {
 
   /** Visits the Line Card and waits for its list: the hint is decided when the list loads, and before
    *  that "no animation" would be true for every visit and prove nothing. */
+  /** The rings are the button's ::before and ::after, which Cypress can't select, so this reads the
+   *  animation the browser computed for ::before. */
+  function expectRings(playing: boolean): void {
+    cy.getBySel('ai-trigger').should(($button) => {
+      const animation = getComputedStyle($button[0], '::before').animationName;
+      if (playing) expect(animation, 'ring animation').not.to.equal('none');
+      else expect(animation, 'ring animation').to.equal('none');
+    });
+  }
+
   function visitLineCard(options: Partial<Cypress.VisitOptions> = {}): void {
     cy.visit('/lines', options);
     cy.getBySel('line-card').should('have.length.greaterThan', 0);
@@ -103,10 +113,10 @@ describe('First-visit hint on the AI chat button', () => {
 
   it('pulses on the first visit, and not on the next', () => {
     visitLineCard();
-    cy.getBySel('ai-trigger').should('not.have.css', 'animation-name', 'none');
+    expectRings(true);
 
     visitLineCard();
-    cy.getBySel('ai-trigger').should('have.css', 'animation-name', 'none');
+    expectRings(false);
   });
 
   it('never pulses for people who asked their computer for less motion', () => {
@@ -120,6 +130,6 @@ describe('First-visit hint on the AI chat button', () => {
         );
       },
     });
-    cy.getBySel('ai-trigger').should('have.css', 'animation-name', 'none');
+    expectRings(false);
   });
 });
