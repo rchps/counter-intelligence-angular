@@ -1,22 +1,27 @@
 // The dialog shell itself uses the global .dlg styles.
 
+// Tinted with the brand color so it stands out as the page's one extra action, without competing with
+// the search box for attention.
 .ai-trigger {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   min-height: 34px;
-  padding: 0 12px 0 10px;
-  border: 1px solid var(--line-strong);
+  padding: 0 14px 0 11px;
+  border: 1px solid color-mix(in srgb, var(--brand) 35%, transparent);
   border-radius: 999px;
-  background: var(--surface);
-  color: var(--ink);
-  font: 500 13px/1 var(--font);
+  background: var(--brand-soft);
+  color: var(--brand-strong);
+  font: 600 13px/1 var(--font);
   cursor: pointer;
   box-shadow: var(--shadow);
+  transition:
+    border-color 0.15s,
+    background-color 0.15s;
 }
-.ai-trigger:hover {
+.ai-trigger:hover:not([disabled]) {
   border-color: var(--brand);
-  color: var(--brand-strong);
+  background: color-mix(in srgb, var(--brand) 14%, var(--surface));
 }
 .ai-trigger:focus-visible {
   outline: 3px solid var(--focus);
