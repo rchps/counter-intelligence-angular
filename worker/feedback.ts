@@ -1,18 +1,16 @@
 // What the feedback endpoint accepts from the page, and the GitHub request it turns that into. Pure, so
 // both can be checked directly (feedback.spec.ts); index.ts does the fetching.
+//
+// The submission's shape comes from the API spec (api/openapi.yaml), through its generated types. Types
+// are gone once this runs, though, so parseSubmission still checks every request itself.
+import type { FeedbackSubmission } from '../api/generated';
 
-export type FeedbackKind = 'problem' | 'idea';
-
-export interface FeedbackSubmission {
-  kind: FeedbackKind;
-  title: string;
-  body: string;
-  /** The Turnstile widget's answer, checked with Cloudflare before anything is posted. */
-  turnstileToken: string;
-}
+export type { FeedbackSubmission };
+export type FeedbackKind = FeedbackSubmission['kind'];
 
 // The dialog's boxes are 500 characters each, so a real report is far under these. They stop anyone
 // posting straight to the endpoint from filing something huge. 2048 is Turnstile's own token maximum.
+// The spec's maxLength for each (feedback.spec.ts checks they match: generated types can't carry them).
 export const LIMITS = { title: 256, body: 4000, turnstileToken: 2048 };
 
 // GitHub's default labels, so they exist in any repo without setting them up.

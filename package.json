@@ -8,12 +8,15 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "format": "prettier --write \"src/**/*.{ts,html,scss}\" \"scripts/**/*.mts\" \"worker/**/*.ts\" \"cypress/**/*.ts\" cypress.config.ts cypress.visual.config.ts cypress.readme.config.ts",
-    "format:check": "prettier --check \"src/**/*.{ts,html,scss}\" \"scripts/**/*.mts\" \"worker/**/*.ts\" \"cypress/**/*.ts\" cypress.config.ts cypress.visual.config.ts cypress.readme.config.ts",
+    "format": "prettier --write \"src/**/*.{ts,html,scss}\" \"scripts/**/*.mts\" \"worker/**/*.ts\" \"cypress/**/*.ts\" cypress.config.ts cypress.visual.config.ts cypress.readme.config.ts openapi-ts.config.ts",
+    "format:check": "prettier --check \"src/**/*.{ts,html,scss}\" \"scripts/**/*.mts\" \"worker/**/*.ts\" \"cypress/**/*.ts\" cypress.config.ts cypress.visual.config.ts cypress.readme.config.ts openapi-ts.config.ts",
     "validate-data": "node scripts/validate-data.mts",
     "test:scripts": "vitest run scripts",
     "test:worker": "vitest run worker",
-    "typecheck:worker": "tsc -p tsconfig.worker.json",
+    "typecheck:worker": "tsc -p tsconfig.worker.json && tsc -p tsconfig.worker-spec.json",
+    "api:types": "openapi-ts",
+    "api:lint": "redocly lint api/openapi.yaml",
+    "api:check": "npm run api:lint && npm run api:types && git diff --exit-code -- api/generated",
     "e2e": "ng run counter-intelligence-angular:cypress-run",
     "e2e:open": "ng e2e",
     "visual:base": "VISUAL_BASE=1 ng run counter-intelligence-angular:cypress-run --config-file cypress.visual.config.ts --browser chromium",
@@ -41,6 +44,8 @@
     "@angular/compiler-cli": "^22.2.0",
     "@cypress/schematic": "^6.0.0",
     "@eslint/js": "^10.0.1",
+    "@hey-api/openapi-ts": "0.99.0",
+    "@redocly/cli": "^2.54.3",
     "@types/node": "^26.6.3",
     "angular-eslint": "22.5.0",
     "cypress": "16.1.0",
@@ -53,6 +58,12 @@
     "reg-cli": "0.18.16",
     "typescript": "~6.0.2",
     "typescript-eslint": "8.70.1",
-    "vitest": "^5.0.0"
+    "vitest": "^5.0.0",
+    "yaml": "^2.9.1"
+  },
+  "overrides": {
+    "@hey-api/json-schema-ref-parser": {
+      "js-yaml": "4.3.2"
+    }
   }
 }

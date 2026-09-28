@@ -1,6 +1,15 @@
+import { readFileSync } from 'node:fs';
 import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
+import { parse } from 'yaml';
 import { githubIssueRequest, LIMITS, parseSubmission, type FeedbackSubmission } from './feedback';
 import { handleFeedback, type Env } from './index';
+
+interface StringSchema {
+  maxLength: number;
+}
+interface ApiSpec {
+  components: { schemas: { FeedbackSubmission: { properties: Record<string, StringSchema> } } };
+}
 
 const SUBMISSION: FeedbackSubmission = {
   kind: 'problem',
@@ -8,6 +17,19 @@ const SUBMISSION: FeedbackSubmission = {
   body: "What's wrong: Wrong or broken link\nManufacturer: Altronix",
   turnstileToken: 'XXXX.DUMMY.TOKEN.XXXX',
 };
+
+describe('the API spec', () => {
+  // The generated types carry each field's type but not its length, so this keeps the two in step.
+  it('allows the same lengths the Worker does', () => {
+    const spec = parse(
+      readFileSync(new URL('../api/openapi.yaml', import.meta.url), 'utf8'),
+    ) as ApiSpec;
+    const { properties } = spec.components.schemas.FeedbackSubmission;
+    expect(properties['title']?.maxLength).toBe(LIMITS.title);
+    expect(properties['body']?.maxLength).toBe(LIMITS.body);
+    expect(properties['turnstileToken']?.maxLength).toBe(LIMITS.turnstileToken);
+  });
+});
 
 describe('parseSubmission', () => {
   it('takes what the dialog sends, trimmed', () => {

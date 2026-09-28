@@ -1,0 +1,4 @@
+# How `npm run api:lint` checks the API spec (api/openapi.yaml): Redocly's recommended rules, like every
+# operation having an operationId and a 4xx response. redocly.com/docs/cli/rules/recommended
+extends:
+  - recommended

@@ -6,7 +6,8 @@
   when one of them changes.
 - **pre-push**: the quick whole-project checks: lint, format, unit tests, data validation, build.
 - **GitHub Actions** (`.github/workflows/ci.yml`) on every push:
-  - _Checks_: lint, format, unit, script and Worker tests, a Worker type-check, data validation, build.
+  - _Checks_: lint, format, unit, script and Worker tests, a Worker type-check, the API spec and its
+    types, data validation, build.
   - _End-to-end tests_, with failure screenshots uploaded as an artifact.
   - _Deploy_: `main` deploys to Cloudflare once checks and end-to-end tests pass; other branches get a
     preview. GitHub lists both under Deployments, as the _production_ and _preview_ environments.
@@ -22,7 +23,7 @@ that skips the jobs a change can't affect:
 | Change                                                         | Checks | End-to-end | Screenshot review | Deploy (main) |
 | -------------------------------------------------------------- | ------ | ---------- | ----------------- | ------------- |
 | Docs and Markdown, editor and assistant settings               | —      | —          | —                 | —             |
-| The Worker, data scripts, unit tests, lint and format settings | runs   | —          | —                 | runs          |
+| The Worker, API spec, data scripts, unit tests, lint, format   | runs   | —          | —                 | runs          |
 | End-to-end specs                                               | runs   | runs       | —                 | runs          |
 | Screenshot specs                                               | runs   | —          | runs              | runs          |
 | The app, its data, dependencies, anything else                 | runs   | runs       | runs              | runs          |

@@ -1,0 +1,83 @@
+# The contract for the site's own API: what each endpoint takes and what it answers. The Worker
+# (worker/) implements it, the Angular app calls it, and both use the types generated from this file
+# (`npm run api:types`, into api/generated/). Change this first, then regenerate, then the code.
+openapi: 3.1.0
+info:
+  title: Counter Intelligence API
+  version: 1.0.0
+  description: >-
+    The site's only server code, a Cloudflare Worker. Cloudflare Access stands in front of every
+    request, so only signed-in people reach it.
+  license:
+    name: MIT
+    identifier: MIT
+servers:
+  - url: /
+security:
+  - cloudflareAccess: []
+paths:
+  /api/feedback:
+    post:
+      operationId: sendFeedback
+      summary: File a report as a GitHub issue
+      description: >-
+        Checks the Turnstile answer with Cloudflare, then posts the report as an issue under the
+        site's own GitHub account, so the sender stays anonymous. Nothing about who sent it is passed
+        on, including the email Access adds to the request.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedbackSubmission'
+      responses:
+        '201':
+          description: The issue was filed.
+        '400':
+          description: The body isn't JSON, or isn't a submission.
+        '403':
+          description: The Turnstile answer didn't pass (a bot, or a token that's used or expired).
+        '405':
+          description: Only POST is allowed.
+          headers:
+            Allow:
+              description: The allowed method.
+              schema:
+                type: string
+                const: POST
+        '502':
+          description: GitHub refused the issue.
+components:
+  securitySchemes:
+    cloudflareAccess:
+      type: apiKey
+      in: cookie
+      name: CF_Authorization
+      description: >-
+        Set by Cloudflare Access at sign-in, and checked by Access before the Worker sees the
+        request.
+  schemas:
+    FeedbackSubmission:
+      type: object
+      description: >-
+        A report from the feedback dialog. The Worker trims the title and body, and each text field
+        must have something besides spaces (the pattern).
+      required: [kind, title, body, turnstileToken]
+      properties:
+        kind:
+          type: string
+          enum: [problem, idea]
+          description: A problem is labeled `bug` on GitHub, an idea `enhancement`.
+        title:
+          type: string
+          pattern: \S
+          maxLength: 256
+        body:
+          type: string
+          pattern: \S
+          maxLength: 4000
+        turnstileToken:
+          type: string
+          pattern: \S
+          maxLength: 2048
+          description: The Turnstile widget's answer. Single-use, valid for 5 minutes.

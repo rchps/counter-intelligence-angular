@@ -1,0 +1,10 @@
+/* The Worker's tests (worker/*.spec.ts). They run in Node, under Vitest, so they also get Node's types:
+   one reads the API spec from disk. The Worker's own code is checked without them (tsconfig.worker.json). */
+{
+  "extends": "./tsconfig.worker.json",
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "include": ["worker/**/*.ts"],
+  "exclude": []
+}

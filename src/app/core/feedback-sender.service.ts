@@ -1,13 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import type { FeedbackMode, FeedbackReport } from './feedback';
+import type { FeedbackSubmission } from '../../../api/generated';
 
-/** What POST /api/feedback takes (worker/feedback.ts checks it again on the server). */
-export interface FeedbackSubmission extends FeedbackReport {
-  kind: FeedbackMode;
-  turnstileToken: string;
-}
+/** What POST /api/feedback takes, generated from the API spec (api/openapi.yaml). */
+export type { FeedbackSubmission };
 
 // Posts a report to the site's own Worker, which files it as a GitHub issue. Only the report and the
 // Turnstile answer are sent; the GitHub token never leaves the Worker.
