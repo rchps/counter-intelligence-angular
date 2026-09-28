@@ -1,6 +1,7 @@
 /* The Cloudflare Worker (worker/), which runs on Cloudflare rather than in the browser or Node. Wrangler
    bundles it without type-checking, so `npm run typecheck:worker` does that. The WebWorker lib has the
-   fetch/Request/Response globals the Workers runtime provides. */
+   fetch/Request/Response globals the Workers runtime provides, and no Node: code that reached for `fs`
+   would fail here. Its tests run in Node, under Vitest, and are checked by tsconfig.worker-spec.json. */
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
@@ -8,5 +9,6 @@
     "types": [],
     "noEmit": true
   },
-  "include": ["worker/**/*.ts"]
+  "include": ["worker/**/*.ts"],
+  "exclude": ["worker/**/*.spec.ts"]
 }

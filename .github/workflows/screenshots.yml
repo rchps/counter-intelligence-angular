@@ -58,7 +58,10 @@ jobs:
               - '!wrangler.jsonc'
               - '!scripts/**'
               - '!src/**/*.spec.ts'
-              - '!tsconfig.{spec,scripts,worker}.json'
+              - '!tsconfig.{spec,scripts,worker,worker-spec}.json'
+              - '!api/**' # the spec and its generated types: types only, gone at runtime
+              - '!openapi-ts.config.ts'
+              - '!redocly.yaml'
               - '!eslint.config.js'
               - '!.prettierrc'
               - '!.husky/**'

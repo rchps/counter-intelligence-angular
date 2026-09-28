@@ -5,5 +5,6 @@ npm run lint
 npm run format:check
 npm test -- --watch=false
 npm run test:scripts
+npm run api:check
 npm run validate-data
 npm run build
