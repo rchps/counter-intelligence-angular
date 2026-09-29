@@ -1,3 +1,11 @@
+// Keep all app content above the body's decorative glow and redaction bars (z-index: 0).
+// Without a foreground stacking context, those positioned layers can paint over tool headings.
+:host {
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+
 // The page's one <main>. It fills at least the screen below the top bar, so the feedback card and footer
 // start below the fold instead of painting near the top while a page's code loads and then jumping down
 // (Lighthouse measured that jump as a 0.18-0.40 layout shift; web.dev's "good" is 0.1 or less).
