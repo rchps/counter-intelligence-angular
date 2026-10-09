@@ -37,3 +37,16 @@
     0 1px 2px rgba(0, 0, 0, 0.08),
     0 0 0 1px var(--line);
 }
+
+// On a phone the switch sits on its own row under the search box (search-toolbar.component.scss), so it
+// spans the row like the tools' segmented controls, and its buttons need a height of their own instead
+// of stretching to the search box's.
+@media (max-width: 640px) {
+  .views {
+    flex: 1 1 100%;
+  }
+  .views button {
+    flex: 1 1 0;
+    min-height: 40px;
+  }
+}

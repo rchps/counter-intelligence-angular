@@ -49,7 +49,7 @@ let nextId = 0;
         <kbd class="kbd-mod">{{ isMac ? '⌘' : 'Ctrl' }}</kbd
         ><kbd>K</kbd>
       </span>
-      <button type="button" class="clear" (click)="clear()">Clear</button>
+      <button type="button" class="clear" data-cy="search-clear" (click)="clear()">Clear</button>
     </div>
     <ng-content select="[toolbarExtras]" />
   `,

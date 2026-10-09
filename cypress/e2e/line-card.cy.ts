@@ -150,6 +150,24 @@ describe('Line Card', () => {
     cy.focused().should('have.attr', 'data-cy', 'search-input');
   });
 
+  it('gives the search box a row of its own on a phone, with the view switch under it', () => {
+    cy.viewport(390, 844);
+    cy.getBySel('search-input').then(($search) => {
+      cy.getBySel('view-switch').then(($views) => {
+        const search = $search[0].getBoundingClientRect();
+        const views = $views[0].getBoundingClientRect();
+        expect(views.top, 'the switch starts below the search box').to.be.at.least(search.bottom);
+        expect(search.width, 'the search box spans the row').to.be.closeTo(views.width, 1);
+      });
+    });
+
+    cy.getBySel('search-input').type('altronix');
+    cy.getBySel('search-clear').should('be.visible').click();
+    cy.getBySel('search-input').should('have.value', '');
+    cy.getBySel('view-az').click();
+    cy.location('search').should('contain', 'view=az');
+  });
+
   it('slides the cards to their new places when the filter changes', () => {
     // A transition the browser skips (say, because a navigation started another) rejects its `ready`
     // promise, so waiting on it proves the cards really animated.
