@@ -6,6 +6,7 @@ import { FeedbackService } from './core/feedback.service';
 import { FeedbackDialogComponent } from './features/feedback/feedback-dialog.component';
 import { FeedbackCardComponent } from './layout/feedback-card.component';
 import { FooterComponent } from './layout/footer.component';
+import { SectionSwipeDirective } from './layout/section-swipe.directive';
 import { TopBarComponent } from './layout/top-bar.component';
 
 @Component({
@@ -16,6 +17,7 @@ import { TopBarComponent } from './layout/top-bar.component';
     FeedbackCardComponent,
     FeedbackDialogComponent,
     FooterComponent,
+    SectionSwipeDirective,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
