@@ -14,6 +14,9 @@
 - **GitHub Actions**, screenshots: each push to `main` records its screenshots as the next baseline
   (`screenshots-main.yml`), and each pull request gets the _Screenshot review_ check (see [Testing](testing.md#screenshot-review-on-pull-requests))
   (`screenshots.yml`).
+- **GitHub Actions**, linked issue (`linked-issue.yml`): a pull request can only merge once it closes an
+  issue, so every change shows up on the project board with its PR. Dependabot's PRs and PRs labelled
+  `no-issue` are exempt.
 
 ## Only the checks a change needs
 
