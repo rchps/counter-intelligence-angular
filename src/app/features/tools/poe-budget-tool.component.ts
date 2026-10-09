@@ -1,4 +1,13 @@
-import { Component, computed, signal } from '@angular/core';
+import {
+  afterNextRender,
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  Injector,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { POE_CLASSES, poeBudget, readPositiveNumber, type PoeDevice } from '../../core/tools-math';
 import { ToolResultCardComponent } from './tool-result-card.component';
 import { inputValue } from '../../shared/input-value';
@@ -25,6 +34,10 @@ interface ParsedDevices {
   templateUrl: './poe-budget-tool.component.html',
 })
 export class PoeBudgetToolComponent {
+  private readonly injector = inject(Injector);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly addButton = viewChild.required<ElementRef<HTMLButtonElement>>('addButton');
+
   protected readonly inputValue = inputValue;
   protected readonly classOptions = Object.keys(POE_CLASSES);
 
@@ -99,15 +112,23 @@ export class PoeBudgetToolComponent {
   protected readonly portsDisplay = computed(() => this.result()?.ports ?? '—');
   protected readonly highestTypeDisplay = computed(() => this.result()?.highestPortType ?? '—');
 
+  // A new row's quantity is the next thing to fill in, so focus goes there once the row is on the page.
   protected addDevice(): void {
+    const id = this.nextId++;
     this.devices.update((rows) => [
       ...rows,
-      { id: this.nextId++, quantityText: '', classChoice: '3', wattsText: '' },
+      { id, quantityText: '', classChoice: '3', wattsText: '' },
     ]);
+    afterNextRender(
+      () => this.host.nativeElement.querySelector<HTMLInputElement>(`#poe-qty-${id}`)?.focus(),
+      { injector: this.injector },
+    );
   }
 
+  // The Remove button goes with its row, so focus moves to "Add device" rather than being lost.
   protected removeDevice(id: number): void {
     this.devices.update((rows) => rows.filter((row) => row.id !== id));
+    this.addButton().nativeElement.focus();
   }
 
   protected setQuantityText(id: number, text: string): void {
