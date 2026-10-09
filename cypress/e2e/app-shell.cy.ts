@@ -51,15 +51,16 @@ describe('App shell', () => {
     });
 
     it('leaves a sideways drag on the scrolling filter chips to the chips', () => {
-      cy.visit('/lines');
+      // Branches' state chips: the Line Card's categories are a dropdown at phone width.
+      cy.visit('/branches');
       // The chips only scroll sideways when they don't fit, as they don't at phone width.
       cy.getBySel('filter-chip-all')
         .parent()
         .should(($row) => expect($row[0].scrollWidth).to.be.greaterThan($row[0].clientWidth));
-      swipe(cy.getBySel('filter-chip-all'), 300, 100);
-      // Had the chips swipe changed section, this one would land on Tools instead.
+      swipe(cy.getBySel('filter-chip-all'), 100, 300);
+      // Had the chips swipe gone back to the Line Card, this one would land on Branches instead.
       swipe(heading(), 300, 100);
-      cy.location('pathname').should('eq', '/branches');
+      cy.location('pathname').should('match', /^\/tools\//);
     });
   });
 

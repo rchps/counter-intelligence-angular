@@ -39,7 +39,17 @@
     </app-search-toolbar>
 
     <app-filter-chips
+      class="category-chips"
       groupLabel="Filter by category"
+      [total]="matching().length"
+      [chips]="chips()"
+      [selected]="filter()"
+      (selectedChange)="setFilter($event)"
+    />
+    <app-filter-select
+      class="category-select"
+      label="Category"
+      allLabel="All categories"
       [total]="matching().length"
       [chips]="chips()"
       [selected]="filter()"
