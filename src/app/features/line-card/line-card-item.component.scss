@@ -165,3 +165,76 @@
     opacity: 1;
   }
 }
+
+// Phones: a row instead of a card (issue #92). As 155px cards in one column, four or five fit on screen
+// and the list ran to 41,000px; as 56px rows, two to three times as many fit. Nothing moves behind a
+// tap: the row keeps the logo (in a small plate; the name beside it says who it is when a wide wordmark
+// gets thin), the name, the caption, the new-tab arrow and the pin. The rows sit in one list box (category-group's .grid),
+// which draws the background, the corners and the dividers, so a row is transparent and square.
+// Screen only: paper keeps the card grid, whatever its width.
+@media screen and (max-width: 640px) {
+  .line {
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0 12px;
+    min-height: 56px;
+    // The right padding keeps the text and arrow clear of the pin, which sits over the row's right end.
+    padding: 8px 52px 8px 8px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  // A row lifting out of a list would leave a gap in it; the arrow's own hover nudge is enough.
+  :host(:hover) a.line,
+  :host(:hover) a.line ~ .pin {
+    transform: none;
+    box-shadow: none;
+  }
+  // The global ring sits outside the element, where it would run into the rows above and below; inside,
+  // it's whole on every row, the first and last included.
+  .line:focus-visible {
+    outline-offset: -3px;
+  }
+  .logo {
+    flex: 0 0 88px;
+    height: 36px;
+    padding: 4px 6px;
+    margin: 0;
+    border-radius: 6px;
+  }
+  // The component's balanced height is sized for the card's plate; this keeps it inside the small one.
+  .logo img {
+    max-height: 100%;
+  }
+  .txt {
+    padding: 0;
+  }
+  // A line in two or more categories (or a long match reason) gets a second line rather than being cut
+  // off after the first category: the row is too narrow for the card's one-line caption.
+  .meta {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    white-space: normal;
+  }
+  .go {
+    margin: 0;
+  }
+  // A full-size tap target (44×44, WCAG 2.5.5), centred on the row, and drawn as just the icon: a box
+  // around it would read as a second card inside the row.
+  .pin {
+    top: 50%;
+    right: 4px;
+    width: 44px;
+    height: 44px;
+    margin-top: -22px;
+    border-color: transparent;
+    background: transparent;
+  }
+  .pin svg {
+    width: 18px;
+    height: 18px;
+  }
+}
