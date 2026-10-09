@@ -151,6 +151,18 @@ describe('App shell', () => {
       });
   });
 
+  // The skip link is a bare "#main-content", which <base href="/"> would turn into a link to the site root.
+  for (const path of ['/lines', '/branches', '/tools/margin']) {
+    it(`skips to the main content and stays on ${path}`, () => {
+      cy.visit(path);
+      cy.getBySel('page-heading').should('be.visible');
+      cy.getBySel('skip-link').focus();
+      cy.getBySel('skip-link').click();
+      cy.location('pathname').should('equal', path);
+      cy.focused().should('have.attr', 'data-cy', 'main-content');
+    });
+  }
+
   it('shows the build in the footer', () => {
     cy.visit('/lines');
     // The e2e server stamps a fixed build (angular.json, build:e2e), in the same format as npm run build.

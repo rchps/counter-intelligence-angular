@@ -45,4 +45,12 @@ export class App {
       )
       .subscribe(() => this.mainContent().nativeElement.focus());
   }
+
+  // Left to the browser, "#main-content" resolves against <base href="/">, so from any page but the Line
+  // Card the skip link loaded the site root (which is the Line Card). Focusing <main> is all it has to
+  // do: focus scrolls it into view, and Tab carries on from there.
+  protected skipToMain(event: MouseEvent): void {
+    event.preventDefault();
+    this.mainContent().nativeElement.focus();
+  }
 }

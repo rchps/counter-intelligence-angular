@@ -1,4 +1,6 @@
-<a class="skip" href="#main-content">Skip to main content</a>
+<a class="skip" href="#main-content" data-cy="skip-link" (click)="skipToMain($event)"
+  >Skip to main content</a
+>
 <app-top-bar appHideBarsOnScroll />
 <main id="main-content" data-cy="main-content" #mainContent tabindex="-1" appSectionSwipe>
   <router-outlet />
