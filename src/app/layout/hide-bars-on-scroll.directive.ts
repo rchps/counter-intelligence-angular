@@ -1,16 +1,18 @@
 import { DestroyRef, Directive, ElementRef, inject } from '@angular/core';
 import { barsAfterScroll, type BarsScrollState } from '../core/bars-on-scroll';
 
-// On a phone, the top bar (this directive's element) and a search page's sticky toolbar slide out of
-// the way while someone scrolls down, and come back when they scroll up (core/bars-on-scroll.ts). Focus
-// overrides scrolling: the bars stay while focus is in either of them (typing a search, with the
-// on-screen keyboard open), and go when focus moves into the page below them, so they never cover the
-// focused element (WCAG 2.4.11). The sliding itself is CSS, keyed on .bars-hidden on <html> (see
-// styles.scss's toolbar). Wider screens have the room to keep both in place.
+// On a small screen, the top bar (this directive's element) and a search page's sticky toolbar slide out
+// of the way while someone scrolls down, and come back when they scroll up (core/bars-on-scroll.ts).
+// Small is narrow (a phone held upright) or short (one turned sideways, where the bars would otherwise
+// cover most of the screen). Focus overrides scrolling: the bars stay while focus is in either of them
+// (typing a search, with the on-screen keyboard open), and go when focus moves into the page below them,
+// so they never cover the focused element (WCAG 2.4.11). The sliding itself is CSS, keyed on .bars-hidden
+// on <html> under the same media query (see styles.scss's toolbar). Larger screens have the room to keep
+// both in place.
 @Directive({ selector: '[appHideBarsOnScroll]' })
 export class HideBarsOnScrollDirective {
   private readonly bar = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
-  private readonly phone = matchMedia('(max-width: 640px)');
+  private readonly smallScreen = matchMedia('(max-width: 640px), (max-height: 500px)');
   private state: BarsScrollState = { hidden: false, anchorY: scrollY };
   private frame = 0;
 
@@ -23,22 +25,22 @@ export class HideBarsOnScrollDirective {
       });
     };
     const onFocusIn = (event: FocusEvent): void => this.onFocusIn(event.target);
-    const onWidthChange = (): void => this.show();
+    const onSizeChange = (): void => this.show();
 
     addEventListener('scroll', onScroll, { passive: true });
     document.addEventListener('focusin', onFocusIn);
-    this.phone.addEventListener('change', onWidthChange);
+    this.smallScreen.addEventListener('change', onSizeChange);
     inject(DestroyRef).onDestroy(() => {
       removeEventListener('scroll', onScroll);
       document.removeEventListener('focusin', onFocusIn);
-      this.phone.removeEventListener('change', onWidthChange);
+      this.smallScreen.removeEventListener('change', onSizeChange);
       cancelAnimationFrame(this.frame);
       this.show();
     });
   }
 
   private onScroll(): void {
-    if (!this.phone.matches || this.isInBars(document.activeElement)) {
+    if (!this.smallScreen.matches || this.isInBars(document.activeElement)) {
       this.show();
       return;
     }
@@ -46,7 +48,7 @@ export class HideBarsOnScrollDirective {
   }
 
   private onFocusIn(target: EventTarget | null): void {
-    if (!this.phone.matches) return;
+    if (!this.smallScreen.matches) return;
     const hidden = !this.isInBars(target) && this.barsAreStuck();
     this.setState({ hidden, anchorY: scrollY });
   }

@@ -805,10 +805,17 @@ mark {
 .toolbar .wrap {
   padding: 14px 0 10px;
 }
-// On a phone the top bar and this toolbar slide away while scrolling down through the results and come
-// back on scrolling up (HideBarsOnScrollDirective sets .bars-hidden). The toolbar is held below the bar,
-// so it moves up by its own height and the bar's.
-@media (max-width: 640px) {
+// The "Showing N of M" status sits just under the toolbar but isn't part of it: held at the top, it took
+// another row from the results on a phone, and the count only matters while choosing what to show, which
+// happens at the top of the page.
+.toolbar-status {
+  padding-top: 8px;
+}
+// On a small screen (narrow, or short like a phone turned sideways) the top bar and this toolbar slide
+// away while scrolling down through the results and come back on scrolling up (HideBarsOnScrollDirective
+// sets .bars-hidden, from the same query). The toolbar is held below the bar, so it moves up by its own
+// height and the bar's.
+@media (max-width: 640px), (max-height: 500px) {
   app-top-bar,
   .toolbar {
     transition: transform 200ms cubic-bezier(0.2, 0, 0, 1);

@@ -46,16 +46,27 @@
     0 0 0 1px var(--line);
 }
 
-// On a phone the switch sits on its own row under the search box (search-toolbar.component.scss), so it
-// spans the row like the tools' segmented controls, and its buttons need a height of their own instead
-// of stretching to the search box's.
+// On a phone the toolbar is two rows: the search box on its own (search-toolbar.component.scss), then the
+// view switch and the category dropdown side by side, since every row it holds is one fewer row of
+// results. The switch is inside the search toolbar and the dropdown isn't, so the search toolbar's own box
+// steps aside (display: contents) to put both in this row's flex layout. The switch's buttons need a
+// height of their own instead of stretching to the search box's, and drop "By " to fit.
 @media (max-width: 640px) {
-  .views {
-    flex: 1 1 100%;
+  .toolbar .wrap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
+  app-search-toolbar {
+    display: contents;
   }
   .views button {
-    flex: 1 1 0;
     min-height: 40px;
+    text-transform: capitalize;
+  }
+  .views .by {
+    display: none;
   }
 }
 
@@ -71,5 +82,7 @@
   }
   .category-select {
     display: block;
+    flex: 1 1 0;
+    min-width: 0;
   }
 }

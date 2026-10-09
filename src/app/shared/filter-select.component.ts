@@ -11,8 +11,8 @@ let nextId = 0;
   selector: 'app-filter-select',
   styleUrl: './filter-select.component.scss',
   template: `
-    <div class="filter-select" [class.active]="selected() !== 'all'">
-      <label [for]="selectId">{{ label() }}</label>
+    <div class="filter-select" [class.active]="selected() !== 'all'" [class.inline]="inline()">
+      <label [for]="selectId" [class.sr-only]="inline()">{{ label() }}</label>
       <select [id]="selectId" data-cy="filter-select" (change)="selected.set(inputValue($event))">
         <!-- Options built by @for must each say whether they're selected: the browser shows the
              first option otherwise. -->
@@ -36,6 +36,9 @@ export class FilterSelectComponent {
   readonly total = input.required<number>();
   readonly chips = input.required<FilterChip[]>();
   readonly selected = model.required<string>();
+  /** Shares a row with another control: the label is left to screen readers (the options already say
+   *  what they are), and the row's spacing is the page's to set. */
+  readonly inline = input(false);
 
   protected readonly selectId = `filter-select-${++nextId}`;
 }
