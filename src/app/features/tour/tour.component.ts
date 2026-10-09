@@ -26,6 +26,9 @@ const FIND_TIMEOUT_MS = 2000;
 /** Long enough for the search box's debounce (60ms) to run and the new results to render, so a step
  *  never points at a card from the search before. */
 const SETTLE_MS = 150;
+/** Set on the element a step points at, while it does. Lets a control that's normally hidden until
+ *  hover (a card's pin button) show itself for the step: its stylesheet opts in with this attribute. */
+const ACTIVE_ATTRIBUTE = 'data-tour-active';
 
 const nextFrame = (): Promise<void> =>
   new Promise((resolve) => requestAnimationFrame(() => resolve()));
@@ -81,6 +84,8 @@ export class TourComponent {
   /** Whether the dialog has been opened. The effect first runs before the view exists, when there's
    *  nothing to close (and reading the dialog then would throw). */
   private opened = false;
+  /** The element marked with ACTIVE_ATTRIBUTE right now. */
+  private active: HTMLElement | null = null;
 
   constructor() {
     effect(() => {
@@ -122,6 +127,7 @@ export class TourComponent {
     this.presenting++;
     this.ready.set(false);
     this.spot.set(null);
+    this.markActive(null);
     if (!this.opened) return;
     this.opened = false;
     const dialog = this.dialog().nativeElement;
@@ -148,9 +154,11 @@ export class TourComponent {
     }
     if (token !== this.presenting) return;
     if (!target) {
+      this.markActive(null);
       this.tour.skipMissing();
       return;
     }
+    this.markActive(target);
 
     // The card now holds this step's text, so its height (a phone's bottom sheet) is known.
     await nextFrame();
@@ -175,6 +183,7 @@ export class TourComponent {
     const step = this.tour.step();
     const target = step ? visibleTarget(step.target) : null;
     if (!target) return;
+    this.markActive(target);
     const box = target.getBoundingClientRect();
     const spot: Box = {
       top: box.top - SPOT_PADDING,
@@ -191,6 +200,13 @@ export class TourComponent {
         { width: innerWidth, height: innerHeight },
       ),
     );
+  }
+
+  private markActive(target: HTMLElement | null): void {
+    if (target === this.active) return;
+    this.active?.removeAttribute(ACTIVE_ATTRIBUTE);
+    target?.setAttribute(ACTIVE_ATTRIBUTE, '');
+    this.active = target;
   }
 
   /** How much of the top of the screen the sticky top bar and search toolbar cover, unless the step's

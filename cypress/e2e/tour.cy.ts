@@ -73,9 +73,13 @@ describe('Guided tour', () => {
     expectStep(4);
     cy.getBySel('search-input').should('have.value', '');
     expectSpotAround('pin');
+    // A pin button only shows on hover, so the step shows the one it points at, and only that one.
+    cy.getBySel('pin-line').first().should('have.css', 'opacity', '1');
+    cy.getBySel('pin-line').eq(1).should('have.css', 'opacity', '0');
 
     cy.getBySel('tour-next').click();
     expectStep(5);
+    cy.getBySel('pin-line').first().should('have.css', 'opacity', '0');
     cy.getBySel('tour-next').should('contain.text', 'Done').click();
     cy.getBySel('tour').should('not.be.visible');
   });
