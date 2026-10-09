@@ -22,7 +22,8 @@ select {
   border-radius: 12px;
   background-color: var(--surface);
   color: var(--ink);
-  font: 500 15px/1.2 var(--font);
+  // 16px, not less: iOS Safari zooms the page into a field whose text is smaller when it's focused.
+  font: 500 16px/1.2 var(--font);
 }
 // A category is picked: the dropdown says so at a glance, as the dark chip does on wider screens.
 .active select {

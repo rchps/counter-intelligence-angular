@@ -655,7 +655,8 @@ mark {
   border-radius: 12px;
   background: var(--surface);
   color: var(--ink);
-  font: 400 15px/1.45 var(--font);
+  // 16px, not less: iOS Safari zooms the page into a field whose text is smaller when it's focused.
+  font: 400 16px/1.45 var(--font);
 }
 .dlg textarea {
   min-height: 92px;

@@ -183,7 +183,7 @@
   <div class="sl-card sl-section">
     <div class="sl-section-head">
       <h2>Daily sales</h2>
-      <span class="sl-hint">Enter moves to the next selling day.</span>
+      <span class="sl-hint">Enter or Next moves to the next selling day.</span>
     </div>
     <div class="sl-cal">
       @for (d of weekdayHeads; track d) {
@@ -220,6 +220,7 @@
             [id]="'sl-day-' + day.date"
             [attr.data-cy]="'sales-day-' + day.date"
             inputmode="decimal"
+            enterkeyhint="next"
             autocomplete="off"
             placeholder="—"
             [value]="dayTexts()[day.date] ?? ''"

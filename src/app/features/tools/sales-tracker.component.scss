@@ -502,6 +502,12 @@
   .sl-day-hit {
     grid-column: 1 / -1;
   }
+  // One day per row leaves the field room for 16px text: iOS Safari zooms the page into a smaller one
+  // when it's focused. And a full-size touch target, now there's room for that too.
+  .sl-day input[type='text'] {
+    min-height: 44px;
+    font-size: 16px;
+  }
   .sl-hero .v {
     font-size: 44px;
   }
