@@ -1,6 +1,6 @@
 // Which tools exist and how they're grouped, and the localStorage key remembering the last tool used.
-// Shared by app.routes.ts (the /tools redirect), ToolNavComponent (the list) and ToolsPage
-// (remembering what's chosen).
+// Shared by app.routes.ts (the /tools redirect and each tool's page title), ToolNavComponent (the list)
+// and ToolsPage (remembering what's chosen).
 
 import { STORAGE_KEYS } from '../../core/storage-keys';
 
@@ -26,6 +26,13 @@ export const TOOL_NAV: ToolNavItem[] = [
 
 export function isToolId(value: string | null | undefined): value is ToolId {
   return !!value && TOOL_NAV.some((tool) => tool.id === value);
+}
+
+// The page title for /tools/<id>, e.g. "Margin calculator · Tools". An unknown id shows the margin
+// calculator (ToolsPage), so it's titled as that too.
+export function toolPageTitle(id: string | null | undefined): string {
+  const tool = TOOL_NAV.find((item) => item.id === id) ?? TOOL_NAV[0];
+  return `${tool.label} · Tools`;
 }
 
 export interface SizingToolHeading {

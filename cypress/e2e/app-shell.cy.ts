@@ -16,6 +16,22 @@ describe('App shell', () => {
     cy.getBySel('nav-branches').should('not.have.attr', 'aria-current');
   });
 
+  it('names each section in the browser tab, and keeps the name while searching', () => {
+    cy.visit('/lines');
+    cy.title().should('equal', 'Line Card · Counter Intelligence');
+    // The search lives in the address (?q=) but not in the title.
+    cy.getBySel('search-input').type('altronix');
+    cy.location('search').should('contain', 'q=altronix');
+    cy.title().should('equal', 'Line Card · Counter Intelligence');
+
+    cy.getBySel('nav-branches').click();
+    cy.title().should('equal', 'Branches · Counter Intelligence');
+
+    // /tools redirects to a tool, which titles the page.
+    cy.getBySel('nav-tools').click();
+    cy.title().should('equal', 'Margin calculator · Tools · Counter Intelligence');
+  });
+
   describe('swiping between sections on a phone', () => {
     // A quick sideways touch from (fromX, 300) to (toX, 300), dispatched the way a finger would.
     const swipe = (subject: Cypress.Chainable<JQuery<HTMLElement>>, fromX: number, toX: number) => {

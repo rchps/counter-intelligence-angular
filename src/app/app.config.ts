@@ -4,6 +4,7 @@ import {
   isActive,
   provideRouter,
   Router,
+  TitleStrategy,
   withComponentInputBinding,
   withViewTransitions,
   type ActivatedRouteSnapshot,
@@ -12,6 +13,7 @@ import {
 } from '@angular/router';
 import { routes } from './app.routes';
 import { prefersReducedMotion } from './core/card-transition.service';
+import { PageTitleStrategy } from './core/page-title.strategy';
 import { sectionStep } from './core/section-swipe';
 
 const SAME_PAGE: IsActiveMatchOptions = {
@@ -64,5 +66,6 @@ export const appConfig: ApplicationConfig = {
         onViewTransitionCreated: animateNewPage,
       }),
     ),
+    { provide: TitleStrategy, useClass: PageTitleStrategy },
   ],
 };

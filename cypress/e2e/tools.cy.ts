@@ -239,6 +239,27 @@ describe('Tools navigation', () => {
     cy.location('pathname').should('eq', '/tools/poe');
   });
 
+  it('names the chosen tool in the browser tab, opened from its address or from the list', () => {
+    cy.visit('/tools/nvr');
+    cy.title().should('equal', 'NVR storage · Tools · Counter Intelligence');
+
+    // Every tool is the same route, so moving between them must retitle the page without a reload. A
+    // reload would throw away this marker on the window.
+    cy.window().then((win) => Object.assign(win, { sameDocument: true }));
+    for (const [id, label] of [
+      ['margin', 'Margin calculator'],
+      ['battery', 'Battery standby'],
+      ['vdrop', 'Voltage drop'],
+      ['poe', 'PoE budget'],
+      ['sales', 'Sales tracker'],
+      ['nvr', 'NVR storage'],
+    ]) {
+      cy.getBySel(`tool-link-${id}`).click();
+      cy.title().should('equal', `${label} · Tools · Counter Intelligence`);
+    }
+    cy.window().should('have.property', 'sameDocument', true);
+  });
+
   describe('on a phone', () => {
     beforeEach(() => {
       cy.viewport(390, 844);
