@@ -17,6 +17,7 @@ import { didYouMean } from '../../core/search/typos';
 import { BackToTopComponent } from '../../shared/back-to-top.component';
 import { FilterChipsComponent, type FilterChip } from '../../shared/filter-chips.component';
 import { FilterSelectComponent } from '../../shared/filter-select.component';
+import { PublishHeightDirective } from '../../shared/publish-height.directive';
 import { SearchStatusComponent } from '../../shared/search-status.component';
 import { SearchToolbarComponent } from '../../shared/search-toolbar.component';
 import { FEATURES } from '../../features';
@@ -55,6 +56,7 @@ interface CategoryLineGroup {
     EmptyStateComponent,
     RecentLinesComponent,
     BackToTopComponent,
+    PublishHeightDirective,
   ],
   templateUrl: './line-card.page.html',
   styleUrl: './line-card.page.scss',

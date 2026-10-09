@@ -139,7 +139,7 @@
       </div>
       <button
         type="button"
-        class="sl-linkbtn"
+        class="sl-linkbtn touch-target"
         data-cy="sales-table-toggle"
         aria-controls="sl-daytable"
         [attr.aria-expanded]="showDayTable()"
@@ -198,7 +198,7 @@
             <span class="sl-day-num">{{ dayLabel(day.date) }}</span>
             <button
               type="button"
-              class="sl-toggle"
+              class="sl-toggle touch-target"
               [attr.data-cy]="'sales-toggle-' + day.date"
               [attr.aria-pressed]="day.selling"
               [attr.aria-label]="
