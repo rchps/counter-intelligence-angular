@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { adjacentSection, swipeDirection } from './section-swipe';
+import { adjacentSection, sectionStep, swipeDirection } from './section-swipe';
 
 describe('swipeDirection', () => {
   it('reads a quick leftward swipe as next and a rightward one as previous', () => {
@@ -42,5 +42,18 @@ describe('adjacentSection', () => {
   it('does nothing on a page that is not a section', () => {
     expect(adjacentSection('/', 'next')).toBeNull();
     expect(adjacentSection('/elsewhere', 'next')).toBeNull();
+  });
+});
+
+describe('sectionStep', () => {
+  it('goes next towards Tools and previous towards the Line Card, skipping a section if need be', () => {
+    expect(sectionStep('/lines', '/branches')).toBe('next');
+    expect(sectionStep('/lines?q=bosch', '/tools/margin')).toBe('next');
+    expect(sectionStep('/tools/sales', '/lines')).toBe('previous');
+  });
+
+  it('has no direction within a section or outside them', () => {
+    expect(sectionStep('/tools/margin', '/tools/vdrop')).toBeNull();
+    expect(sectionStep('/', '/lines')).toBeNull();
   });
 });
