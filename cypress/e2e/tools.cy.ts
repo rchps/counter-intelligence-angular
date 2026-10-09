@@ -238,4 +238,46 @@ describe('Tools navigation', () => {
     cy.visit('/tools');
     cy.location('pathname').should('eq', '/tools/poe');
   });
+
+  describe('on a phone', () => {
+    beforeEach(() => {
+      cy.viewport(390, 844);
+      cy.visit('/tools/sales');
+    });
+
+    it('folds the list behind a Tools button that names the current tool', () => {
+      cy.getBySel('tool-link-margin').should('not.be.visible');
+      cy.getBySel('tool-menu-toggle')
+        .should('be.visible')
+        .and('have.attr', 'aria-expanded', 'false')
+        .and('contain.text', 'Sales tracker');
+
+      cy.getBySel('tool-menu-toggle').click();
+      cy.getBySel('tool-menu-toggle').should('have.attr', 'aria-expanded', 'true');
+      cy.getBySel('tool-menu').should('be.visible');
+      cy.getBySel('tool-link-sales').should('have.attr', 'aria-current', 'page');
+
+      cy.getBySel('tool-link-poe').click();
+      cy.location('pathname').should('eq', '/tools/poe');
+      cy.getBySel('tool-menu').should('not.be.visible');
+      cy.getBySel('tool-menu-toggle')
+        .should('have.attr', 'aria-expanded', 'false')
+        .and('contain.text', 'PoE budget');
+      cy.getBySel('poe-budget').should('be.visible');
+    });
+
+    it('closes on Esc, returning focus to the button, and on a tap outside it', () => {
+      cy.getBySel('tool-menu-toggle').click();
+      cy.getBySel('tool-link-margin').focus();
+      cy.focused().trigger('keydown', { key: 'Escape' });
+      cy.getBySel('tool-menu').should('not.be.visible');
+      cy.focused().should('have.attr', 'data-cy', 'tool-menu-toggle');
+
+      cy.getBySel('tool-menu-toggle').click();
+      // Low on the screen, below the open list (which covers the page heading).
+      cy.getBySel('main-content').click(16, 640);
+      cy.getBySel('tool-menu').should('not.be.visible');
+      cy.getBySel('tool-menu-toggle').should('have.attr', 'aria-expanded', 'false');
+    });
+  });
 });

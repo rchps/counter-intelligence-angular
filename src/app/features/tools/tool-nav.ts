@@ -1,6 +1,6 @@
 // Which tools exist and how they're grouped, and the localStorage key remembering the last tool used.
-// Shared by app.routes.ts (the /tools redirect) and ToolsPage (the nav list + remembering what's
-// chosen).
+// Shared by app.routes.ts (the /tools redirect), ToolNavComponent (the list) and ToolsPage
+// (remembering what's chosen).
 
 import { STORAGE_KEYS } from '../../core/storage-keys';
 

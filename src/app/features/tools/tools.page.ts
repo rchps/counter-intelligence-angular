@@ -1,5 +1,4 @@
 import { Component, computed, effect, inject, input } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
 import { FeedbackService } from '../../core/feedback.service';
 import { StorageService } from '../../core/storage.service';
 import { BatteryToolComponent } from './battery-tool.component';
@@ -7,6 +6,7 @@ import { MarginCalculatorComponent } from './margin-calculator.component';
 import { NvrStorageToolComponent } from './nvr-storage-tool.component';
 import { PoeBudgetToolComponent } from './poe-budget-tool.component';
 import { SalesTrackerComponent } from './sales-tracker.component';
+import { ToolNavComponent } from './tool-nav.component';
 import {
   isSizingTool,
   isToolId,
@@ -17,18 +17,12 @@ import {
 } from './tool-nav';
 import { VoltageDropToolComponent } from './voltage-drop-tool.component';
 
-interface ToolNavGroup {
-  group: string;
-  items: typeof TOOL_NAV;
-}
-
-// A grouped list of tools (Quoting / Sizing / Tracking) on the left, the chosen tool on the right.
-// Each tool is its own route, so the list is plain routerLinks.
+// The list of tools (ToolNavComponent) on the left, the chosen tool on the right. Each tool is its own
+// route, so the list is plain routerLinks.
 @Component({
   selector: 'app-tools-page',
   imports: [
-    RouterLink,
-    RouterLinkActive,
+    ToolNavComponent,
     MarginCalculatorComponent,
     BatteryToolComponent,
     VoltageDropToolComponent,
@@ -47,11 +41,6 @@ export class ToolsPage {
     const requested = this.tool();
     return isToolId(requested) ? requested : 'margin';
   });
-
-  protected readonly navGroups: ToolNavGroup[] = ['Quoting', 'Sizing', 'Tracking'].map((group) => ({
-    group,
-    items: TOOL_NAV.filter((item) => item.group === group),
-  }));
 
   // Battery/voltage-drop/PoE/NVR share an eyebrow and lede, each with its own title + tagline
   // (SIZING_TOOL_HEADINGS). Margin and sales bring their own heading entirely.
