@@ -220,6 +220,15 @@
   }
 }
 
+// Touch screens: tabs tall enough for a fingertip (44px, as styles.scss's .touch-target). These grow for
+// real instead of getting an invisible tap box: below 900px the row scrolls sideways, which cuts off
+// anything reaching past it (and would let it scroll up and down by those few pixels too).
+@media (pointer: coarse) {
+  .nav a {
+    height: 44px;
+  }
+}
+
 @media print {
   :host {
     display: none !important;

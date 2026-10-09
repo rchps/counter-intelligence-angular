@@ -56,7 +56,7 @@ import { matchReason, type Line } from '../../core/search/match';
     }
     <button
       type="button"
-      class="pin"
+      class="pin touch-target"
       data-cy="pin-line"
       [attr.aria-label]="'Pin ' + line().name"
       [attr.aria-pressed]="pinned()"
