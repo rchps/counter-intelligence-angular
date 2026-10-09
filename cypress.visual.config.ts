@@ -16,6 +16,9 @@ export default defineConfig({
     screenshotsFolder: process.env['VISUAL_BASE']
       ? 'cypress/snapshots/expected'
       : 'cypress/snapshots/actual',
+    // Which theme and size to take (VISUAL_SHARD=dark-phone), when CI splits the screenshots across
+    // parallel jobs; empty takes them all. The spec reads it with Cypress.expose('shard').
+    expose: { shard: process.env['VISUAL_SHARD'] ?? '' },
     // A failed test's automatic screenshot would land in the same folder and be compared like a page.
     screenshotOnRunFailure: false,
     setupNodeEvents(on) {

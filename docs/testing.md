@@ -49,10 +49,15 @@ commit the branch started from. It's required, so a PR can't merge while it's fa
 3. Open the failed run, download the **screenshot-report** artifact, and open `report.html` in it.
 4. If the changes are intended, add the **visual-ok** label. The check runs again, reuses the comparison
    it already made, and passes within seconds.
-5. Pushing again removes the label, since the new commits may change more.
+5. Pushing again removes the label, since the new commits may change more, unless every screenshot that
+   differs from `main` is byte for byte the same as when the label was added, before and after. So
+   bringing a branch up to date with a `main` that changed other pages keeps the approval; a `main` that
+   changed the same pages, or a commit that changes how the PR looks, needs another look.
 
-Each push to `main` records its screenshots as the baseline later PRs compare against, so a PR usually
-only has to screenshot itself.
+The screenshots are taken in four jobs side by side, one per theme and size (`VISUAL_SHARD=dark-phone npm
+run visual:shoot` takes one locally), and _Screenshot review_ puts them together. Each push to `main`
+records its screenshots, in the same four parts, as the baseline later PRs compare against, so a PR
+usually only has to screenshot itself.
 
 ## README screenshots
 
