@@ -59,7 +59,9 @@ describe('Guided tour', () => {
     expectStep(2);
     cy.getBySel('tour-title').should('contain.text', 'AI');
     // The button says it copies just the maglock results, which is the point of the step.
-    cy.getBySel('ai-trigger').invoke('text').should('match', /^Use these \d+ in an AI chat/);
+    cy.getBySel('ai-trigger')
+      .invoke('text')
+      .should('match', /^Use these \d+ in an AI chat/);
     expectSpotAround('ai');
 
     cy.getBySel('tour-next').click();

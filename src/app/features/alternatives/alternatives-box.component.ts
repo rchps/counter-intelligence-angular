@@ -8,7 +8,11 @@ import type { AlternativeBrand } from '../../core/alternatives';
   styleUrl: './alternatives-box.component.scss',
   template: `
     @for (brand of brands(); track brand.brand) {
-      <section class="alt-box" data-tour="alternatives" [attr.aria-label]="'Alternatives to ' + brand.brand">
+      <section
+        class="alt-box"
+        data-tour="alternatives"
+        [attr.aria-label]="'Alternatives to ' + brand.brand"
+      >
         <h2 data-cy="alternative-heading">Not a line we carry: {{ brand.brand }}</h2>
         <p>
           @if (brand.note) {
