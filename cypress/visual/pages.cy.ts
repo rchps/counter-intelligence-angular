@@ -50,6 +50,24 @@ function openSalesTrackerOnSep10(theme: Theme, width: number, height: number): v
   open('/tools/sales', theme, width, height);
 }
 
+/** Keeps the top bar and search toolbar on screen for the rest of the test. On a phone they slide away
+ *  when the page scrolls down (HideBarsOnScrollDirective), and a setup that scrolls (Cypress bringing a
+ *  field into view to type in it, a scroll to the bottom) left them hidden: a full-page screenshot starts
+ *  back at the top, but with them still gone, and only on the pages whose setup happened to scroll. The
+ *  page is pictured as it rests, bars showing. The directive sets .bars-hidden on <html>, so the class is
+ *  taken off now and again whenever it's put back while the screenshot scrolls the page. An observer's
+ *  callback runs before the browser next paints, so the bars are never drawn hidden. */
+function holdBarsShown(doc: Document): void {
+  const html = doc.documentElement;
+  const show = (): void => {
+    // Only when it's there: removing a class rewrites the attribute even if it was absent, which would
+    // call this observer again, and again.
+    if (html.classList.contains('bars-hidden')) html.classList.remove('bars-hidden');
+  };
+  show();
+  new MutationObserver(show).observe(html, { attributes: true, attributeFilter: ['class'] });
+}
+
 /** Takes the screenshot once nothing is still changing: the data loaded, no text cursor blinking in a
  *  focused field, and every image finished loading, logos resized to their balanced height (set by their
  *  load handler, so a moment after loading). */
@@ -63,6 +81,7 @@ function snapshot(name: string, capture: 'viewport' | 'fullPage'): void {
     // Logos load lazily, as they near the screen, and a full-page screenshot scrolls: without this, one
     // coming into view mid-capture could be pictured before or after it's sized, depending on the run.
     for (const img of Array.from(doc.images)) img.loading = 'eager';
+    holdBarsShown(doc);
   });
   cy.window().should((win) => {
     for (const img of Array.from(win.document.images)) {
