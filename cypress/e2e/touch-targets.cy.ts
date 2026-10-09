@@ -36,6 +36,8 @@ interface Control {
   get: () => Cypress.Chainable<JQuery<HTMLElement>>;
   /** Grows for real on a touch screen, instead of getting an invisible tap box (see its stylesheet). */
   grows: boolean;
+  /** Already 44×44 on a phone, mouse or not, so there's no smaller desktop size there to compare with. */
+  fullSizeOnPhone?: boolean;
 }
 
 const CONTROLS: Control[] = [
@@ -44,6 +46,8 @@ const CONTROLS: Control[] = [
     path: '/lines',
     get: () => cy.getBySel('pin-line').first(),
     grows: false,
+    // The Line Card's compact rows (#92) give the pin a full-size square on a phone.
+    fullSizeOnPhone: true,
   },
   {
     name: 'the top bar’s Feedback button',
@@ -73,9 +77,24 @@ const CONTROLS: Control[] = [
 ];
 
 const SCREENS = [
-  { name: 'a wide screen', width: 1280, height: 800 },
-  { name: 'a phone', width: 390, height: 844 },
+  { name: 'a wide screen', width: 1280, height: 800, phone: false },
+  { name: 'a phone', width: 390, height: 844, phone: true },
 ];
+
+/** Whether taps across a 44×44 square centred on `el` all land on it. */
+function expectFullSizeTaps(el: HTMLElement): void {
+  const box = el.getBoundingClientRect();
+  const cx = box.left + box.width / 2;
+  const cy = box.top + box.height / 2;
+  for (const [dx, dy] of [
+    [-REACH, -REACH],
+    [REACH, -REACH],
+    [-REACH, REACH],
+    [REACH, REACH],
+  ]) {
+    expect(tapLandsOn(el, cx + dx, cy + dy), `tap at (${dx}, ${dy})`).to.equal(true);
+  }
+}
 
 describe('Tap targets', { browser: { family: 'chromium' } }, () => {
   for (const screen of SCREENS) {
@@ -91,6 +110,19 @@ describe('Tap targets', { browser: { family: 'chromium' } }, () => {
           // Into the middle of the screen, clear of the sticky bars. Scrolled by hand, since this is
           // about where taps land, not a click.
           control.get().then(($control) => $control[0].scrollIntoView({ block: 'center' }));
+
+          if (screen.phone && control.fullSizeOnPhone) {
+            control.get().should(($control) => {
+              const box = $control[0].getBoundingClientRect();
+              expect(box.width, 'width').to.be.at.least(44);
+              expect(box.height, 'height').to.be.at.least(44);
+            });
+            // A round control misses taps at its square's corners (hit testing follows border-radius);
+            // on a touch screen its tap box fills them in.
+            usePointer('coarse');
+            control.get().should(($touch) => expectFullSizeTaps($touch[0]));
+            return;
+          }
 
           control.get().then(($control) => {
             const el = $control[0];
@@ -115,18 +147,7 @@ describe('Tap targets', { browser: { family: 'chromium' } }, () => {
                 expect(touch.width, 'width on a touch screen').to.equal(mouse.width);
                 expect(touch.height, 'height on a touch screen').to.equal(mouse.height);
               }
-              const cx = touch.left + touch.width / 2;
-              const cy = touch.top + touch.height / 2;
-              for (const [dx, dy] of [
-                [-REACH, -REACH],
-                [REACH, -REACH],
-                [-REACH, REACH],
-                [REACH, REACH],
-              ]) {
-                expect(tapLandsOn($touch[0], cx + dx, cy + dy), `tap at (${dx}, ${dy})`).to.equal(
-                  true,
-                );
-              }
+              expectFullSizeTaps($touch[0]);
             });
           });
         });

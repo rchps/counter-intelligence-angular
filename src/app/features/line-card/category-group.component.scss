@@ -2,6 +2,12 @@
   display: block;
   margin: 0 0 40px;
 }
+// Phones: with the cards turned into 56px rows (line-card-item), 40px between groups is most of a row.
+@media screen and (max-width: 640px) {
+  :host {
+    margin-bottom: 24px;
+  }
+}
 
 // The heading of the group being scrolled through stays at the top, just below the sticky bars, so on a
 // long category it's still clear which one the cards are in; the next group's heading pushes it away as it
@@ -79,4 +85,20 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr));
   gap: 12px;
+}
+// Phones: one list box of rows, divided by hairlines, instead of a grid of cards. The box draws the
+// background and the rounded corners; the rows inside are transparent, so their square corners don't
+// show, and nothing needs overflow: hidden, which would clip the focus ring of the pin at a row's edge.
+@media screen and (max-width: 640px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+  .grid > li + li {
+    border-top: 1px solid var(--line);
+  }
 }

@@ -327,6 +327,231 @@ describe('Sticky category headings', () => {
   });
 });
 
+// Issue #92: as cards in one column, a phone showed about four manufacturers and the page ran to 41,000px.
+describe('Compact rows on a phone', () => {
+  const WIDTH = 390;
+  const HEIGHT = 844;
+
+  /** How far down the screen things stay put over the rows: the bars (when shown) and a group heading
+   *  held below them. */
+  function coveredDownTo(doc: Document): number {
+    const bars = Math.max(
+      0,
+      ...['top-bar', 'toolbar'].map(
+        (bar) => doc.querySelector(`[data-cy="${bar}"]`)!.getBoundingClientRect().bottom,
+      ),
+    );
+    const held = [...doc.querySelectorAll('[data-cy="group-heading"]')]
+      .map((heading) => heading.getBoundingClientRect())
+      .filter((box) => Math.abs(box.top - bars) <= 1);
+    return Math.max(bars, ...held.map((box) => box.bottom));
+  }
+
+  /** The rows wholly on screen below whatever covers the top of it. */
+  function rowsInView(doc: Document): number {
+    const top = coveredDownTo(doc);
+    return [...doc.querySelectorAll('[data-cy="line-card"]')]
+      .map((row) => row.getBoundingClientRect())
+      .filter((box) => box.top >= top - 1 && box.bottom <= HEIGHT + 1).length;
+  }
+
+  /** Shift+Tab, through the browser's own input (cy.press sends a key without modifiers), so the browser
+   *  moves focus and scrolls to it as it would for a person. */
+  function pressShiftTab(): void {
+    // Inside cy.then: Cypress.automation acts as soon as it's called, so called directly it would press
+    // the key while the test was still being queued, before the focus it depends on.
+    for (const type of ['keyDown', 'keyUp']) {
+      cy.then(() =>
+        Cypress.automation('remote:debugger:protocol', {
+          command: 'Input.dispatchKeyEvent',
+          params: { type, key: 'Tab', code: 'Tab', windowsVirtualKeyCode: 9, modifiers: 8 },
+        }),
+      );
+    }
+  }
+
+  /** Waits for the bars to finish sliding (200ms) and a group heading to be held below them, so what's
+   *  measured next isn't caught partway. */
+  function expectBarsSettled(hidden: boolean): void {
+    cy.document().should((doc) => {
+      expect(doc.documentElement.classList.contains('bars-hidden'), 'bars hidden').to.equal(hidden);
+      const bar = doc.querySelector('[data-cy="top-bar"]')!.getBoundingClientRect();
+      const toolbar = doc.querySelector('[data-cy="toolbar"]')!.getBoundingClientRect();
+      if (hidden) expect(toolbar.bottom, 'toolbar gone').to.be.at.most(0);
+      else expect([bar.top, toolbar.top], 'bars in place').to.deep.equal([0, bar.bottom]);
+      expect(coveredDownTo(doc), 'a heading held').to.be.above(Math.max(0, toolbar.bottom) + 30);
+    });
+  }
+
+  /** Scrolls a long way into the category view, past its first group. */
+  function scrollIntoTheList(): void {
+    cy.getBySel('line-card')
+      .eq(30)
+      .then(($row) => {
+        const win = $row[0].ownerDocument.defaultView!;
+        win.scrollTo(0, win.scrollY + $row[0].getBoundingClientRect().top - 400);
+      });
+    // A second, smaller scroll down: the first, made just after the page opens, can arrive before the
+    // bars are held at the top, when there's nothing yet to slide away.
+    cy.window().then((win) => win.scrollBy(0, 100));
+  }
+
+  // Sized before the page loads: a phone-sized screen arriving later brings the bars back.
+  beforeEach(() => {
+    cy.viewport(WIDTH, HEIGHT);
+    cy.visit('/lines');
+    cy.getBySel('line-card').should('have.length.greaterThan', 0);
+  });
+
+  it('shows each manufacturer as one short row, logo, name, caption, arrow and all', () => {
+    cy.getBySel('line-card').should(($rows) => {
+      const heights = [...$rows].map((row) => row.getBoundingClientRect().height);
+      // A long name or a second category takes a second line; nothing takes a third.
+      expect(Math.max(...heights), 'tallest row').to.be.at.most(76);
+      const oneLine = heights.filter((height) => height <= 60).length;
+      expect(oneLine, 'rows of one name line and one caption line').to.be.at.least(
+        heights.length * 0.85,
+      );
+    });
+    cy.document().its('documentElement.scrollHeight').should('be.at.most', 18000);
+
+    cy.getBySel('line-card')
+      .first()
+      .should(($row) => {
+        const row = $row[0];
+        for (const part of ['.logo img', '[data-cy="line-name"]', '[data-cy="line-meta"]', '.go']) {
+          const box = row.querySelector(part)!.getBoundingClientRect();
+          expect(box.width, `${part} shown`).to.be.greaterThan(0);
+          expect(box.top, `${part} within the row`).to.be.at.least(row.getBoundingClientRect().top);
+          expect(box.bottom, `${part} within the row`).to.be.at.most(
+            row.getBoundingClientRect().bottom,
+          );
+        }
+      });
+  });
+
+  // As cards, this spot showed four with the bars slid away and two or three with them shown. A group
+  // boundary or a row with a wrapped name costs a row, so these are the fewest, not the typical.
+  it('fits at least ten rows on screen once the bars slide away, and six with them shown', () => {
+    scrollIntoTheList();
+    expectBarsSettled(true);
+    cy.document().should((doc) => expect(rowsInView(doc), 'rows, bars hidden').to.be.at.least(10));
+
+    cy.window().then((win) => win.scrollBy(0, -100));
+    expectBarsSettled(false);
+    cy.document().should((doc) => expect(rowsInView(doc), 'rows, bars shown').to.be.at.least(6));
+  });
+
+  it('gives the pin a 44×44 target, centred on its row', () => {
+    cy.getBySel('pin-line')
+      .first()
+      .should(($pin) => {
+        const pin = $pin[0].getBoundingClientRect();
+        const row = $pin[0].parentElement!.querySelector('[data-cy="line-card"]')!;
+        const rowBox = row.getBoundingClientRect();
+        expect(pin.width, 'width').to.be.at.least(44);
+        expect(pin.height, 'height').to.be.at.least(44);
+        expect(pin.top + pin.height / 2, 'centred').to.be.closeTo(
+          rowBox.top + rowBox.height / 2,
+          1,
+        );
+      });
+  });
+
+  // The rows share one list box: a focus ring drawn outside a row would run into its neighbours, and a
+  // box clipping its corners would cut the ring off.
+  it('draws the focus ring inside the row, with nothing around it clipping it', () => {
+    cy.getBySel('pin-line')
+      .first()
+      .then(($pin) => $pin[0].focus());
+    cy.press(Cypress.Keyboard.Keys.TAB);
+    cy.focused().should('have.attr', 'data-cy', 'line-card');
+    cy.focused().should(($row) => {
+      const row = $row[0];
+      const style = getComputedStyle(row);
+      expect(row.matches(':focus-visible'), 'keyboard focus').to.equal(true);
+      expect(style.outlineStyle, 'ring').to.equal('solid');
+      expect(parseFloat(style.outlineOffset), 'ring offset').to.be.at.most(
+        -parseFloat(style.outlineWidth),
+      );
+      for (
+        let box = row.parentElement;
+        box && box !== row.ownerDocument.body;
+        box = box.parentElement
+      ) {
+        expect(getComputedStyle(box).overflow, `overflow of ${box.tagName}`).to.equal('visible');
+      }
+    });
+  });
+
+  // Someone tabbing through the rows scrolls back up a little, which brings the bars back over the rows
+  // above the focused one, with a group heading held below them; Shift+Tab then lands on a row they cover.
+  // It has to come out from under both (WCAG 2.4.11): focus moving into the page slides the bars away
+  // (HideBarsOnScrollDirective), leaving only the heading, and the 220px scroll-padding clears that.
+  it('brings a row out from under the bars and the held heading on Shift+Tab', () => {
+    const SCROLL_BACK = 100;
+    scrollIntoTheList();
+    expectBarsSettled(true);
+    // Focuses the row that will sit just below the bars and heading once the page is scrolled back, and
+    // names the pin of the row above it, which they'll cover.
+    cy.getBySel('line-card').then(($rows) => {
+      const coveredOnceBack = 300 - SCROLL_BACK; // the bars and heading, about 295px, and a margin
+      const index = [...$rows].findIndex(
+        (row) => row.getBoundingClientRect().bottom > coveredOnceBack,
+      );
+      cy.wrap($rows[index - 1].parentElement!.querySelector('[data-cy="pin-line"]')).as(
+        'hiddenPin',
+      );
+      $rows[index].focus({ preventScroll: true });
+    });
+    cy.window().then((win) => win.scrollBy(0, -SCROLL_BACK));
+    expectBarsSettled(false);
+    cy.get('@hiddenPin').should(($pin) => {
+      const row = $pin[0].parentElement!.getBoundingClientRect();
+      expect(row.top, 'starts on screen').to.be.at.least(0);
+      expect(row.bottom, 'starts covered').to.be.at.most(coveredDownTo($pin[0].ownerDocument));
+    });
+    pressShiftTab();
+    cy.get('@hiddenPin').then(($pin) =>
+      cy.focused().should('have.attr', 'aria-label', $pin.attr('aria-label')),
+    );
+    cy.focused().should(($pin) => {
+      const row = $pin[0].parentElement!.getBoundingClientRect();
+      expect(row.top, 'its row below the bars and the heading').to.be.at.least(
+        coveredDownTo($pin[0].ownerDocument) - 1,
+      );
+    });
+  });
+});
+
+// Above the phone breakpoint the Line Card keeps its cards: a logo plate on top, in a grid.
+describe('Cards on a wide screen', () => {
+  beforeEach(() => {
+    cy.viewport(1280, 800);
+    cy.visit('/lines');
+    cy.getBySel('line-card').should('have.length.greaterThan', 0);
+  });
+
+  it('keeps the card grid', () => {
+    cy.getBySel('line-card').should(($cards) => {
+      const first = $cards[0].getBoundingClientRect();
+      const second = $cards[1].getBoundingClientRect();
+      expect(first.height, 'card height').to.be.closeTo(143, 1);
+      expect(second.top, 'side by side').to.be.closeTo(first.top, 1);
+      expect(getComputedStyle($cards[0]).borderRadius, 'its own corners').to.equal('14px');
+      const logo = $cards[0].querySelector('.logo')!.getBoundingClientRect();
+      expect(logo.height, 'logo plate').to.equal(72);
+      expect(logo.width, 'across the card').to.be.closeTo(first.width - 22, 1);
+    });
+    cy.getBySel('pin-line')
+      .first()
+      .should(($pin) => {
+        const pin = $pin[0].getBoundingClientRect();
+        expect([pin.width, pin.height], 'pin').to.deep.equal([30, 30]);
+      });
+  });
+});
+
 describe('A–Z jump bar', () => {
   /** Taps a letter from the middle of the bar, then checks the page stayed put and moved to it. The
    *  click doesn't scroll the bar into view first: Cypress scrolling the page would slide the bars away
