@@ -1,5 +1,5 @@
-// Branches-specific: the branch grid. .hero/.eyebrow/.toolbar/main/.empty/.linkbtn are shared and live in
-// the global stylesheet.
+// Branches-specific: the branch grid and which state filter shows. .hero/.eyebrow/.toolbar/main/.empty/
+// .linkbtn are shared and live in the global stylesheet.
 
 :host {
   display: block;
@@ -19,4 +19,19 @@
 }
 .bgrid > li {
   display: flex; // lets each card stretch to its grid row's height
+}
+
+// Seventeen state chips don't fit a phone's width, and scrolling sideways through them hides most of the
+// choices, so a phone gets the same choices as one dropdown instead, as the Line Card's categories do (the
+// breakpoint is where the chips stop wrapping; see styles.scss's chips).
+.state-select {
+  display: none;
+}
+@media (max-width: 640px) {
+  .state-chips {
+    display: none;
+  }
+  .state-select {
+    display: block;
+  }
 }

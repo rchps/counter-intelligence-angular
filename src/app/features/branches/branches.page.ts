@@ -4,6 +4,7 @@ import { searchStatusText, type CountNoun } from '../../core/feedback';
 import { FeedbackService } from '../../core/feedback.service';
 import { searchBranches, STATE_NAMES } from '../../core/search/match';
 import { FilterChipsComponent, type FilterChip } from '../../shared/filter-chips.component';
+import { FilterSelectComponent } from '../../shared/filter-select.component';
 import { SearchStatusComponent } from '../../shared/search-status.component';
 import { SearchToolbarComponent } from '../../shared/search-toolbar.component';
 import { BranchCardComponent } from './branch-card.component';
@@ -16,6 +17,7 @@ import { BranchCardComponent } from './branch-card.component';
   imports: [
     SearchToolbarComponent,
     FilterChipsComponent,
+    FilterSelectComponent,
     SearchStatusComponent,
     BranchCardComponent,
   ],

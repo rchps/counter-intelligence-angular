@@ -21,7 +21,16 @@
     />
 
     <app-filter-chips
+      class="state-chips"
       groupLabel="Filter by state"
+      [total]="matching().length"
+      [chips]="chips()"
+      [(selected)]="filter"
+    />
+    <app-filter-select
+      class="state-select"
+      label="State"
+      allLabel="All states"
       [total]="matching().length"
       [chips]="chips()"
       [(selected)]="filter"
