@@ -355,6 +355,15 @@
 .sl-day.off .sl-toggle {
   border-style: dashed;
 }
+// Touch screens: an On/Off pill a fingertip can hit (44×44, as styles.scss's .touch-target). It grows for
+// real, since an invisible tap box around the small pill would reach over the day's sales field. It keeps
+// .touch-target too, but only for the corners its round ends cut off.
+@media (pointer: coarse) {
+  .sl-toggle {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
 .sl-day input[type='text'] {
   min-height: 36px;
   padding: 6px 8px;

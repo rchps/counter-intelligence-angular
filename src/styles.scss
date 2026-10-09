@@ -242,6 +242,27 @@ a {
   border: 0;
 }
 
+/* On a touch screen, a small control answers taps across at least 44×44px (Apple's default control size
+   on iOS, and WCAG 2.5.5's AAA target size) without growing what you see: an invisible box centered on
+   it takes the taps. A mouse is precise enough for the control's own size, so the desktop layout doesn't
+   change. Only for a control with room around it: the box mustn't reach another control, or a tap meant
+   for that one would land here. */
+@media (pointer: coarse) {
+  /* :where() so a control that's already positioned (absolute, say) keeps its own position. */
+  :where(.touch-target) {
+    position: relative;
+  }
+  .touch-target::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
+  }
+}
+
 .skip {
   position: absolute;
   left: 16px;
