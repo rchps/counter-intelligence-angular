@@ -7,9 +7,6 @@ export function azAnchorId(letter: string): string {
   return 'L-' + (letter === '#' ? 'num' : letter);
 }
 
-/** Room (px) left between the sticky bars and the heading a letter jumps to. */
-const JUMP_GAP = 12;
-
 @Component({
   selector: 'app-az-jump-bar',
   styleUrl: './az-jump-bar.component.scss',
@@ -50,20 +47,24 @@ export class AzJumpBarComponent {
   protected jump(event: MouseEvent, letter: string): void {
     if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey)
       return;
-    const heading = document.getElementById(azAnchorId(letter))?.querySelector('h2');
-    if (!heading) return;
+    const group = document.getElementById(azAnchorId(letter));
+    const heading = group?.querySelector('h2');
+    if (!group || !heading) return;
     event.preventDefault();
 
-    alignBelowBars(heading);
+    alignBelowBars(group);
     heading.focus({ preventScroll: true });
     // On a phone, focus below the bars slides them away (HideBarsOnScrollDirective), freeing the room
-    // they held, so the heading moves up into it.
-    alignBelowBars(heading);
+    // they held, so the group moves up into it.
+    alignBelowBars(group);
   }
 }
 
-function alignBelowBars(heading: HTMLElement): void {
-  const top = heading.getBoundingClientRect().top + scrollY - stuckBarsBottom() - JUMP_GAP;
+// Puts the top of the letter's group right where its heading sticks, below the bars. The group, not the
+// heading: a sticky heading already held at the top (the letter being scrolled through) is on screen
+// where it's stuck, not where its group starts. The heading's own padding leaves room above its text.
+function alignBelowBars(group: HTMLElement): void {
+  const top = group.getBoundingClientRect().top + scrollY - stuckBarsBottom();
   scrollTo({ top, behavior: 'instant' });
 }
 

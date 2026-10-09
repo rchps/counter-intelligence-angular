@@ -16,6 +16,7 @@ import { isExactName, sortByBestMatch } from '../../core/search/rank';
 import { didYouMean } from '../../core/search/typos';
 import { FilterChipsComponent, type FilterChip } from '../../shared/filter-chips.component';
 import { FilterSelectComponent } from '../../shared/filter-select.component';
+import { PublishHeightDirective } from '../../shared/publish-height.directive';
 import { SearchStatusComponent } from '../../shared/search-status.component';
 import { SearchToolbarComponent } from '../../shared/search-toolbar.component';
 import { FEATURES } from '../../features';
@@ -53,6 +54,7 @@ interface CategoryLineGroup {
     AzJumpBarComponent,
     EmptyStateComponent,
     RecentLinesComponent,
+    PublishHeightDirective,
   ],
   templateUrl: './line-card.page.html',
   styleUrl: './line-card.page.scss',
