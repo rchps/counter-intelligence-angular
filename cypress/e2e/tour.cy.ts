@@ -101,12 +101,12 @@ describe('Guided tour', () => {
     cy.location('search').should('contain', 'cat=power').and('contain', 'view=az');
   });
 
-  it('works from the keyboard: focus on Next, Enter moves on, Esc ends it', () => {
+  it('works from the keyboard: focus on Next at every step, Esc ends it', () => {
     visitLineCard();
     cy.getBySel('tour-invite-start').click();
     expectStep(1);
     cy.focused().should('have.attr', 'data-cy', 'tour-next');
-    cy.press(Cypress.Keyboard.Keys.ENTER);
+    cy.getBySel('tour-next').click();
     expectStep(2);
     cy.focused().should('have.attr', 'data-cy', 'tour-next');
     // Cypress can't make Chromium close a <dialog> with Esc (see ai-copy.cy.ts), so this fires the

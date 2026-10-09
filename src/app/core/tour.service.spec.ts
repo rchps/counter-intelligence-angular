@@ -108,7 +108,7 @@ describe('TourService', () => {
   it('ends after the last step, and puts the page back then too', async () => {
     const { tour, page } = await onLineCard();
     await tour.start();
-    for (let step = 0; step < TOUR_STEPS.length; step++) tour.next();
+    TOUR_STEPS.forEach(() => tour.next());
     expect(tour.active()).toBe(false);
     expect(page.state).toEqual(BROWSING);
   });
