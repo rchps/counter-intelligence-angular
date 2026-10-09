@@ -82,7 +82,7 @@ describe('Line Card', () => {
     ]);
   });
 
-  it('filters by category, switches to A–Z, and jumps by letter', () => {
+  it('filters by category, switches to A–Z, and lists the letters to jump to', () => {
     cy.getBySel('filter-chip-fire').click();
     expectMatchesBaseline('fire');
 
@@ -216,6 +216,62 @@ describe('Line Card', () => {
     cy.wrap(started).should('have.length', 1);
     cy.then(() => started[0].ready);
     cy.location('search').should('contain', 'cat=fire');
+  });
+});
+
+describe('A–Z jump bar', () => {
+  /** Taps a letter from the middle of the bar, then checks the page stayed put and moved to it. The
+   *  click doesn't scroll the bar into view first: Cypress scrolling the page would slide the bars away
+   *  on a phone before the jump even starts. */
+  function jumpsToALetter(width: number, height: number): void {
+    cy.viewport(width, height);
+    cy.visit('/lines?view=az');
+    cy.getBySel('az-letter').should('have.length.greaterThan', 10);
+
+    cy.getBySel('az-letter')
+      .eq(10)
+      .then(($letter) => {
+        const letter = $letter.text().trim();
+        cy.wrap($letter).click({ scrollBehavior: false });
+
+        // The address doesn't change: the same page, the same view, and no fragment to undo with Back.
+        cy.location('pathname').should('equal', '/lines');
+        cy.location('search').should('equal', '?view=az');
+        cy.location('hash').should('equal', '');
+
+        cy.focused().should('have.prop', 'tagName', 'H2').and('have.text', letter);
+        // Just below whatever the sticky bars still cover (on a phone, they've slid away).
+        cy.focused().should(($heading) => {
+          const doc = $heading[0].ownerDocument;
+          const barsBottom = Math.max(
+            0,
+            ...['top-bar', 'toolbar'].map(
+              (bar) => doc.querySelector(`[data-cy="${bar}"]`)!.getBoundingClientRect().bottom,
+            ),
+          );
+          const top = $heading[0].getBoundingClientRect().top;
+          expect(top, 'heading top').to.be.within(barsBottom, barsBottom + 40);
+        });
+      });
+  }
+
+  it('jumps to a letter below the sticky bars on a wide screen', () => {
+    jumpsToALetter(1280, 800);
+  });
+
+  it('jumps to a letter on a phone, where the bars slide away to make room', () => {
+    jumpsToALetter(390, 844);
+    cy.document().should((doc) =>
+      expect(doc.documentElement.classList.contains('bars-hidden'), 'bars hidden').to.equal(true),
+    );
+  });
+
+  it('points each letter at this view, not the site root', () => {
+    cy.visit('/lines?view=az');
+    cy.getBySel('az-letter')
+      .first()
+      .should('have.attr', 'href')
+      .and('match', /^\/lines\?view=az#L-/);
   });
 });
 
