@@ -21,9 +21,10 @@ const SAME_PAGE: IsActiveMatchOptions = {
   queryParams: 'ignored',
 };
 
-// Moving to another section turns the page forwards or backwards, by where that section sits in the top
-// bar (styles.scss); moving between tools cross-fades. A navigation that stays on the same page, like an
-// A-Z jump link, doesn't animate, and neither does anything for someone who asked for reduced motion.
+// On a phone, moving to another section turns the page forwards or backwards, by where that section sits
+// in the top bar (styles.scss); wider screens, and moving between tools, cross-fade. A navigation that
+// stays on the same page, like an A-Z jump link, doesn't animate, and neither does anything for someone
+// who asked for reduced motion.
 let latestTurn = 0;
 
 function animateNewPage({ transition, from, to }: ViewTransitionInfo): void {

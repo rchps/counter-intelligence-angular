@@ -826,31 +826,35 @@ mark {
 .vt-cards .toolbar {
   view-transition-name: toolbar;
 }
-/* Moving to another section turns the page like a book's, hinged on the left edge (.vt-turn-next /
-   .vt-turn-previous, set in app.config.ts). Going on, the old page is the top sheet and turns away
-   towards the reader, uncovering the next section lying flat beneath it; going back, the earlier page
-   turns back in and lands on top. The turning sheet darkens as it goes edge-on, as a real page catches
-   less light. Its perspective is in vw, so the near edge grows by the same proportion on any screen.
-   The top bar gets a name of its own so it holds still. Moving between tools keeps the cross-fade. */
-.vt-turn-next,
-.vt-turn-previous {
-  app-top-bar {
-    view-transition-name: top-bar;
+/* On a phone, moving to another section turns the page like a book's, hinged on the left edge
+   (.vt-turn-next / .vt-turn-previous, set in app.config.ts). Going on, the old page is the top sheet and
+   turns away towards the reader, uncovering the next section lying flat beneath it; going back, the
+   earlier page turns back in and lands on top. The turning sheet darkens as it goes edge-on, as a real
+   page catches less light, and the top bar gets a name of its own so it holds still. It's kept short
+   because the page can't be tapped until it ends, and someone at the counter changes section often.
+   Wider screens, where sections change by clicking a link rather than swiping, keep the cross-fade, as
+   does moving between tools. The breakpoint is the chips' (641px). */
+@media (max-width: 640px) {
+  .vt-turn-next,
+  .vt-turn-previous {
+    app-top-bar {
+      view-transition-name: top-bar;
+    }
+    &::view-transition-old(root),
+    &::view-transition-new(root) {
+      animation: none;
+      mix-blend-mode: normal;
+      transform-origin: left center;
+      backface-visibility: hidden;
+    }
   }
-  &::view-transition-old(root),
-  &::view-transition-new(root) {
-    animation: none;
-    mix-blend-mode: normal;
-    transform-origin: left center;
-    backface-visibility: hidden;
+  .vt-turn-next::view-transition-old(root) {
+    z-index: 1;
+    animation: vt-page-turn-away 300ms cubic-bezier(0.4, 0, 0.6, 1) both;
   }
-}
-.vt-turn-next::view-transition-old(root) {
-  z-index: 1;
-  animation: vt-page-turn-away 420ms cubic-bezier(0.4, 0, 0.6, 1) both;
-}
-.vt-turn-previous::view-transition-new(root) {
-  animation: vt-page-turn-back 420ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  .vt-turn-previous::view-transition-new(root) {
+    animation: vt-page-turn-back 300ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
 }
 @keyframes vt-page-turn-away {
   from {
