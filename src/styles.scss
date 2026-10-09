@@ -772,6 +772,26 @@ mark {
   max-width: 64ch;
   font-size: 15px;
 }
+// Phones: a smaller heading and tighter spacing, so the search box or a tool's first input is on screen
+// sooner. The intro keeps its words, since it says what the page covers and how to search it.
+@media (max-width: 640px) {
+  .hero {
+    padding: 20px 0 12px;
+  }
+  .eyebrow {
+    margin-bottom: 8px;
+    font-size: 11px;
+  }
+  .hero h1,
+  .page-h {
+    font-size: 24px;
+    line-height: 1.1;
+  }
+  .hero .sub {
+    margin-top: 8px;
+    font-size: 14px;
+  }
+}
 
 .toolbar {
   position: sticky;
@@ -896,6 +916,17 @@ mark {
   color: var(--ink-2);
   margin: 10px 0 24px;
   max-width: 64ch;
+}
+// Phones: the same tightening as the page headings above. The lede stays whole: it's the guidance on
+// how to use the tool (and, for the sizing tools, that the numbers are estimates).
+@media (max-width: 640px) {
+  .mc {
+    padding-top: 20px;
+  }
+  .mc-lede {
+    margin: 6px 0 16px;
+    font-size: 14px;
+  }
 }
 .mc-card {
   display: grid;
