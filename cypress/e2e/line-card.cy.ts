@@ -243,6 +243,90 @@ describe('Line Card', () => {
   });
 });
 
+describe('Sticky category headings', () => {
+  /** How far down the screen the top bar and toolbar reach: nowhere once they've slid away on a phone. */
+  function barsBottom(doc: Document): number {
+    return Math.max(
+      0,
+      ...['top-bar', 'toolbar'].map(
+        (bar) => doc.querySelector(`[data-cy="${bar}"]`)!.getBoundingClientRect().bottom,
+      ),
+    );
+  }
+
+  /** Scrolls the page partway through the group with the most cards, and names its heading `@heading`. */
+  function scrollPartwayThroughTheLongestGroup(): void {
+    cy.getBySel('group-heading').then(($headings) => {
+      const sectionOf = (heading: HTMLElement): HTMLElement => heading.closest('section')!;
+      const longest = [...$headings].reduce((a, b) =>
+        sectionOf(b).offsetHeight > sectionOf(a).offsetHeight ? b : a,
+      );
+      const section = sectionOf(longest).getBoundingClientRect();
+      cy.wrap(longest).as('heading');
+      cy.window().then((win) =>
+        win.scrollTo(0, win.scrollY + section.top + section.height / 2 - win.innerHeight / 2),
+      );
+    });
+  }
+
+  /** The heading is held just below the bars, on top of the cards scrolling under it, while its first
+   *  cards have already gone by above it. */
+  function expectHeadingHeldBelowBars(): void {
+    cy.get('@heading').should(($heading: JQuery<HTMLElement>) => {
+      const heading = $heading[0];
+      const doc = heading.ownerDocument;
+      const box = heading.getBoundingClientRect();
+      expect(box.top, 'heading top').to.be.closeTo(barsBottom(doc), 1);
+      expect(heading.closest('section')!.getBoundingClientRect().top, 'its group').to.be.below(
+        box.top - 100,
+      );
+      const covering = doc.elementFromPoint(box.left + 4, box.top + box.height / 2);
+      expect(heading.contains(covering), 'nothing covers the heading').to.equal(true);
+    });
+  }
+
+  /** Opens the Line Card at this size. Sized before it loads, not after: a phone-sized screen arriving
+   *  later brings the bars back (HideBarsOnScrollDirective), which could undo the scroll that hid them. */
+  function openAt(width: number, height: number, path = '/lines'): void {
+    cy.viewport(width, height);
+    cy.visit(path);
+    cy.getBySel('group-heading').should('have.length.greaterThan', 1);
+  }
+
+  it('holds the current category’s heading below the bars on a wide screen', () => {
+    openAt(1280, 800);
+    scrollPartwayThroughTheLongestGroup();
+    expectHeadingHeldBelowBars();
+  });
+
+  it('holds it below the bars on a phone, and moves it up as the bars slide away', () => {
+    openAt(390, 844);
+    scrollPartwayThroughTheLongestGroup();
+    // Scrolling down slides the bars away, and the heading takes their place at the top.
+    cy.document().should((doc) =>
+      expect(doc.documentElement.classList.contains('bars-hidden'), 'bars hidden').to.equal(true),
+    );
+    expectHeadingHeldBelowBars();
+    cy.get('@heading').should(($heading: JQuery<HTMLElement>) =>
+      expect($heading[0].getBoundingClientRect().top, 'at the top').to.be.closeTo(0, 1),
+    );
+
+    // Scrolling back up a little brings the bars back, and the heading moves down below them again.
+    cy.window().then((win) => win.scrollBy(0, -100));
+    cy.document().should((doc) =>
+      expect(doc.documentElement.classList.contains('bars-hidden'), 'bars hidden').to.equal(false),
+    );
+    expectHeadingHeldBelowBars();
+  });
+
+  it('holds the letter headings in the A–Z view too', () => {
+    openAt(1280, 800, '/lines?view=az');
+    cy.getBySel('az-letter').should('have.length.greaterThan', 10);
+    scrollPartwayThroughTheLongestGroup();
+    expectHeadingHeldBelowBars();
+  });
+});
+
 describe('A–Z jump bar', () => {
   /** Taps a letter from the middle of the bar, then checks the page stayed put and moved to it. The
    *  click doesn't scroll the bar into view first: Cypress scrolling the page would slide the bars away
