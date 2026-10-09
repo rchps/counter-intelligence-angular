@@ -110,6 +110,15 @@
     box-shadow: 0 0 0 1px var(--ink);
   }
 }
+// Phones: less space above the tool list and the heading (see styles.scss's page headings).
+@media (max-width: 640px) {
+  .tk-nav {
+    margin-top: 16px;
+  }
+  .tk-heading {
+    padding-top: 20px;
+  }
+}
 @media print {
   .tk-nav {
     display: none;

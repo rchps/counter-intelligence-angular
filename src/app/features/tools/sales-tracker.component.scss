@@ -479,6 +479,14 @@
   }
 }
 @media (max-width: 640px) {
+  // Tighter heading spacing, as on every page (see styles.scss's page headings).
+  .sl {
+    padding-top: 20px;
+  }
+  .sl > p.sl-lede {
+    margin: 6px 0 16px;
+    font-size: 14px;
+  }
   .sl-cal {
     grid-template-columns: minmax(0, 1fr);
   }

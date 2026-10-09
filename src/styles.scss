@@ -772,6 +772,26 @@ mark {
   max-width: 64ch;
   font-size: 15px;
 }
+// Phones: a smaller heading and tighter spacing, so the search box or a tool's first input is on screen
+// sooner. The intro keeps its words, since it says what the page covers and how to search it.
+@media (max-width: 640px) {
+  .hero {
+    padding: 20px 0 12px;
+  }
+  .eyebrow {
+    margin-bottom: 8px;
+    font-size: 11px;
+  }
+  .hero h1,
+  .page-h {
+    font-size: 24px;
+    line-height: 1.1;
+  }
+  .hero .sub {
+    margin-top: 8px;
+    font-size: 14px;
+  }
+}
 
 .toolbar {
   position: sticky;
@@ -896,6 +916,17 @@ mark {
   color: var(--ink-2);
   margin: 10px 0 24px;
   max-width: 64ch;
+}
+// Phones: the same tightening as the page headings above. The lede stays whole: it's the guidance on
+// how to use the tool (and, for the sizing tools, that the numbers are estimates).
+@media (max-width: 640px) {
+  .mc {
+    padding-top: 20px;
+  }
+  .mc-lede {
+    margin: 6px 0 16px;
+    font-size: 14px;
+  }
 }
 .mc-card {
   display: grid;
@@ -1216,6 +1247,11 @@ mark {
   min-height: 44px;
   font-size: 14px;
 }
+// The "Device 2" heading and the button's "Remove" label only show on a phone (below).
+.tl-device-name,
+.tl-remove-text {
+  display: none;
+}
 .tl-remove {
   min-height: 44px;
   border: 1px solid var(--line);
@@ -1247,5 +1283,58 @@ mark {
 @media (max-width: 700px) {
   .tl-device {
     grid-template-columns: 64px minmax(0, 1fr) 84px 40px;
+  }
+}
+// Phones: four controls don't fit one row, so each device becomes a small card: its name and a labeled
+// Remove button on top, well away from the fields, then the class on a row of its own and the quantity
+// and watts side by side.
+@media (max-width: 640px) {
+  .tl-device {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      'name remove'
+      'class class'
+      'qty watts';
+    gap: 10px 12px;
+    margin-bottom: 12px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface-2);
+  }
+  .tl-device-name {
+    display: block;
+    grid-area: name;
+    align-self: center;
+    font: 600 14px/1.2 var(--font);
+  }
+  .tl-device-class {
+    grid-area: class;
+  }
+  .tl-device-qty {
+    grid-area: qty;
+  }
+  .tl-device-watts {
+    grid-area: watts;
+  }
+  .tl-device label {
+    font-size: 13px;
+  }
+  // 16px: iOS Safari zooms the page into any field with smaller text when it's focused.
+  .tl-device select {
+    font-size: 16px;
+  }
+  .tl-remove {
+    grid-area: remove;
+    justify-self: end;
+    min-height: 40px;
+    padding: 0 14px;
+    font: 500 14px/1 var(--font);
+  }
+  .tl-remove-x {
+    display: none;
+  }
+  .tl-remove-text {
+    display: inline;
   }
 }

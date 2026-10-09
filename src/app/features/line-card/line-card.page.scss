@@ -9,6 +9,14 @@
   padding: 28px 0 8px;
 }
 
+// A phone has no keyboard shortcut to offer (the search box drops its hint there too), so the intro
+// drops that sentence and gets a line shorter.
+@media (max-width: 640px) {
+  .shortcut-hint {
+    display: none;
+  }
+}
+
 .views {
   display: flex;
   gap: 2px;
