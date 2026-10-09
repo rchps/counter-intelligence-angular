@@ -6,6 +6,7 @@ import { FeedbackService } from './core/feedback.service';
 import { FeedbackDialogComponent } from './features/feedback/feedback-dialog.component';
 import { FeedbackCardComponent } from './layout/feedback-card.component';
 import { FooterComponent } from './layout/footer.component';
+import { HideBarsOnScrollDirective } from './layout/hide-bars-on-scroll.directive';
 import { SectionSwipeDirective } from './layout/section-swipe.directive';
 import { TopBarComponent } from './layout/top-bar.component';
 
@@ -18,6 +19,7 @@ import { TopBarComponent } from './layout/top-bar.component';
     FeedbackDialogComponent,
     FooterComponent,
     SectionSwipeDirective,
+    HideBarsOnScrollDirective,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
