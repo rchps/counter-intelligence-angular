@@ -91,11 +91,20 @@ function lineCardLoaded(): void {
 }
 
 /** Picks a category the way a user would at this size: a chip on a desktop, the dropdown on a phone. The
- *  viewport is set before the page loads, so which one shows can't change partway through. */
+ *  viewport is set before the page loads, so which one shows can't change partway through. The dropdown
+ *  is on screen when the page opens, so it's picked without scrolling: Cypress would scroll it to the top,
+ *  and on a phone scrolling down slides the toolbar it's in out of the way (HideBarsOnScrollDirective). */
 function pickCategory(key: string): void {
   cy.getBySel('filter-select').then(($select) => {
-    if ($select.is(':visible')) cy.wrap($select).select(key);
-    else cy.getBySel(`filter-chip-${key}`).click();
+    if (!$select.is(':visible')) {
+      cy.getBySel(`filter-chip-${key}`).click();
+      return;
+    }
+    // .select() has no scrollBehavior option of its own, so the setting is switched off around it.
+    const scrollBehavior = Cypress.config('scrollBehavior');
+    Cypress.config('scrollBehavior', false);
+    cy.wrap($select).select(key);
+    cy.then(() => Cypress.config('scrollBehavior', scrollBehavior));
   });
 }
 
