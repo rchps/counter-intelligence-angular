@@ -18,7 +18,7 @@ import { highlightMatches } from '../../core/search/normalize';
         <a [href]="mapLink()" target="_blank" rel="noopener">{{ branch().addr }}</a>
       </address>
       @if (branch().phone; as phone) {
-        <a class="tel" [href]="'tel:+1' + phoneDigits()">{{ phone }}</a>
+        <a class="tel" data-cy="branch-call" [href]="'tel:+1' + phoneDigits()">{{ phone }}</a>
       } @else {
         <span class="soon">Coming soon</span>
       }

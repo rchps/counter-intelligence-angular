@@ -63,6 +63,12 @@
   font: 500 14px/1 var(--mono);
   text-decoration: none;
 }
+// A phone is where the number gets tapped, so there it gets a full-size touch target.
+@media (max-width: 640px) {
+  .branch .tel {
+    min-height: 44px;
+  }
+}
 .branch .tel::before {
   content: '';
   width: 14px;
