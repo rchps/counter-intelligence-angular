@@ -51,15 +51,74 @@ describe('App shell', () => {
     });
 
     it('leaves a sideways drag on the scrolling filter chips to the chips', () => {
-      cy.visit('/lines');
+      // Branches' state chips: the Line Card's categories are a dropdown at phone width.
+      cy.visit('/branches');
       // The chips only scroll sideways when they don't fit, as they don't at phone width.
       cy.getBySel('filter-chip-all')
         .parent()
         .should(($row) => expect($row[0].scrollWidth).to.be.greaterThan($row[0].clientWidth));
-      swipe(cy.getBySel('filter-chip-all'), 300, 100);
-      // Had the chips swipe changed section, this one would land on Tools instead.
+      swipe(cy.getBySel('filter-chip-all'), 100, 300);
+      // Had the chips swipe gone back to the Line Card, this one would land on Branches instead.
       swipe(heading(), 300, 100);
-      cy.location('pathname').should('eq', '/branches');
+      cy.location('pathname').should('match', /^\/tools\//);
+    });
+  });
+
+  describe('the top bar and search toolbar', () => {
+    const bottomOf = ($element: JQuery<HTMLElement>): number =>
+      $element[0].getBoundingClientRect().bottom;
+    const topOf = ($element: JQuery<HTMLElement>): number =>
+      $element[0].getBoundingClientRect().top;
+
+    // The bars react once per animation frame, so two frames is long enough to be sure one didn't.
+    const waitTwoFrames = (): void => {
+      cy.window().then(
+        (win) =>
+          new Promise<void>((resolve) =>
+            win.requestAnimationFrame(() => win.requestAnimationFrame(() => resolve())),
+          ),
+      );
+    };
+
+    const openLineCard = (width: number): void => {
+      cy.viewport(width, 844);
+      cy.visit('/lines');
+      cy.getBySel('line-card').should('have.length.greaterThan', 0);
+    };
+
+    it('slide away on a phone while scrolling down, and come back on scrolling up', () => {
+      openLineCard(390);
+      cy.scrollTo(0, 2000);
+      cy.getBySel('top-bar').should(($bar) => expect(bottomOf($bar)).to.be.at.most(0));
+      cy.getBySel('toolbar').should(($toolbar) => expect(bottomOf($toolbar)).to.be.at.most(0));
+
+      cy.scrollTo(0, 1800);
+      cy.getBySel('top-bar').should(($bar) => expect(topOf($bar)).to.equal(0));
+      // The search box is held below the top bar, which wraps onto two rows here, not behind it.
+      cy.getBySel('top-bar').then(($bar) => {
+        cy.getBySel('search-input').should(($input) =>
+          expect(topOf($input)).to.be.at.least(bottomOf($bar)),
+        );
+      });
+    });
+
+    it('stay on a phone while the search box has focus, and go when focus moves below them', () => {
+      openLineCard(390);
+      cy.scrollTo(0, 1800);
+      cy.getBySel('search-input').focus();
+      cy.scrollTo(0, 2600);
+      waitTwoFrames();
+      cy.getBySel('top-bar').should(($bar) => expect(topOf($bar)).to.equal(0));
+
+      cy.getBySel('pin-line').eq(12).focus();
+      cy.getBySel('top-bar').should(($bar) => expect(bottomOf($bar)).to.be.at.most(0));
+    });
+
+    it('stay put on a wider screen', () => {
+      openLineCard(1280);
+      cy.scrollTo(0, 2000);
+      waitTwoFrames();
+      cy.getBySel('top-bar').should(($bar) => expect(topOf($bar)).to.equal(0));
     });
   });
 

@@ -15,6 +15,7 @@ import { searchLines, type Line } from '../../core/search/match';
 import { isExactName, sortByBestMatch } from '../../core/search/rank';
 import { didYouMean } from '../../core/search/typos';
 import { FilterChipsComponent, type FilterChip } from '../../shared/filter-chips.component';
+import { FilterSelectComponent } from '../../shared/filter-select.component';
 import { SearchStatusComponent } from '../../shared/search-status.component';
 import { SearchToolbarComponent } from '../../shared/search-toolbar.component';
 import { FEATURES } from '../../features';
@@ -46,6 +47,7 @@ interface CategoryLineGroup {
     AlternativesBoxComponent,
     SearchToolbarComponent,
     FilterChipsComponent,
+    FilterSelectComponent,
     SearchStatusComponent,
     CategoryGroupComponent,
     AzJumpBarComponent,
@@ -207,12 +209,12 @@ export class LineCardPage {
   });
 
   protected readonly subText = computed(() => {
-    const isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
-    const shortcut = isMac ? '⌘K' : 'Ctrl K';
     const total = this.data.lines().length;
     const categoryCount = Object.keys(this.data.categories()).length;
-    return `${total} manufacturers across ${categoryCount} categories. Search by brand, product family, or product type. Press ${shortcut} or / from anywhere.`;
+    return `${total} manufacturers across ${categoryCount} categories. Search by brand, product family, or product type.`;
   });
+  private readonly isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+  protected readonly shortcutHint = `Press ${this.isMac ? '⌘K' : 'Ctrl K'} or / from anywhere.`;
   protected readonly placeholderWide = computed(
     () =>
       `Search ${this.data.lines().length} manufacturers, brands, or products (e.g. Wheelock, maglock, Cat6)`,

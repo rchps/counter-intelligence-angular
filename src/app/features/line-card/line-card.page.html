@@ -4,11 +4,13 @@
     <h1 data-cy="page-heading">
       Every line we carry. <span class="accent">Searchable, linked, and current.</span>
     </h1>
-    <p class="sub">{{ subText() }}</p>
+    <p class="sub">
+      {{ subText() }} <span class="shortcut-hint">{{ shortcutHint }}</span>
+    </p>
   </div>
 </section>
 
-<div class="toolbar" role="search">
+<div class="toolbar" data-cy="toolbar" role="search">
   <div class="wrap">
     <app-search-toolbar
       inputLabel="Search manufacturers, brands, or product types"
@@ -37,7 +39,17 @@
     </app-search-toolbar>
 
     <app-filter-chips
+      class="category-chips"
       groupLabel="Filter by category"
+      [total]="matching().length"
+      [chips]="chips()"
+      [selected]="filter()"
+      (selectedChange)="setFilter($event)"
+    />
+    <app-filter-select
+      class="category-select"
+      label="Category"
+      allLabel="All categories"
       [total]="matching().length"
       [chips]="chips()"
       [selected]="filter()"

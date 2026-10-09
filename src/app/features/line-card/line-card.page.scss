@@ -1,5 +1,5 @@
-// Line Card-specific: the results area and the By category/A-Z view toggle. .hero/.eyebrow/.toolbar are
-// shared with Branches and live in the global stylesheet.
+// Line Card-specific: the results area, the By category/A-Z view toggle, and which category filter
+// shows. .hero/.eyebrow/.toolbar are shared with Branches and live in the global stylesheet.
 
 :host {
   display: block;
@@ -7,6 +7,14 @@
 
 .results {
   padding: 28px 0 8px;
+}
+
+// A phone has no keyboard shortcut to offer (the search box drops its hint there too), so the intro
+// drops that sentence and gets a line shorter.
+@media (max-width: 640px) {
+  .shortcut-hint {
+    display: none;
+  }
 }
 
 .views {
@@ -48,5 +56,20 @@
   .views button {
     flex: 1 1 0;
     min-height: 40px;
+  }
+}
+
+// Eleven category chips don't fit a phone's width, and scrolling sideways through them hides most of
+// the choices, so a phone gets the same choices as one dropdown instead (the breakpoint is where the
+// chips stop wrapping; see styles.scss's chips).
+.category-select {
+  display: none;
+}
+@media (max-width: 640px) {
+  .category-chips {
+    display: none;
+  }
+  .category-select {
+    display: block;
   }
 }
