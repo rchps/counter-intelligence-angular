@@ -95,14 +95,15 @@
   align-items: center;
   gap: 8px;
 }
-.skip,
+.skip-tour,
 .back {
   min-height: 44px;
   border-radius: 12px;
   font: 500 14px/1 var(--font);
   cursor: pointer;
 }
-.skip {
+// Not .skip: that's the global skip link's class, which would pull this off the top of the screen.
+.skip-tour {
   margin-right: auto;
   padding: 0 4px;
   border: 0;
