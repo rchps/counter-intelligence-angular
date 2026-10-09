@@ -1,11 +1,12 @@
 # Screenshots of every page state (cypress/visual), for catching changes to how the site looks. Each
 # push to main records the baseline this compares against (screenshots-main.yml).
 #
-# On a pull request, "Screenshot review" takes the same screenshots of the PR and of the main commit it
-# branched from, and reg-cli compares them. No changes: it passes. Changes: it fails, with the pages listed
-# on the PR and a before/after/diff report in the run's screenshot-report artifact, until someone who has
-# looked adds the visual-ok label. A later push removes the label, since it may change more. The check is
-# required on main (branch protection), so auto-merge waits for it too.
+# On a pull request, four "Screenshots" jobs take the same screenshots of the PR and of the main commit it
+# branched from, a quarter each, and "Screenshot review" compares them with reg-cli. No changes: it passes.
+# Changes: it fails, with the pages listed on the PR and a before/after/diff report in the run's
+# screenshot-report artifact, until someone who has looked adds the visual-ok label. A later push removes
+# the label unless the changes it shows are exactly the ones approved. The check is required on main
+# (branch protection), so auto-merge waits for it too.
 name: Screenshots
 
 on:
@@ -69,20 +70,20 @@ jobs:
               - '!cypress/{e2e,readme}/**'
               - '!cypress.{config,readme.config}.ts'
 
-  review:
-    name: Screenshot review
+  # Which main commit to compare against, and whether this run can reuse a comparison already made (a label
+  # change runs the workflow again for the same commits).
+  plan:
+    name: Plan the comparison
     needs: [changes]
     # !cancelled(): if "What changed" itself fails, review anyway. When in doubt, look.
     if: ${{ !cancelled() && needs.changes.outputs.looks != 'false' }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
-    permissions:
-      contents: read
-      pull-requests: write # to comment the result and remove a stale visual-ok label
-    env:
-      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-      PR: ${{ github.event.pull_request.number }}
-      GH_TOKEN: ${{ github.token }}
+    timeout-minutes: 5
+    outputs:
+      base: ${{ steps.base.outputs.sha }}
+      same-specs: ${{ steps.base.outputs.same-specs }}
+      key: ${{ steps.base.outputs.key }}
+      done: ${{ steps.done.outputs.cache-hit }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -90,49 +91,71 @@ jobs:
           fetch-depth: 0 # the whole history, so the commit to compare against is here
       - name: Pick the commit to compare against
         id: base
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           base=$(git merge-base origin/main HEAD)
           echo "sha=$base" >> "$GITHUB_OUTPUT"
-          echo "image=$ImageOS-$ImageVersion" >> "$GITHUB_OUTPUT"
+          echo "key=screenshots-review-$HEAD_SHA-$base-$ImageOS-$ImageVersion" >> "$GITHUB_OUTPUT"
           echo "Comparing with main at $base" | tee -a "$GITHUB_STEP_SUMMARY"
           # main's recorded screenshots stand in for taking them again only if they were taken the same
           # way: the same specs, and the same Cypress.
           if git diff --quiet "$base" HEAD -- cypress/visual cypress/support cypress/fixtures cypress.visual.config.ts package-lock.json; then
             echo "same-specs=true" >> "$GITHUB_OUTPUT"
           fi
-      # A label change runs this job again for the same commits; the comparison is already done.
       - name: Reuse this comparison
         id: done
         uses: actions/cache/restore@v6
         with:
           path: ${{ env.SNAPSHOTS }}
-          key: screenshots-review-${{ env.HEAD_SHA }}-${{ steps.base.outputs.sha }}-${{ steps.base.outputs.image }}
-      - if: steps.done.outputs.cache-hit != 'true'
-        uses: actions/setup-node@v7
+          key: ${{ steps.base.outputs.key }}
+          lookup-only: true # whether it's there; "Screenshot review" downloads it
+
+  # The screenshots, in four jobs side by side, one per theme and size (VISUAL_SHARD, read by
+  # cypress.visual.config.ts). Each takes main's and this PR's on the same runner, so a pair is never split
+  # across two Chromiums. The same four as screenshots-main.yml, whose recordings they restore by name.
+  shoot:
+    name: Screenshots (${{ matrix.shard }})
+    needs: [plan]
+    if: ${{ !cancelled() && needs.plan.result == 'success' && needs.plan.outputs.done != 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false # a failing page in one shard shouldn't hide the others'
+      matrix:
+        shard: [light-desktop, dark-desktop, light-phone, dark-phone]
+    env:
+      VISUAL_SHARD: ${{ matrix.shard }}
+      BASE: ${{ needs.plan.outputs.base }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0 # "Screenshot main" checks out the base commit beside this one
+      - name: Name the runner image
+        id: image
+        run: echo "id=$ImageOS-$ImageVersion" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
-      - if: steps.done.outputs.cache-hit != 'true'
-        uses: actions/cache@v6
+      - uses: actions/cache@v6
         with:
           path: ~/.cache/Cypress
           key: cypress-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-      - if: steps.done.outputs.cache-hit != 'true'
-        run: npm ci
-      - if: steps.done.outputs.cache-hit != 'true' && steps.base.outputs.same-specs
+      - run: npm ci
+      - if: needs.plan.outputs.same-specs
         name: Reuse main's recorded screenshots
         id: saved
         uses: actions/cache/restore@v6
         with:
           path: ${{ env.SNAPSHOTS }}/expected
-          key: screenshots-${{ steps.base.outputs.sha }}-${{ steps.base.outputs.image }}
+          key: screenshots-${{ env.BASE }}-${{ steps.image.outputs.id }}-${{ matrix.shard }}
       # None recorded: take them from main now. It gets its own folder (a git worktree) and its own
       # node_modules, since its dependencies may differ. Only its app is used; the specs come from this PR,
       # so a page state the PR adds fails there (it doesn't exist yet) and shows up as new, not as a failure.
-      - if: steps.done.outputs.cache-hit != 'true' && steps.saved.outputs.cache-hit != 'true'
+      - if: steps.saved.outputs.cache-hit != 'true'
         name: Screenshot main
-        env:
-          BASE: ${{ steps.base.outputs.sha }}
         run: |
           CYPRESS_INSTALL_BINARY=0 git worktree add ../base "$BASE"
           CYPRESS_INSTALL_BINARY=0 npm ci --prefix ../base
@@ -144,31 +167,103 @@ jobs:
             || echo "::notice::Some page states couldn't be pictured on main; the report lists them as new."
           kill -- -"$server"
           timeout 60 bash -c 'while curl -sf http://localhost:4210 > /dev/null; do sleep 1; done'
-      - if: steps.done.outputs.cache-hit != 'true'
-        name: Screenshot this PR and compare
+      - name: Screenshot this PR
+        run: npm run visual:shoot
+      - uses: actions/upload-artifact@v7
+        with:
+          name: screenshots-${{ matrix.shard }}
+          path: ${{ env.SNAPSHOTS }}
+          retention-days: 1 # only "Screenshot review", a few minutes from now, reads it
+
+  # Puts the four shards' screenshots together, compares them, and waits for approval. This is the check
+  # branch protection requires, so its name stays "Screenshot review".
+  review:
+    name: Screenshot review
+    needs: [changes, plan, shoot]
+    if: ${{ !cancelled() && needs.changes.outputs.looks != 'false' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: write # to comment the result and remove a stale visual-ok label
+    env:
+      PR: ${{ github.event.pull_request.number }}
+      GH_TOKEN: ${{ github.token }}
+      KEY: ${{ needs.plan.outputs.key }}
+      DONE: ${{ needs.plan.outputs.done }}
+    steps:
+      - name: Check every screenshot was taken
+        env:
+          PLAN: ${{ needs.plan.result }}
+          SHOOT: ${{ needs.shoot.result }}
         run: |
-          npm run visual:shoot
-          npm run visual:compare -- --ignoreChange
-      - if: steps.done.outputs.cache-hit != 'true'
+          if [ "$PLAN" != success ]; then
+            echo "::error::Couldn't work out what to compare against; see the \"Plan the comparison\" job."
+            exit 1
+          fi
+          if [ "$DONE" != true ] && [ "$SHOOT" != success ]; then
+            echo "::error::Some screenshots couldn't be taken; see the failed \"Screenshots\" jobs."
+            exit 1
+          fi
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - if: env.DONE == 'true'
+        name: Reuse this comparison
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ env.SNAPSHOTS }}
+          key: ${{ env.KEY }}
+          fail-on-cache-miss: true
+      - if: env.DONE != 'true'
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - if: env.DONE != 'true'
+        run: npm ci
+        env:
+          CYPRESS_INSTALL_BINARY: '0' # only reg-cli is needed here, not the browser-driving app
+      - if: env.DONE != 'true'
+        uses: actions/download-artifact@v7
+        with:
+          pattern: screenshots-*
+          path: ${{ env.SNAPSHOTS }}
+          merge-multiple: true # each holds expected/ and actual/ for its quarter; together, the whole set
+      - if: env.DONE != 'true'
+        name: Compare
+        run: npm run visual:compare -- --ignoreChange
+      - if: env.DONE != 'true'
         uses: actions/cache/save@v6
         continue-on-error: true
         with:
           path: ${{ env.SNAPSHOTS }}
-          key: screenshots-review-${{ env.HEAD_SHA }}-${{ steps.base.outputs.sha }}-${{ steps.base.outputs.image }}
+          key: ${{ env.KEY }}
 
+      # The fingerprint is a hash of every screenshot that differs from main, before and after. Two runs
+      # with the same fingerprint show a reviewer exactly the same changes.
       - name: Read the result
         id: result
         run: |
           node -e '
-            const reg = require("./" + process.env.SNAPSHOTS + "/reg.json");
+            const fs = require("fs");
+            const crypto = require("crypto");
+            const dir = process.env.SNAPSHOTS;
+            const reg = require("./" + dir + "/reg.json");
             const list = (title, items) =>
               items.length ? `**${title}**\n${items.map((i) => "- " + i.split("/").pop()).join("\n")}\n` : "";
             const count = reg.failedItems.length + reg.newItems.length + reg.deletedItems.length;
             const body = count
               ? [list("Changed", reg.failedItems), list("New", reg.newItems), list("Removed", reg.deletedItems)].join("\n")
               : `No visual changes: all ${reg.passedItems.length} screenshots match main.`;
-            require("fs").writeFileSync(process.env.RUNNER_TEMP + "/pages.md", body);
-            require("fs").appendFileSync(process.env.GITHUB_OUTPUT, `count=${count}\n`);
+            const hash = (file) =>
+              fs.existsSync(file) ? crypto.createHash("sha256").update(fs.readFileSync(file)).digest("hex") : "none";
+            const lines = [...reg.failedItems, ...reg.newItems, ...reg.deletedItems]
+              .map((i) => `${i} ${hash(dir + "/expected/" + i)} ${hash(dir + "/actual/" + i)}`)
+              .sort();
+            const fingerprint = crypto.createHash("sha256").update(lines.join("\n")).digest("hex");
+            fs.writeFileSync(process.env.RUNNER_TEMP + "/pages.md", body);
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, `count=${count}\nfingerprint=${fingerprint}\n`);
           '
       - if: steps.result.outputs.count != '0'
         uses: actions/upload-artifact@v7
@@ -181,11 +276,24 @@ jobs:
         env:
           ACTION: ${{ github.event.action }}
           LABELED: ${{ contains(github.event.pull_request.labels.*.name, 'visual-ok') }}
+          FINGERPRINT: ${{ steps.result.outputs.fingerprint }}
         run: |
-          # An approval covers the pages someone looked at. A new push may change more, so it's cleared.
+          # An approval covers the screenshots someone looked at. A new push keeps it only if every
+          # screenshot that differs from main, before and after, is byte for byte what was approved: say,
+          # bringing the branch up to date with a main that changed other pages. Anything else clears it.
           if [ "$LABELED" = true ] && [ "$ACTION" = synchronize ]; then
-            gh pr edit "$PR" --remove-label visual-ok || echo "Couldn't remove the label (no permission)."
-            echo "approved=false" >> "$GITHUB_OUTPUT"
+            # Only this workflow's own comment counts, since anyone can write the marker in one of theirs.
+            approved=$(gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/issues/$PR/comments" \
+              | jq -r '[.[][] | select(.user.login == "github-actions[bot]")] | last | .body // ""' \
+              | grep -oP '(?<=<!-- approved-fingerprint: )[0-9a-f]+' || true)
+            if [ -n "$approved" ] && [ "$approved" = "$FINGERPRINT" ]; then
+              echo "Every changed screenshot is the same as the approved ones; keeping visual-ok."
+              echo "approved=true" >> "$GITHUB_OUTPUT"
+              echo "carried=true" >> "$GITHUB_OUTPUT"
+            else
+              gh pr edit "$PR" --remove-label visual-ok || echo "Couldn't remove the label (no permission)."
+              echo "approved=false" >> "$GITHUB_OUTPUT"
+            fi
           else
             echo "approved=$LABELED" >> "$GITHUB_OUTPUT"
           fi
@@ -194,12 +302,16 @@ jobs:
         env:
           COUNT: ${{ steps.result.outputs.count }}
           APPROVED: ${{ steps.approval.outputs.approved }}
+          CARRIED: ${{ steps.approval.outputs.carried }}
+          FINGERPRINT: ${{ steps.result.outputs.fingerprint }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           {
             echo "### Screenshot review"
             if [ "$COUNT" != 0 ]; then
-              if [ "$APPROVED" = true ]; then
+              if [ "$CARRIED" = true ]; then
+                echo "$COUNT screenshots differ from main. **Approved** (visual-ok label, kept: the same changes as when it was added)."
+              elif [ "$APPROVED" = true ]; then
                 echo "$COUNT screenshots differ from main. **Approved** (visual-ok label)."
               else
                 echo "$COUNT screenshots differ from main. Download **screenshot-report** from [this run]($RUN_URL), open \`report.html\`, and if the changes are intended, add the **visual-ok** label to let this merge."
@@ -207,6 +319,11 @@ jobs:
               echo
             fi
             cat "$RUNNER_TEMP/pages.md"
+            # What a later push compares against, to keep the label (see "Check for approval").
+            if [ "$APPROVED" = true ] && [ "$COUNT" != 0 ]; then
+              echo
+              echo "<!-- approved-fingerprint: $FINGERPRINT -->"
+            fi
           } | tee -a "$GITHUB_STEP_SUMMARY" > "$RUNNER_TEMP/comment.md"
           gh pr comment "$PR" --edit-last --create-if-none --body-file "$RUNNER_TEMP/comment.md"
       - name: Wait for approval

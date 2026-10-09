@@ -20,10 +20,16 @@ env:
   SNAPSHOTS: cypress/snapshots
 
 jobs:
+  # One job per theme and size, side by side, each saving its quarter of the baseline under its own key. The
+  # same four as the Screenshot review's shards (screenshots.yml), which restore them by name.
   record:
-    name: Record main's screenshots
+    name: Record main's screenshots (${{ matrix.shard }})
     runs-on: ubuntu-24.04
     timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [light-desktop, dark-desktop, light-phone, dark-phone]
     steps:
       - uses: actions/checkout@v7
       # The runner image (and so its Chromium) changes every week or two, and a newer Chromium can render
@@ -42,8 +48,10 @@ jobs:
           key: cypress-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
       - run: npm ci
       - run: npm run visual:base
+        env:
+          VISUAL_SHARD: ${{ matrix.shard }}
       - uses: actions/cache/save@v6
         continue-on-error: true # a re-run finds its key already saved, which is fine
         with:
           path: ${{ env.SNAPSHOTS }}/expected
-          key: screenshots-${{ github.sha }}-${{ steps.image.outputs.id }}
+          key: screenshots-${{ github.sha }}-${{ steps.image.outputs.id }}-${{ matrix.shard }}

@@ -303,10 +303,15 @@ const STATES: Record<string, PageState> = {
   },
 };
 
+// CI splits the screenshots across parallel jobs, one per theme and size (VISUAL_SHARD=dark-phone, passed
+// through cypress.visual.config.ts). Without a shard, every screenshot is taken.
+const shard = Cypress.expose('shard') as string | undefined;
+
 describe('How pages look', () => {
   for (const [name, state] of Object.entries(STATES)) {
     for (const theme of THEMES) {
       for (const size of SIZES) {
+        if (shard && shard !== `${theme}-${size.name}`) continue;
         it(`${name}, ${theme}, ${size.name}`, () => {
           if (state.path === '/tools/sales')
             openSalesTrackerOnSep10(theme, size.width, size.height);
