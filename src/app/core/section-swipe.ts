@@ -1,7 +1,8 @@
-// Swiping sideways on a phone moves to the neighbouring section, in the top bar's order. These are the
-// pure parts: which way a finished touch went (if it was a swipe at all), and where that leads.
+// Swiping sideways on a phone moves to the neighbouring section, in the top bar's order (SECTIONS). These are the
+// pure parts: which way a finished touch went (if it was a swipe at all), where that leads, and which way
+// any move between sections goes, so the page can slide in from that side.
 
-export const SECTION_PATHS = ['/lines', '/branches', '/tools'] as const;
+import { SECTIONS } from '../sections';
 
 export type SwipeDirection = 'next' | 'previous';
 
@@ -20,8 +21,21 @@ export function swipeDirection(dx: number, dy: number, durationMs: number): Swip
 /** The section path a swipe from currentUrl leads to, or null at either end (it doesn't wrap around)
  *  or on a page that isn't one of the sections. */
 export function adjacentSection(currentUrl: string, direction: SwipeDirection): string | null {
-  const path = '/' + (currentUrl.split(/[?#]/)[0].split('/')[1] ?? '');
-  const index = SECTION_PATHS.indexOf(path as (typeof SECTION_PATHS)[number]);
+  const index = sectionIndex(currentUrl);
   if (index === -1) return null;
-  return SECTION_PATHS[index + (direction === 'next' ? 1 : -1)] ?? null;
+  return SECTIONS[index + (direction === 'next' ? 1 : -1)]?.path ?? null;
+}
+
+/** Which way a move from one URL to another goes through the sections, or null when it stays within one
+ *  section (one tool to another) or either end isn't a section. */
+export function sectionStep(fromUrl: string, toUrl: string): SwipeDirection | null {
+  const from = sectionIndex(fromUrl);
+  const to = sectionIndex(toUrl);
+  if (from === -1 || to === -1 || from === to) return null;
+  return to > from ? 'next' : 'previous';
+}
+
+function sectionIndex(url: string): number {
+  const path = '/' + (url.split(/[?#]/)[0].split('/')[1] ?? '');
+  return SECTIONS.findIndex((section) => section.path === path);
 }
