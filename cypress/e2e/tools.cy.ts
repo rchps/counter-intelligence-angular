@@ -133,6 +133,44 @@ describe('Sizing tools', () => {
     cy.getBySel('poe-total').should('have.text', '104.0 W');
   });
 
+  it('PoE budget on a phone: each device is a card, and rows add and remove cleanly', () => {
+    cy.viewport(390, 844);
+    cy.visit('/tools/poe');
+    fill('poe-budget', '120');
+    fill('poe-quantity', '8');
+    cy.getBySel('poe-total').should('have.text', '123.2 W');
+
+    // Remove sits on a row of its own above the fields, and nothing scrolls sideways.
+    cy.getBySel('poe-remove').then(($remove) => {
+      cy.getBySel('poe-class').should(($class) =>
+        expect($remove[0].getBoundingClientRect().bottom).to.be.at.most(
+          $class[0].getBoundingClientRect().top,
+        ),
+      );
+    });
+    cy.document().should((doc) =>
+      expect(doc.documentElement.scrollWidth).to.be.at.most(doc.documentElement.clientWidth),
+    );
+
+    // A new row starts with its quantity focused.
+    cy.getBySel('poe-add').click();
+    cy.getBySel('poe-device').should('have.length', 2);
+    cy.focused().type('2');
+    cy.getBySel('poe-class').eq(1).select('watts');
+    cy.getBySel('poe-watts').eq(1).type('10');
+    cy.getBySel('poe-total').should('have.text', '143.2 W');
+    cy.getBySel('poe-basis-device').check();
+    cy.getBySel('poe-total').should('have.text', '124.0 W');
+
+    // Removing one keeps focus on the list's Add button and renumbers what's left.
+    cy.getBySel('poe-remove').first().click();
+    cy.getBySel('poe-device').should('have.length', 1);
+    cy.getBySel('poe-total').should('have.text', '20.0 W');
+    cy.focused().should('have.attr', 'data-cy', 'poe-add');
+    cy.getBySel('poe-remove').should('have.attr', 'aria-label', 'Remove device 1');
+    cy.getBySel('poe-device').should('contain.text', 'Device 1');
+  });
+
   it('NVR storage: shows the Genetec example, drive counts, and the estimate range', () => {
     cy.visit('/tools/nvr');
     fill('nvr-kbps', '500');

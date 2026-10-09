@@ -46,9 +46,10 @@
       </div>
     </fieldset>
     <ul class="tl-devices">
-      @for (row of devices(); track row.id) {
-        <li class="tl-device">
-          <div>
+      @for (row of devices(); track row.id; let index = $index) {
+        <li class="tl-device" data-cy="poe-device">
+          <span class="tl-device-name">Device {{ index + 1 }}</span>
+          <div class="tl-device-qty">
             <label [for]="'poe-qty-' + row.id">Qty</label>
             <input
               type="text"
@@ -61,7 +62,7 @@
               (input)="setQuantityText(row.id, inputValue($event))"
             />
           </div>
-          <div>
+          <div class="tl-device-class">
             <label [for]="'poe-class-' + row.id">PoE class</label>
             <select
               [id]="'poe-class-' + row.id"
@@ -76,11 +77,12 @@
               <option value="watts" [selected]="row.classChoice === 'watts'">Known watts</option>
             </select>
           </div>
-          <div>
+          <div class="tl-device-watts">
             <label [for]="'poe-watts-' + row.id">Watts each</label>
             <input
               type="text"
               [id]="'poe-watts-' + row.id"
+              data-cy="poe-watts"
               inputmode="decimal"
               autocomplete="off"
               [value]="wattsDisplay(row)"
@@ -91,15 +93,25 @@
           <button
             type="button"
             class="tl-remove"
-            aria-label="Remove this device"
+            data-cy="poe-remove"
+            [attr.aria-label]="'Remove device ' + (index + 1)"
             (click)="removeDevice(row.id)"
           >
-            ×
+            <span class="tl-remove-x" aria-hidden="true">×</span>
+            <span class="tl-remove-text">Remove</span>
           </button>
         </li>
       }
     </ul>
-    <button type="button" class="mc-reset linkbtn" (click)="addDevice()">+ Add device</button>
+    <button
+      #addButton
+      type="button"
+      class="mc-reset linkbtn"
+      data-cy="poe-add"
+      (click)="addDevice()"
+    >
+      + Add device
+    </button>
     <div class="mc-msg" role="status" aria-live="polite" [class.err]="message()">
       {{ message() }}
     </div>
