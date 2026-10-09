@@ -33,6 +33,6 @@
     {"brand": "Crestron / Control4", "match": ["crestron", "control4", "control 4"], "offer": ["Brilliant", "Russound", "WyreStorm"]},
     {"brand": "Atlona / Just Add Power", "match": ["atlona", "just add power", "j plus"], "offer": ["WyreStorm", "Blustream"]},
     {"brand": "Peerless-AV / Sanus", "match": ["peerless", "sanus"], "offer": ["OmniMount", "Rapid Video Mounts", "ErgoAV", "VMP (Video Mount Products)"]},
-    {"brand": "Klipsch / Polk (architectural)", "match": ["klipsch", "polk"], "offer": ["OSD Audio", "Proficient Audio", "TDG Audio", "Current Audio", "Russound"]}
+    {"brand": "Klipsch / Polk (architectural)", "match": ["klipsch", "polk"], "offer": ["OSD Audio", "Proficient Audio", "TDG Audio", "Russound"]}
   ]
 }

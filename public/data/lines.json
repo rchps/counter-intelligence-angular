@@ -1,5 +1,5 @@
 {
-  "asOf": "2026-09-25",
+  "asOf": "2026-10-08",
   "cats": {
     "access": "Access Control",
     "intrusion": "Intrusion",
@@ -64,7 +64,7 @@
     },
     {
       "name": "ABB",
-      "url": "https://new.abb.com/",
+      "url": "https://www.abb.com/global/en",
       "cats": [
         "network"
       ],
@@ -142,7 +142,7 @@
     },
     {
       "name": "AFL",
-      "url": "https://www.aflglobal.com/",
+      "url": "https://www.aflglobal.com/en",
       "cats": [
         "wire",
         "network"
@@ -294,7 +294,7 @@
     },
     {
       "name": "ASSA ABLOY",
-      "url": "https://www.assaabloy.com/us/en",
+      "url": "https://www.assaabloydss.com/en",
       "cats": [
         "access",
         "video"
@@ -375,7 +375,7 @@
     },
     {
       "name": "Beacon",
-      "url": null,
+      "url": "https://beaconadhesives.com/",
       "cats": [
         "accessories"
       ],
@@ -432,7 +432,7 @@
     },
     {
       "name": "Bosch Security",
-      "url": "https://www.boschsecurity.com/us/en/",
+      "url": "https://www.boschbuildingtechnologies.com/na/en",
       "cats": [
         "intrusion"
       ],
@@ -469,7 +469,7 @@
     },
     {
       "name": "Brilliant",
-      "url": "https://www.brilliant.tech/",
+      "url": "http://brilliant.tech/home?tab=system",
       "cats": [
         "av"
       ],
@@ -493,7 +493,7 @@
     },
     {
       "name": "Cablecom Inc.",
-      "url": "https://cablecominc.com/",
+      "url": "https://cablecomllc.us/",
       "cats": [
         "wire"
       ],
@@ -645,7 +645,7 @@
     },
     {
       "name": "Comtran Cable",
-      "url": "https://www.comtrancorp.com/",
+      "url": "https://marmoniei.com/",
       "cats": [
         "wire"
       ],
@@ -656,7 +656,7 @@
     },
     {
       "name": "Condumex",
-      "url": "https://www.condumex.com.mx/",
+      "url": "https://condumexinc.com/",
       "cats": [
         "wire"
       ],
@@ -665,7 +665,7 @@
     },
     {
       "name": "Cooper Wheelock",
-      "url": "https://www.eaton.com/us/en-us/products/life-safety-mass-notification/fire-alarm-notification.html",
+      "url": "https://www.eaton.com/us/en-us.html",
       "cats": [
         "fire"
       ],
@@ -689,17 +689,6 @@
       "logo": "crkt.png"
     },
     {
-      "name": "Current Audio",
-      "url": "https://www.currentaudio.com/",
-      "cats": [
-        "av"
-      ],
-      "aka": [
-        "speakers"
-      ],
-      "logo": "current-audio.png"
-    },
-    {
       "name": "CyberPower",
       "url": "https://www.cyberpowersystems.com/",
       "cats": [
@@ -715,7 +704,7 @@
     },
     {
       "name": "D-Line",
-      "url": "https://d-line-it.com/us/",
+      "url": "https://d-line-it.com/us/home-2/",
       "cats": [
         "accessories"
       ],
@@ -878,7 +867,7 @@
     },
     {
       "name": "Eaton",
-      "url": "https://www.eaton.com/",
+      "url": "https://www.eaton.com/us/en-us.html",
       "cats": [
         "fire"
       ],
@@ -973,7 +962,7 @@
     },
     {
       "name": "ETS",
-      "url": "https://www.etslan.com/",
+      "url": "https://www.etsnm.com/",
       "cats": [
         "av"
       ],
@@ -1007,7 +996,7 @@
     },
     {
       "name": "Fire-Lite Alarms",
-      "url": "https://www.firelite.com/",
+      "url": "https://buildings.honeywell.com/us/en/brands/our-brands/firelite",
       "cats": [
         "fire"
       ],
@@ -1053,7 +1042,7 @@
     },
     {
       "name": "Genesis",
-      "url": "https://www.southwire.com/wire-cable/genesis-cable/c/c-genesis-cable",
+      "url": "https://www.southwire.com/genesis",
       "cats": [
         "wire"
       ],
@@ -1088,7 +1077,7 @@
     },
     {
       "name": "Golden State Instrument",
-      "url": null,
+      "url": "https://www.linkedin.com/company/golden-state-instrument-company/about/",
       "cats": [
         "intrusion"
       ],
@@ -1111,7 +1100,7 @@
     },
     {
       "name": "GS Yuasa",
-      "url": "https://www.gsyuasa-lp.com/",
+      "url": "https://gsyuasa-es.com/",
       "cats": [
         "power"
       ],
@@ -1135,7 +1124,7 @@
     },
     {
       "name": "Hanwha Vision",
-      "url": "https://www.hanwhavisionamerica.com/",
+      "url": "https://www.hanwhavision.com/us",
       "cats": [
         "video"
       ],
@@ -1174,7 +1163,7 @@
     },
     {
       "name": "HID",
-      "url": "https://www.hidglobal.com/",
+      "url": "https://www.hidglobal.com/solutions/access-control-systems",
       "cats": [
         "access"
       ],
@@ -1198,7 +1187,7 @@
     },
     {
       "name": "Home8",
-      "url": "https://www.home8alarm.com/",
+      "url": "https://havenlock.com/",
       "cats": [
         "access"
       ],
@@ -1209,7 +1198,7 @@
     },
     {
       "name": "Honeywell",
-      "url": "https://buildings.honeywell.com/us/en/brands/our-brands",
+      "url": "https://buildings.honeywell.com/us/en/brands/our-brands/honeywell-building-solutions/solutions/commercial-security",
       "cats": [
         "video",
         "fire"
@@ -1225,7 +1214,7 @@
     },
     {
       "name": "Honeywell StreetSmart Security",
-      "url": "https://buildings.honeywell.com/us/en/solutions/security",
+      "url": "https://www.honeywell.com/us/en",
       "cats": [
         "intrusion"
       ],
@@ -1310,7 +1299,7 @@
     },
     {
       "name": "Intellinet",
-      "url": "https://www.intellinet-network.com/",
+      "url": "https://intellinetsolutions.com/",
       "cats": [
         "network"
       ],
@@ -1343,7 +1332,7 @@
     },
     {
       "name": "Island",
-      "url": "https://www.islandrouter.com/",
+      "url": "https://www.island.io/",
       "cats": [
         "network"
       ],
@@ -1415,7 +1404,7 @@
     },
     {
       "name": "Keyscan",
-      "url": "https://www.keyscan.ca/",
+      "url": "https://amer.dormakaba.com/keyscan_upgrade_program/",
       "cats": [
         "access"
       ],
@@ -1568,7 +1557,7 @@
     },
     {
       "name": "Linear",
-      "url": "https://www.linear-solutions.com/",
+      "url": "https://linear-solutions.com/access-controls/",
       "cats": [
         "access"
       ],
@@ -1606,7 +1595,7 @@
     },
     {
       "name": "LSD (Labor Saving Devices)",
-      "url": "https://lsdinc.com/",
+      "url": "https://laborsavingdevices.org/",
       "cats": [
         "tools"
       ],
@@ -1629,7 +1618,7 @@
     },
     {
       "name": "Lynn",
-      "url": "https://nsiindustries.com/lynn/",
+      "url": "https://lynnnetworks.com/",
       "cats": [
         "wire",
         "network"
@@ -1718,7 +1707,7 @@
     },
     {
       "name": "Middle Atlantic Products",
-      "url": "https://www.middleatlantic.com/",
+      "url": "https://www.legrand.us/middle-atlantic-products",
       "cats": [
         "video"
       ],
@@ -1803,7 +1792,7 @@
     },
     {
       "name": "Nedap",
-      "url": "https://www.nedapsecurity.com/",
+      "url": "https://www.nedap.com/en",
       "cats": [
         "access"
       ],
@@ -1889,7 +1878,7 @@
     },
     {
       "name": "OmniMount",
-      "url": "https://www.omnimount.com/",
+      "url": "https://www.ergotron.com/omnimount",
       "cats": [
         "av"
       ],
@@ -1902,7 +1891,7 @@
     },
     {
       "name": "Onkyo",
-      "url": "https://www.onkyousa.com/",
+      "url": "https://onkyo.com/",
       "cats": [
         "av"
       ],
@@ -1974,7 +1963,7 @@
     },
     {
       "name": "Platinum Tools",
-      "url": "https://www.platinumtools.com/",
+      "url": "https://nsiindustries.com/platinum-tools-2/",
       "cats": [
         "tools"
       ],
@@ -2009,7 +1998,7 @@
     },
     {
       "name": "PPG",
-      "url": "https://www.ppg.com/",
+      "url": "https://www.ppg.com/en-US",
       "cats": [
         "accessories"
       ],
@@ -2053,7 +2042,7 @@
     },
     {
       "name": "Qolsys",
-      "url": "https://www.qolsys.com/",
+      "url": "https://www.iqsecurityproducts.com/",
       "cats": [
         "intrusion"
       ],
@@ -2123,7 +2112,7 @@
     },
     {
       "name": "Rutherford Controls (RCI)",
-      "url": "https://www.dormakaba.com/us-en/offering/products/door-hardware/electronic-access-control-components/electromagnetic-locks--do_2115",
+      "url": "https://www.dormakaba.com/us-en/offering/products/electronic-access-data",
       "cats": [
         "access"
       ],
@@ -2216,7 +2205,7 @@
     },
     {
       "name": "Silent Knight",
-      "url": "https://www.silentknight.com/",
+      "url": "https://buildings.honeywell.com/us/en/brands/our-brands/silent-knight",
       "cats": [
         "fire"
       ],
@@ -2228,7 +2217,7 @@
     },
     {
       "name": "Simply45",
-      "url": "https://www.simply45.com/",
+      "url": "https://simplybrands.com/shop/simply45/simply45-tools/",
       "cats": [
         "tools"
       ],
@@ -2273,7 +2262,7 @@
     },
     {
       "name": "STI (Safety Technology International)",
-      "url": "https://www.sti-usa.com/",
+      "url": "https://www.sti-global.com/en-us",
       "cats": [
         "fire"
       ],
@@ -2312,7 +2301,7 @@
     },
     {
       "name": "SwiftFusion",
-      "url": null,
+      "url": "https://swift-fusion.net/",
       "cats": [
         "tools"
       ],
@@ -2324,7 +2313,7 @@
     },
     {
       "name": "System Sensor",
-      "url": "https://www.systemsensor.com/",
+      "url": "https://systemsensorshop.com/",
       "cats": [
         "fire"
       ],
@@ -2360,7 +2349,7 @@
     },
     {
       "name": "TCL",
-      "url": "https://www.tcl.com/us/en",
+      "url": "https://us.tcl.com/",
       "cats": [
         "av"
       ],
@@ -2432,7 +2421,7 @@
     },
     {
       "name": "Trend Networks",
-      "url": "https://www.trend-networks.com/",
+      "url": "https://www.trend-networks.com/us/",
       "cats": [
         "network",
         "tools"
@@ -2479,6 +2468,19 @@
         "cctv tester"
       ],
       "logo": "triplett.png"
+    },
+    {
+      "name": "Turing",
+      "url": "https://turing.ai/",
+      "cats": [
+        "video"
+      ],
+      "aka": [
+        "turing ai",
+        "turing video",
+        "turing vision"
+      ],
+      "logo": "turing.png"
     },
     {
       "name": "United Security Products",
@@ -2564,7 +2566,7 @@
     },
     {
       "name": "Videofied",
-      "url": "https://www.resideo.com/emea/en/products/security/security-systems/videofied/",
+      "url": "https://www.videofied.co.za/index.html",
       "cats": [
         "video"
       ],
@@ -2599,7 +2601,7 @@
     },
     {
       "name": "Vivotek",
-      "url": "https://www.vivotek.com/",
+      "url": "https://www.vivotek.com/en-US/",
       "cats": [
         "video"
       ],
@@ -2621,7 +2623,7 @@
     },
     {
       "name": "Vosker",
-      "url": "https://www.vosker.com/",
+      "url": "https://www.vosker.com/us/en",
       "cats": [
         "video"
       ],
@@ -2728,7 +2730,7 @@
     },
     {
       "name": "Yale",
-      "url": "https://www.yalehome.com/",
+      "url": "https://shopyalehome.com/",
       "cats": [
         "access",
         "intrusion"
@@ -2752,7 +2754,7 @@
     },
     {
       "name": "Zebra Technologies",
-      "url": "https://www.zebra.com/",
+      "url": "https://www.zebra.com/us/en/about-zebra/security.html",
       "cats": [
         "tools"
       ],
@@ -2765,7 +2767,7 @@
     },
     {
       "name": "ZKTeco",
-      "url": "https://www.zkteco.com/",
+      "url": "https://zktecousa.com/",
       "cats": [
         "access"
       ],
@@ -2817,7 +2819,7 @@
       "st": "FL",
       "city": "Melbourne",
       "addr": "185 West Drive Suite 1, Melbourne, FL 32904",
-      "phone": null
+      "phone": "(321) 768-3511"
     },
     {
       "st": "ID",

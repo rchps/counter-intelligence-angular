@@ -93,7 +93,7 @@
     {"label": "Detector testers", "syn": ["detector tester", "smoke tester", "smoke test", "heat tester"], "lines": ["SDi"]},
     {"label": "Duct detectors", "syn": ["duct detector", "duct smoke"], "lines": ["System Sensor"]},
     {"label": "Fire alarm radios / communicators", "syn": ["fire communicator", "radio", "long range radio", "fire alarm communicator"], "lines": ["Sigcom", "Uplink", "Telular"]},
-    {"label": "Speakers", "syn": ["speaker", "speakers", "in ceiling speaker", "in wall speaker", "outdoor speaker", "ceiling speaker"], "lines": ["OSD Audio", "Proficient Audio", "TDG Audio", "Current Audio", "Russound", "Earthquake Sound", "Atlas IED", "Bogen"]},
+    {"label": "Speakers", "syn": ["speaker", "speakers", "in ceiling speaker", "in wall speaker", "outdoor speaker", "ceiling speaker"], "lines": ["OSD Audio", "Proficient Audio", "TDG Audio", "Russound", "Earthquake Sound", "Atlas IED", "Bogen"]},
     {"label": "Amplifiers", "syn": ["amp", "amplifier", "power amp"], "lines": ["Atlas IED", "Bogen", "LEA Professional", "Russound", "OSD Audio", "Juke Audio"]},
     {"label": "Paging", "syn": ["paging", "pa system", "public address"], "lines": ["Atlas IED", "Bogen"]},
     {"label": "Subwoofers", "syn": ["subwoofer", "sub"], "lines": ["Earthquake Sound"]},
