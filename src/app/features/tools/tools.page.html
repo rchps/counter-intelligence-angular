@@ -1,20 +1,5 @@
 <div class="tk">
-  <nav class="tk-nav" aria-label="Tools">
-    @for (group of navGroups; track group.group) {
-      <p class="tk-group">{{ group.group }}</p>
-      @for (item of group.items; track item.id) {
-        <a
-          [routerLink]="['/tools', item.id]"
-          [attr.data-cy]="'tool-link-' + item.id"
-          routerLinkActive="current"
-          ariaCurrentWhenActive="page"
-        >
-          <span class="tk-dot" [attr.data-dot]="item.id"></span>
-          {{ item.label }}
-        </a>
-      }
-    }
-  </nav>
+  <app-tool-nav [current]="currentTool()" />
   <div class="tk-body">
     @if (sizingHeading(); as heading) {
       <div class="tk-heading">
