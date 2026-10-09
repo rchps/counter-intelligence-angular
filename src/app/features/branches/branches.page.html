@@ -26,16 +26,19 @@
       [chips]="chips()"
       [(selected)]="filter"
     />
-
-    <app-search-status
-      [shownCount]="shown().length"
-      [totalCount]="data.branches().length"
-      [noun]="noun"
-      [filterLabel]="filterLabel()"
-      [search]="search()"
-      (clear)="clearSearch()"
-    />
   </div>
+</div>
+
+<!-- Below the sticky toolbar, not in it, so it scrolls away with the page (styles.scss). -->
+<div class="wrap toolbar-status">
+  <app-search-status
+    [shownCount]="shown().length"
+    [totalCount]="data.branches().length"
+    [noun]="noun"
+    [filterLabel]="filterLabel()"
+    [search]="search()"
+    (clear)="clearSearch()"
+  />
 </div>
 
 <section class="branches" aria-label="Branch list">

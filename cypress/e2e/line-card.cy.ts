@@ -150,14 +150,22 @@ describe('Line Card', () => {
     cy.focused().should('have.attr', 'data-cy', 'search-input');
   });
 
-  it('gives the search box a row of its own on a phone, with the view switch under it', () => {
+  it('gives the search box a row of its own on a phone, with the view switch and dropdown under it', () => {
     cy.viewport(390, 844);
     cy.getBySel('search-input').then(($search) => {
       cy.getBySel('view-switch').then(($views) => {
-        const search = $search[0].getBoundingClientRect();
-        const views = $views[0].getBoundingClientRect();
-        expect(views.top, 'the switch starts below the search box').to.be.at.least(search.bottom);
-        expect(search.width, 'the search box spans the row').to.be.closeTo(views.width, 1);
+        cy.getBySel('filter-select').then(($select) => {
+          const search = $search[0].getBoundingClientRect();
+          const views = $views[0].getBoundingClientRect();
+          const select = $select[0].getBoundingClientRect();
+          expect(views.top, 'the switch starts below the search box').to.be.at.least(search.bottom);
+          expect(select.left, 'the dropdown is beside the switch').to.be.at.least(views.right);
+          expect(select.top, 'on the same row').to.be.below(views.bottom);
+          expect(select.right - views.left, 'the two span the search box').to.be.closeTo(
+            search.width,
+            1,
+          );
+        });
       });
     });
 
@@ -166,6 +174,22 @@ describe('Line Card', () => {
     cy.getBySel('search-input').should('have.value', '');
     cy.getBySel('view-az').click();
     cy.location('search').should('contain', 'view=az');
+  });
+
+  // Shown again on scrolling up, the bars cover the top of the screen; the status row isn't one of them.
+  it('keeps the sticky bars to the top third of a phone screen', () => {
+    cy.viewport(412, 924);
+    cy.scrollTo(0, 1500, { ensureScrollable: false });
+    cy.scrollTo(0, 1300, { ensureScrollable: false });
+    cy.getBySel('top-bar').should(($bar) =>
+      expect($bar[0].getBoundingClientRect().top).to.equal(0),
+    );
+    cy.getBySel('toolbar').should(($toolbar) =>
+      expect($toolbar[0].getBoundingClientRect().bottom).to.be.at.most(924 / 3),
+    );
+    cy.getBySel('search-status').should(($status) =>
+      expect($status[0].getBoundingClientRect().bottom, 'scrolled away').to.be.at.most(0),
+    );
   });
 
   it('offers the categories as one labeled dropdown on a phone, with live counts', () => {

@@ -80,8 +80,8 @@ describe('App shell', () => {
       );
     };
 
-    const openLineCard = (width: number): void => {
-      cy.viewport(width, 844);
+    const openLineCard = (width: number, height = 844): void => {
+      cy.viewport(width, height);
       cy.visit('/lines');
       cy.getBySel('line-card').should('have.length.greaterThan', 0);
     };
@@ -112,6 +112,18 @@ describe('App shell', () => {
 
       cy.getBySel('pin-line').eq(12).focus();
       cy.getBySel('top-bar').should(($bar) => expect(bottomOf($bar)).to.be.at.most(0));
+    });
+
+    // Turned sideways, a phone is too wide for the phone layout, and the top bar wraps onto two rows: kept
+    // in place, the bars would cover over 80% of the screen.
+    it('slide away on a phone turned sideways too, and come back on scrolling up', () => {
+      openLineCard(844, 390);
+      cy.scrollTo(0, 2000);
+      cy.getBySel('top-bar').should(($bar) => expect(bottomOf($bar)).to.be.at.most(0));
+      cy.getBySel('toolbar').should(($toolbar) => expect(bottomOf($toolbar)).to.be.at.most(0));
+
+      cy.scrollTo(0, 1800);
+      cy.getBySel('top-bar').should(($bar) => expect(topOf($bar)).to.equal(0));
     });
 
     it('stay put on a wider screen', () => {
