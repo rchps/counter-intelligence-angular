@@ -8,27 +8,15 @@
   </div>
 
   <nav class="nav" aria-label="Sections">
-    <a
-      routerLink="/lines"
-      data-cy="nav-lines"
-      routerLinkActive="active"
-      ariaCurrentWhenActive="page"
-      >Line Card</a
-    >
-    <a
-      routerLink="/branches"
-      data-cy="nav-branches"
-      routerLinkActive="active"
-      ariaCurrentWhenActive="page"
-      >Branches</a
-    >
-    <a
-      routerLink="/tools"
-      data-cy="nav-tools"
-      routerLinkActive="active"
-      ariaCurrentWhenActive="page"
-      >Tools</a
-    >
+    @for (section of sections; track section.key) {
+      <a
+        [routerLink]="section.path"
+        [attr.data-cy]="'nav-' + section.key"
+        routerLinkActive="active"
+        ariaCurrentWhenActive="page"
+        >{{ section.label }}</a
+      >
+    }
   </nav>
 
   <!-- Always-visible way to report a problem (the fuller card sits at the end of each page). -->
