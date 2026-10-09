@@ -18,6 +18,11 @@ updates:
       npm-minor-and-patch:
         patterns: ['*']
         update-types: [minor, patch]
+    ignore:
+      # Angular pins TypeScript to one minor line (a peer range like ">=6.0 <6.1"), and TypeScript's minors can
+      # break, so anything past a patch fails `npm ci`. `ng update` moves TypeScript along with Angular instead.
+      - dependency-name: typescript
+        update-types: ['version-update:semver-major', 'version-update:semver-minor']
   - package-ecosystem: github-actions
     directory: /
     schedule:
