@@ -795,7 +795,12 @@ describe('Back to top', () => {
         cy.getBySel('back-to-top').should('be.visible');
         cy.getBySel('back-to-top').then(($button) => {
           const button = $button[0].getBoundingClientRect();
-          for (const control of ['feedback-card-idea', 'footer-report', 'footer-idea']) {
+          for (const control of [
+            'feedback-card-idea',
+            'footer-tour',
+            'footer-report',
+            'footer-idea',
+          ]) {
             cy.getBySel(control).should(($control) => {
               const box = $control[0].getBoundingClientRect();
               const tooClose =

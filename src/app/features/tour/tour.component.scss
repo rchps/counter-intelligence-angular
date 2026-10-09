@@ -1,0 +1,126 @@
+// The dialog is a transparent layer over the whole screen. The dimming comes from the ring's huge shadow,
+// which leaves the highlighted element itself undimmed. The card is the only thing that looks like a
+// dialog, and it reuses the app's dialog look (surface, hairline border, large radius, .dlg-primary).
+.tour {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: hidden;
+}
+.tour::backdrop {
+  background: transparent;
+}
+
+.spot {
+  position: absolute;
+  border-radius: 12px;
+  outline: 2px solid var(--brand);
+  outline-offset: 0;
+  box-shadow: 0 0 0 200vmax rgba(10, 10, 11, 0.5);
+  pointer-events: none;
+  opacity: 0;
+}
+.spot.ready {
+  opacity: 1;
+}
+
+.card {
+  position: absolute;
+  width: min(380px, calc(100% - 32px));
+  padding: 18px 20px 16px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-lg);
+  // Not hidden: the text stays readable to screen readers, so the live region announces each step.
+  opacity: 0;
+  pointer-events: none;
+}
+.card.ready {
+  opacity: 1;
+  pointer-events: auto;
+}
+// Phones: a bottom sheet, like the app's other dialogs.
+.card.docked {
+  top: auto;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  border-width: 1px 0 0;
+  border-radius: 18px 18px 0 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .spot,
+  .card {
+    transition:
+      top 0.25s ease,
+      left 0.25s ease,
+      width 0.25s ease,
+      height 0.25s ease,
+      opacity 0.15s ease;
+  }
+}
+
+.count {
+  margin: 0 0 6px;
+  color: var(--ink-2);
+  font: 500 12px/1 var(--mono);
+  letter-spacing: 0.04em;
+}
+.title {
+  margin: 0;
+  font: 600 18px/1.25 var(--display);
+  letter-spacing: -0.01em;
+}
+.body {
+  margin: 8px 0 16px;
+  color: var(--ink-2);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.skip,
+.back {
+  min-height: 44px;
+  border-radius: 12px;
+  font: 500 14px/1 var(--font);
+  cursor: pointer;
+}
+.skip {
+  margin-right: auto;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: var(--ink-2);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.back {
+  padding: 0 16px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--ink);
+}
+.next {
+  min-width: 88px;
+}
+.actions button:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}

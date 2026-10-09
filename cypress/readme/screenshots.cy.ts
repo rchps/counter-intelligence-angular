@@ -25,7 +25,7 @@ function open(
   cy.visit(path, {
     onBeforeLoad(win) {
       win.localStorage.setItem('counter-intelligence:theme', theme);
-      win.localStorage.setItem('counter-intelligence:ai-hint-seen', '1');
+      win.localStorage.setItem('counter-intelligence:tour-seen', '1');
       for (const [key, value] of Object.entries(storage)) win.localStorage.setItem(key, value);
       win.document.addEventListener('DOMContentLoaded', () => {
         const still = win.document.createElement('style');

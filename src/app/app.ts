@@ -4,6 +4,7 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { distinctUntilChanged, filter, map, skip } from 'rxjs';
 import { FeedbackService } from './core/feedback.service';
 import { FeedbackDialogComponent } from './features/feedback/feedback-dialog.component';
+import { TourComponent } from './features/tour/tour.component';
 import { FeedbackCardComponent } from './layout/feedback-card.component';
 import { FooterComponent } from './layout/footer.component';
 import { HideBarsOnScrollDirective } from './layout/hide-bars-on-scroll.directive';
@@ -18,6 +19,7 @@ import { TopBarComponent } from './layout/top-bar.component';
     FeedbackCardComponent,
     FeedbackDialogComponent,
     FooterComponent,
+    TourComponent,
     SectionSwipeDirective,
     HideBarsOnScrollDirective,
   ],

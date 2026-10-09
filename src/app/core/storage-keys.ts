@@ -1,11 +1,12 @@
 // Every key the app saves in the browser, in one place.
 export const STORAGE_KEYS = {
   theme: 'counter-intelligence:theme',
-  aiHintSeen: 'counter-intelligence:ai-hint-seen',
   sales: 'counter-intelligence:sales:v1',
   tool: 'counter-intelligence:tool',
   pinnedLines: 'counter-intelligence:pinned-lines:v1',
   recentLines: 'counter-intelligence:recent-lines:v1',
+  /** Set once this browser has started or turned down the guided tour, so the invite shows once. */
+  tourSeen: 'counter-intelligence:tour-seen',
 } as const;
 
 // The names the same keys had before the rename. A browser keeps what it saved under the old name
@@ -13,7 +14,6 @@ export const STORAGE_KEYS = {
 // since the rename (2026-09-27): after a few weeks, delete it and the migrateKeys call.
 export const RENAMED_KEYS: Readonly<Record<string, string>> = {
   'sds-theme': STORAGE_KEYS.theme,
-  'sds-ai-hint-seen': STORAGE_KEYS.aiHintSeen,
   'sds-counter-reference:sales:v1': STORAGE_KEYS.sales,
   'sds-counter-reference:tool': STORAGE_KEYS.tool,
 };

@@ -3,9 +3,9 @@
   type="button"
   class="ai-trigger"
   data-cy="ai-trigger"
+  data-tour="ai"
   aria-haspopup="dialog"
   title="Copies this list so an AI chat (ChatGPT, Copilot, Claude) only suggests lines we carry"
-  [class.hint]="hint()"
   [disabled]="shown().length === 0"
   (click)="open()"
 >

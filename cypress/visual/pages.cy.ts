@@ -18,6 +18,7 @@ function open(
   width: number,
   height: number,
   storage: Record<string, string> = {},
+  firstVisit = false,
 ): void {
   cy.viewport(width, height);
   cy.intercept('GET', '/logos/**', {
@@ -26,7 +27,8 @@ function open(
   cy.visit(path, {
     onBeforeLoad(win) {
       win.localStorage.setItem('counter-intelligence:theme', theme);
-      win.localStorage.setItem('counter-intelligence:ai-hint-seen', '1');
+      // A returning visitor, so the tour's first-visit invite isn't in every picture (it has its own).
+      if (!firstVisit) win.localStorage.setItem('counter-intelligence:tour-seen', '1');
       for (const [key, value] of Object.entries(storage)) win.localStorage.setItem(key, value);
       // Snapshots compare where things end up, not how they move: without this, a transition that's
       // still running (the theme switch's knob sliding as the saved theme applies) is caught partway.
@@ -135,6 +137,8 @@ interface PageState {
   setUp: () => void;
   /** Saved browser state to start from, like pinned lines. */
   storage?: Record<string, string>;
+  /** Opened as a first visit, with the guided tour's invite showing. */
+  firstVisit?: boolean;
 }
 
 const STATES: Record<string, PageState> = {
@@ -222,6 +226,27 @@ const STATES: Record<string, PageState> = {
       cy.getBySel('ai-trigger').click();
       cy.getBySel('ai-preview-toggle').click();
       cy.getBySel('ai-preview').should('be.visible');
+    },
+  },
+  'tour-invite': {
+    path: '/lines',
+    capture: 'viewport',
+    firstVisit: true,
+    setUp: () => {
+      lineCardLoaded();
+      cy.getBySel('tour-invite').should('be.visible');
+    },
+  },
+  'tour-ai-step': {
+    path: '/lines',
+    capture: 'viewport',
+    setUp: () => {
+      lineCardLoaded();
+      cy.getBySel('footer-tour').click();
+      cy.getBySel('tour-card').should('have.class', 'ready');
+      cy.getBySel('tour-next').click();
+      cy.getBySel('tour-count').should('have.text', 'Step 2 of 5');
+      cy.getBySel('tour-card').should('have.class', 'ready');
     },
   },
   'feedback-problem': {
@@ -334,7 +359,7 @@ describe('How pages look', () => {
         it(`${name}, ${theme}, ${size.name}`, () => {
           if (state.path === '/tools/sales')
             openSalesTrackerOnSep10(theme, size.width, size.height);
-          else open(state.path, theme, size.width, size.height, state.storage);
+          else open(state.path, theme, size.width, size.height, state.storage, state.firstVisit);
           state.setUp();
           snapshot(`${name}-${theme}-${size.name}`, state.capture);
         });
