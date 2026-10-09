@@ -150,6 +150,38 @@ describe('Line Card', () => {
     cy.focused().should('have.attr', 'data-cy', 'search-input');
   });
 
+  it('offers the categories as one labeled dropdown on a phone, with live counts', () => {
+    cy.viewport(390, 844);
+    cy.getBySel('filter-chip-all').should('not.be.visible');
+    cy.getBySel('filter-select').should('be.visible');
+    cy.getBySel('filter-select').should(($select) => {
+      const select = $select[0] as HTMLSelectElement;
+      expect(select.labels[0].textContent?.trim()).to.equal('Category');
+      expect(select.value).to.equal('all');
+      // All, then every category, each with its count.
+      expect(select.options).to.have.length(12);
+      expect(select.options[0].text.trim()).to.match(/^All categories \(\d+\)$/);
+    });
+
+    cy.getBySel('filter-select').select('fire');
+    cy.location('search').should('contain', 'cat=fire');
+    cy.getBySel('search-status').should('contain.text', 'in Fire');
+
+    // A search keeps the category picked and updates every count.
+    cy.getBySel('search-input').type('altronix');
+    cy.getBySel('search-status').should('contain.text', 'altronix');
+    cy.getBySel('filter-select').should('have.value', 'fire');
+    cy.getBySel('filter-select')
+      .find('option')
+      .first()
+      .should('contain.text', 'All categories (1)');
+
+    // And the A–Z view keeps it too.
+    cy.getBySel('view-az').click();
+    cy.location('search').should('contain', 'view=az');
+    cy.getBySel('filter-select').should('have.value', 'fire');
+  });
+
   it('slides the cards to their new places when the filter changes', () => {
     // A transition the browser skips (say, because a navigation started another) rejects its `ready`
     // promise, so waiting on it proves the cards really animated.

@@ -15,6 +15,7 @@ import { searchLines, type Line } from '../../core/search/match';
 import { isExactName, sortByBestMatch } from '../../core/search/rank';
 import { didYouMean } from '../../core/search/typos';
 import { FilterChipsComponent, type FilterChip } from '../../shared/filter-chips.component';
+import { FilterSelectComponent } from '../../shared/filter-select.component';
 import { SearchStatusComponent } from '../../shared/search-status.component';
 import { SearchToolbarComponent } from '../../shared/search-toolbar.component';
 import { FEATURES } from '../../features';
@@ -46,6 +47,7 @@ interface CategoryLineGroup {
     AlternativesBoxComponent,
     SearchToolbarComponent,
     FilterChipsComponent,
+    FilterSelectComponent,
     SearchStatusComponent,
     CategoryGroupComponent,
     AzJumpBarComponent,

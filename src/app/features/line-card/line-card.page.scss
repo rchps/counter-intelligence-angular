@@ -1,5 +1,5 @@
-// Line Card-specific: the results area and the By category/A-Z view toggle. .hero/.eyebrow/.toolbar are
-// shared with Branches and live in the global stylesheet.
+// Line Card-specific: the results area, the By category/A-Z view toggle, and which category filter
+// shows. .hero/.eyebrow/.toolbar are shared with Branches and live in the global stylesheet.
 
 :host {
   display: block;
@@ -36,4 +36,19 @@
   box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.08),
     0 0 0 1px var(--line);
+}
+
+// Eleven category chips don't fit a phone's width, and scrolling sideways through them hides most of
+// the choices, so a phone gets the same choices as one dropdown instead (the breakpoint is where the
+// chips stop wrapping; see styles.scss's chips).
+.category-select {
+  display: none;
+}
+@media (max-width: 640px) {
+  .category-chips {
+    display: none;
+  }
+  .category-select {
+    display: block;
+  }
 }
