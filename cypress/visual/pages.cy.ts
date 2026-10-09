@@ -90,6 +90,15 @@ function lineCardLoaded(): void {
   cy.getBySel('line-card').should('have.length.greaterThan', 0);
 }
 
+/** Picks a category the way a user would at this size: a chip on a desktop, the dropdown on a phone. The
+ *  viewport is set before the page loads, so which one shows can't change partway through. */
+function pickCategory(key: string): void {
+  cy.getBySel('filter-select').then(($select) => {
+    if ($select.is(':visible')) cy.wrap($select).select(key);
+    else cy.getBySel(`filter-chip-${key}`).click();
+  });
+}
+
 interface PageState {
   /** '/tools/sales' opens on a fixed date (see openSalesTrackerOnSep10). */
   path: string;
@@ -124,7 +133,7 @@ const STATES: Record<string, PageState> = {
     capture: 'fullPage',
     setUp: () => {
       lineCardLoaded();
-      cy.getBySel('filter-chip-metal').click();
+      pickCategory('metal');
       // The address changes once the filtered cards have rendered, a frame after the click.
       cy.location('search').should('contain', 'cat=metal');
       cy.scrollTo('bottom');
@@ -171,7 +180,7 @@ const STATES: Record<string, PageState> = {
     capture: 'viewport',
     setUp: () => {
       lineCardLoaded();
-      cy.getBySel('filter-chip-fire').click();
+      pickCategory('fire');
       cy.getBySel('search-input').type('adalet');
       cy.contains(/in other categories/).should('be.visible');
     },
@@ -181,7 +190,7 @@ const STATES: Record<string, PageState> = {
     capture: 'viewport',
     setUp: () => {
       lineCardLoaded();
-      cy.getBySel('filter-chip-fire').click();
+      pickCategory('fire');
       cy.getBySel('ai-trigger').click();
       cy.getBySel('ai-preview-toggle').click();
       cy.getBySel('ai-preview').should('be.visible');
