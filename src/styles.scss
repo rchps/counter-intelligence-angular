@@ -835,6 +835,18 @@ mark {
   }
 }
 
+// A page with a Back to top button (shared/back-to-top.component.ts) keeps its corner clear of anything
+// it can't scroll off. Scrolling to a focused element stops short of the button (the button's 16px
+// offset, its 44px, and a 12px gap), so Tab never leaves a focused control behind it (WCAG 2.4.11). And
+// the page ends that much lower: the footer's own 44px of bottom padding, plus this, lets its last line of
+// controls scroll clear of the button at the very bottom of the page.
+html:has(app-back-to-top) {
+  scroll-padding-bottom: calc(72px + env(safe-area-inset-bottom));
+}
+body:has(app-back-to-top) {
+  padding-bottom: calc(28px + env(safe-area-inset-bottom));
+}
+
 /* Print: base rules every page shares (chrome that never belongs on paper). Feature-specific print
    rules, like the Line Card's, move with their component in a later phase. */
 @media print {

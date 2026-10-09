@@ -1,0 +1,43 @@
+// A round 44×44 button (WCAG 2.5.5's target size) held in the bottom-right corner, above the iPhone's
+// home indicator, and above the sticky toolbar (z-index 20) where the two could meet on a short screen.
+
+.back-to-top {
+  position: fixed;
+  right: calc(16px + env(safe-area-inset-right));
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-lg);
+  cursor: pointer;
+}
+// The display above would otherwise win over the `hidden` attribute's display: none.
+.back-to-top[hidden] {
+  display: none;
+}
+.back-to-top:hover {
+  background: var(--surface-2);
+}
+// The global focus ring's 8px corners would square off a round button.
+.back-to-top:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 50%;
+}
+.back-to-top svg {
+  width: 20px;
+  height: 20px;
+}
+
+@media print {
+  .back-to-top {
+    display: none;
+  }
+}
