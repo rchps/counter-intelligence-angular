@@ -16,6 +16,53 @@ describe('App shell', () => {
     cy.getBySel('nav-branches').should('not.have.attr', 'aria-current');
   });
 
+  describe('swiping between sections on a phone', () => {
+    // A quick sideways touch from (fromX, 300) to (toX, 300), dispatched the way a finger would.
+    const swipe = (subject: Cypress.Chainable<JQuery<HTMLElement>>, fromX: number, toX: number) => {
+      subject
+        .trigger('touchstart', { touches: [{ clientX: fromX, clientY: 300 }] })
+        .trigger('touchend', { touches: [], changedTouches: [{ clientX: toX, clientY: 300 }] });
+    };
+
+    // Swipes start on the page heading: <main> is thousands of px tall, so aiming at its centre makes
+    // Cypress scroll halfway down and wait for the cards to settle, long enough to read as a slow drag.
+    const heading = () => cy.getBySel('page-heading');
+
+    beforeEach(() => {
+      cy.viewport('iphone-x');
+    });
+
+    it('moves to the next section with a left swipe and back with a right one', () => {
+      cy.visit('/lines');
+      swipe(heading(), 300, 100);
+      cy.location('pathname').should('eq', '/branches');
+      swipe(heading(), 300, 100);
+      cy.location('pathname').should('match', /^\/tools\//);
+      swipe(heading(), 100, 300);
+      cy.location('pathname').should('eq', '/branches');
+    });
+
+    it('stops at the ends instead of wrapping around', () => {
+      cy.visit('/lines');
+      swipe(heading(), 100, 300);
+      // Had it wrapped round to Tools, this swipe would go nowhere instead of on to Branches.
+      swipe(heading(), 300, 100);
+      cy.location('pathname').should('eq', '/branches');
+    });
+
+    it('leaves a sideways drag on the scrolling filter chips to the chips', () => {
+      cy.visit('/lines');
+      // The chips only scroll sideways when they don't fit, as they don't at phone width.
+      cy.getBySel('filter-chip-all')
+        .parent()
+        .should(($row) => expect($row[0].scrollWidth).to.be.greaterThan($row[0].clientWidth));
+      swipe(cy.getBySel('filter-chip-all'), 300, 100);
+      // Had the chips swipe changed section, this one would land on Tools instead.
+      swipe(heading(), 300, 100);
+      cy.location('pathname').should('eq', '/branches');
+    });
+  });
+
   it('switches between light and dark, and remembers the choice', () => {
     cy.visit('/lines');
     cy.getBySel('theme-toggle')
