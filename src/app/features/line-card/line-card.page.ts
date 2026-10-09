@@ -14,6 +14,7 @@ import { normalize, searchWordsOf } from '../../core/search/normalize';
 import { searchLines, type Line } from '../../core/search/match';
 import { isExactName, sortByBestMatch } from '../../core/search/rank';
 import { didYouMean } from '../../core/search/typos';
+import { BackToTopComponent } from '../../shared/back-to-top.component';
 import { FilterChipsComponent, type FilterChip } from '../../shared/filter-chips.component';
 import { FilterSelectComponent } from '../../shared/filter-select.component';
 import { PublishHeightDirective } from '../../shared/publish-height.directive';
@@ -54,6 +55,7 @@ interface CategoryLineGroup {
     AzJumpBarComponent,
     EmptyStateComponent,
     RecentLinesComponent,
+    BackToTopComponent,
     PublishHeightDirective,
   ],
   templateUrl: './line-card.page.html',

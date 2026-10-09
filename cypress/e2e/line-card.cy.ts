@@ -438,3 +438,162 @@ describe('Pinned and recently opened manufacturers', () => {
     });
   });
 });
+
+describe('Back to top', () => {
+  const SIZES = [
+    { name: 'a wide screen', width: 1280, height: 800 },
+    { name: 'a phone', width: 390, height: 844 },
+  ];
+
+  /** Opens the page with window.scrollTo watched (as @scrollTo), optionally asking for reduced motion. */
+  function open(path: string, width: number, height: number, reduceMotion = false): void {
+    cy.viewport(width, height);
+    cy.visit(path, {
+      onBeforeLoad(win) {
+        if (!reduceMotion) return;
+        const realMatchMedia = win.matchMedia.bind(win);
+        cy.stub(win, 'matchMedia').callsFake((query: string) =>
+          query === '(prefers-reduced-motion: reduce)'
+            ? { matches: true, media: query }
+            : realMatchMedia(query),
+        );
+      },
+    });
+    cy.getBySel('line-card').should('have.length.greaterThan', 0);
+    cy.window().then((win) => cy.spy(win, 'scrollTo').as('scrollTo'));
+  }
+
+  // The button checks where the page is once per frame, so "still hidden" means something only after one.
+  function waitTwoFrames(): void {
+    cy.window().then(
+      (win) =>
+        new Promise<void>((resolve) =>
+          win.requestAnimationFrame(() => win.requestAnimationFrame(() => resolve())),
+        ),
+    );
+  }
+
+  /** Activates the button where it is: Cypress scrolling it into view first would move the page, and on
+   *  a phone slide the bars away. */
+  function activate(): void {
+    cy.getBySel('back-to-top').click({ scrollBehavior: false });
+  }
+
+  for (const { name, width, height } of SIZES) {
+    describe(`on ${name}`, () => {
+      it('stays hidden, and out of the Tab order, until the page is two screens down', () => {
+        open('/lines', width, height);
+        cy.getBySel('back-to-top').should('not.be.visible').and('have.attr', 'hidden');
+
+        cy.scrollTo(0, height * 2 - 100, { ensureScrollable: false });
+        waitTwoFrames();
+        cy.getBySel('back-to-top').should('not.be.visible');
+        // Hidden is display: none, which can't take focus, by Tab or otherwise.
+        cy.getBySel('back-to-top').then(($button) => {
+          $button[0].focus();
+          expect($button[0].ownerDocument.activeElement).not.to.equal($button[0]);
+        });
+
+        cy.scrollTo(0, height * 2 + 200, { ensureScrollable: false });
+        cy.getBySel('back-to-top').should('be.visible');
+        // 44×44, in the bottom-right corner of the screen.
+        cy.getBySel('back-to-top').should(($button) => {
+          const box = $button[0].getBoundingClientRect();
+          expect(box.width, 'width').to.be.at.least(44);
+          expect(box.height, 'height').to.be.at.least(44);
+          expect(box.right, 'right edge').to.be.within(width - 40, width);
+          expect(box.bottom, 'bottom edge').to.be.within(height - 40, height);
+        });
+
+        cy.scrollTo(0, 0, { ensureScrollable: false });
+        cy.getBySel('back-to-top').should('not.be.visible');
+      });
+
+      it('takes the page back to the top, with focus on main and the address unchanged', () => {
+        open('/lines?view=az', width, height);
+        cy.scrollTo(0, height * 3, { ensureScrollable: false });
+        cy.getBySel('back-to-top').should('be.visible');
+
+        activate();
+        cy.get('@scrollTo').should('have.been.calledWithMatch', { top: 0, behavior: 'smooth' });
+        cy.window().its('scrollY').should('equal', 0);
+        cy.focused().should('have.attr', 'data-cy', 'main-content');
+        cy.location('pathname').should('equal', '/lines');
+        cy.location('search').should('equal', '?view=az');
+        cy.location('hash').should('equal', '');
+        cy.getBySel('view-az').should('have.attr', 'aria-pressed', 'true');
+        cy.getBySel('back-to-top').should('not.be.visible');
+        // On a phone the bars slid away on the way down; at the top they're back.
+        cy.document().should((doc) =>
+          expect(doc.documentElement.classList.contains('bars-hidden'), 'bars hidden').to.equal(
+            false,
+          ),
+        );
+      });
+
+      // The last card's pin button starts at the very bottom of the screen, where the button would cover
+      // it (on a phone, exactly behind it). Tabbing to it has to bring it up clear of the button (WCAG
+      // 2.4.11); one more Tab reaches the button itself.
+      it('keeps a focused control clear of it, and comes next in the Tab order after the last card', () => {
+        open('/lines', width, height);
+        cy.getBySel('pin-line')
+          .last()
+          .then(($pin) => {
+            const win = $pin[0].ownerDocument.defaultView!;
+            const top = win.scrollY + $pin[0].getBoundingClientRect().bottom - (height - 8);
+            win.scrollTo({ top, behavior: 'instant' });
+            // The card's link, just before its pin button in the Tab order.
+            $pin[0].parentElement!.querySelector('a')!.focus({ preventScroll: true });
+          });
+        cy.getBySel('back-to-top').should('be.visible');
+
+        cy.press(Cypress.Keyboard.Keys.TAB);
+        cy.focused().should('have.attr', 'data-cy', 'pin-line');
+        cy.getBySel('back-to-top').then(($button) => {
+          cy.focused().should(($pin) =>
+            expect($pin[0].getBoundingClientRect().bottom, 'pin button bottom').to.be.at.most(
+              $button[0].getBoundingClientRect().top,
+            ),
+          );
+        });
+
+        cy.press(Cypress.Keyboard.Keys.TAB);
+        cy.focused().should('have.attr', 'data-cy', 'back-to-top');
+      });
+
+      // A gap, not just no overlap: a footer that wraps a line differently (a longer build stamp) mustn't
+      // put a control under it.
+      it('leaves the controls at the end of the page clear of it', () => {
+        const GAP = 8;
+        open('/lines', width, height);
+        cy.scrollTo('bottom', { ensureScrollable: false });
+        cy.getBySel('back-to-top').should('be.visible');
+        cy.getBySel('back-to-top').then(($button) => {
+          const button = $button[0].getBoundingClientRect();
+          for (const control of ['feedback-card-idea', 'footer-report', 'footer-idea']) {
+            cy.getBySel(control).should(($control) => {
+              const box = $control[0].getBoundingClientRect();
+              const tooClose =
+                box.left < button.right + GAP &&
+                box.right > button.left - GAP &&
+                box.top < button.bottom + GAP &&
+                box.bottom > button.top - GAP;
+              expect(tooClose, `${control} within ${GAP}px of the button`).to.equal(false);
+            });
+          }
+        });
+      });
+    });
+  }
+
+  it('jumps straight to the top for people who ask for reduced motion', () => {
+    open('/lines', 1280, 800, true);
+    cy.scrollTo(0, 2400, { ensureScrollable: false });
+    cy.getBySel('back-to-top').should('be.visible');
+
+    activate();
+    cy.get('@scrollTo').should('have.been.calledWithMatch', { top: 0, behavior: 'instant' });
+    cy.window().its('scrollY').should('equal', 0);
+    cy.focused().should('have.attr', 'data-cy', 'main-content');
+  });
+});
