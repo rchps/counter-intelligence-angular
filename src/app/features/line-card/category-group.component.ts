@@ -20,7 +20,8 @@ import { LineCardItemComponent } from './line-card-item.component';
     >
       @if (heading(); as heading) {
         <div class="group-head" [attr.data-cat]="catKey()">
-          <h2 [id]="'h-' + anchorId()">{{ heading }}</h2>
+          <!-- tabindex -1: focusable from script, for the A-Z jump bar, but not a stop on the Tab key. -->
+          <h2 [id]="'h-' + anchorId()" tabindex="-1">{{ heading }}</h2>
           <span class="count">{{ countLabel() }}</span>
         </div>
       }
