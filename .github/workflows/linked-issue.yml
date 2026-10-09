@@ -1,0 +1,64 @@
+# Every pull request has to close an issue, so each piece of work shows up on the project board with
+# its PR linked (the issue's sidebar, under Development). Write "Closes #123" (or Fixes / Resolves) in
+# the PR description. Dependabot's PRs are exempt, and so is a PR labelled no-issue, for the rare change
+# that isn't worth an issue of its own. Branch protection on main lists this as a required check.
+#
+# Linking the PR from the issue's sidebar counts too, but GitHub sends no event for it, so the check
+# only notices on the next edit or push, or when the run is re-run.
+name: Linked issue
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize, labeled, unlabeled, ready_for_review]
+
+permissions:
+  pull-requests: read
+  issues: read
+
+# Editing the description several times in a row only needs the last check.
+concurrency:
+  group: linked-issue-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  linked-issue:
+    name: Linked issue
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    # A skipped job reports success, so Dependabot's PRs still pass the required check.
+    if: github.event.pull_request.user.login != 'dependabot[bot]'
+    steps:
+      - name: Check the PR closes an issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          # Passed through the environment, never pasted into the script, so a description can't run code.
+          BODY: ${{ github.event.pull_request.body }}
+          EXEMPT: ${{ contains(github.event.pull_request.labels.*.name, 'no-issue') }}
+        run: |
+          if [ "$EXEMPT" = "true" ]; then
+            echo "::notice::Labelled no-issue, so no linked issue is needed."
+            exit 0
+          fi
+
+          # GitHub's closing keywords in the description: "Closes #12", "fixes: #12", "Resolves owner/repo#12".
+          if printf '%s' "$BODY" | grep -Eiq '\b(close[sd]?|fix(e[sd])?|resolve[sd]?):?[[:space:]]+([[:alnum:]_.-]+/[[:alnum:]_.-]+)?#[0-9]+'; then
+            echo "The description closes an issue."
+            exit 0
+          fi
+
+          # An issue linked from its sidebar, which the description doesn't mention.
+          count=$(gh api graphql -F owner="${REPO%/*}" -F name="${REPO#*/}" -F pr="$PR" -f query='
+            query($owner: String!, $name: String!, $pr: Int!) {
+              repository(owner: $owner, name: $name) {
+                pullRequest(number: $pr) { closingIssuesReferences(first: 1) { totalCount } }
+              }
+            }' --jq '.data.repository.pullRequest.closingIssuesReferences.totalCount')
+          if [ "$count" -gt 0 ]; then
+            echo "An issue is linked from its sidebar."
+            exit 0
+          fi
+
+          echo "::error::This PR doesn't close an issue. Add \"Closes #<issue>\" to the description, or label it no-issue."
+          exit 1
