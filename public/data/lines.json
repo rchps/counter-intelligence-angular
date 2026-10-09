@@ -439,7 +439,8 @@
       "aka": [
         "bosch",
         "b series",
-        "g series"
+        "g series",
+        "keenfinity"
       ],
       "logo": "bosch-security.jpg"
     },
@@ -650,7 +651,8 @@
         "wire"
       ],
       "aka": [
-        "comtran"
+        "comtran",
+        "marmon"
       ],
       "logo": "comtran-cable.png"
     },
@@ -1603,7 +1605,9 @@
         "lsd",
         "labor saving devices",
         "fish tape",
-        "wet noodle"
+        "wet noodle",
+        "lsdi",
+        "george risk"
       ],
       "logo": "lsd-labor-saving-devices.jpg"
     },
@@ -1885,7 +1889,7 @@
       "aka": [
         "omni mount",
         "mounts",
-        "legrand"
+        "ergotron"
       ],
       "logo": "omnimount.png"
     },
@@ -1969,7 +1973,8 @@
       ],
       "aka": [
         "ez-rj45",
-        "crimper"
+        "crimper",
+        "nsi industries"
       ],
       "logo": "platinum-tools.png"
     },
