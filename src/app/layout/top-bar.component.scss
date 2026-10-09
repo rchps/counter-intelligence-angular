@@ -5,7 +5,9 @@
   position: sticky;
   top: 0;
   z-index: 30;
-  height: var(--bar-h);
+  // Its own height, not var(--bar-h): that's published from this one (top-bar.component.ts), so reading
+  // it back would keep a stale height after the screen widens.
+  height: 60px;
   background: color-mix(in srgb, var(--bg) 78%, transparent);
   backdrop-filter: saturate(1.6) blur(14px);
   -webkit-backdrop-filter: saturate(1.6) blur(14px);
