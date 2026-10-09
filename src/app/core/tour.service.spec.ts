@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
@@ -132,6 +133,18 @@ describe('TourService', () => {
     await tour.start();
     expect(router.url).toBe('/lines');
     expect(tour.active()).toBe(true);
+    tour.end();
+    await vi.waitFor(() => expect(router.url).toBe('/tools'));
+  });
+
+  it('goes back to the address bar\u2019s page, even mid-navigation', async () => {
+    // A deep link that the router hasn't finished opening yet: router.url is still "/".
+    TestBed.inject(Location).go('/tools');
+    const router = TestBed.inject(Router);
+    const tour = TestBed.inject(TourService);
+    tour.registerPage(fakeLineCard(BROWSING));
+    await tour.start();
+    expect(router.url).toBe('/lines');
     tour.end();
     await vi.waitFor(() => expect(router.url).toBe('/tools'));
   });

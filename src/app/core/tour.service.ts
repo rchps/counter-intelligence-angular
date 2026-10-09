@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { computed, inject, Service, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { STORAGE_KEYS } from './storage-keys';
@@ -34,6 +35,7 @@ interface Started {
 export class TourService {
   private readonly storage = inject(StorageService);
   private readonly router = inject(Router);
+  private readonly location = inject(Location);
 
   readonly steps = TOUR_STEPS;
 
@@ -72,8 +74,11 @@ export class TourService {
   async start(opener: EventTarget | null = null): Promise<void> {
     if (this.active()) return;
     this.markOffered();
-    const onLineCard = this.router.url.split(/[?#]/)[0] === TOUR_PATH;
-    const returnUrl = onLineCard ? null : this.router.url;
+    // The address bar, not router.url: until the app's first navigation finishes, router.url is still
+    // "/", and a tour started then from a deep link (/tools/poe) would go back to the wrong page.
+    const here = this.location.path() || '/';
+    const onLineCard = here.split(/[?#]/)[0] === TOUR_PATH;
+    const returnUrl = onLineCard ? null : here;
     if (!onLineCard) await this.router.navigateByUrl(TOUR_PATH);
     // The page registers itself as it's created, which a fresh navigation does within a frame or two.
     const page = await this.waitForPage();
