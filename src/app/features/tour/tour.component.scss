@@ -90,9 +90,11 @@
   line-height: 1.5;
 }
 
+// Right-aligned, so a lone tip's Done (no Skip beside it) sits where Next always does.
 .actions {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 8px;
 }
 // On phones .dlg-primary grows to fill the row (styles.scss). These keep their own width and stay on one

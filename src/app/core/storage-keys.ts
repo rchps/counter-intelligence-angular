@@ -7,6 +7,9 @@ export const STORAGE_KEYS = {
   recentLines: 'counter-intelligence:recent-lines:v1',
   /** Set once this browser has started or turned down the guided tour, so the invite shows once. */
   tourSeen: 'counter-intelligence:tour-seen',
+  /** The ids of the tour steps and tips this browser has seen (a JSON list), so each tip shows once and
+   *  a tour step added later shows as new. */
+  tourStepsSeen: 'counter-intelligence:tour-steps-seen:v1',
 } as const;
 
 // The names the same keys had before the rename. A browser keeps what it saved under the old name

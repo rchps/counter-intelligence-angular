@@ -36,9 +36,11 @@
       }
     </div>
     <div class="actions">
-      <button type="button" class="skip-tour" data-cy="tour-skip" (click)="tour.end()">
-        Skip tour
-      </button>
+      @if (skippable()) {
+        <button type="button" class="skip-tour" data-cy="tour-skip" (click)="tour.end()">
+          {{ skipText() }}
+        </button>
+      }
       @if (!isFirst()) {
         <button type="button" class="back" data-cy="tour-back" (click)="tour.back()">Back</button>
       }

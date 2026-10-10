@@ -4,6 +4,7 @@
     type="button"
     class="tk-toggle"
     data-cy="tool-menu-toggle"
+    data-tour="tools-menu"
     aria-controls="tool-menu"
     [attr.aria-expanded]="open()"
     (click)="open.set(!open())"
@@ -28,19 +29,21 @@
   </button>
   <div id="tool-menu" class="tk-list" data-cy="tool-menu" [class.open]="open()">
     @for (group of groups; track group.group) {
-      <p class="tk-group">{{ group.group }}</p>
-      @for (item of group.items; track item.id) {
-        <a
-          [routerLink]="['/tools', item.id]"
-          [attr.data-cy]="'tool-link-' + item.id"
-          routerLinkActive="current"
-          ariaCurrentWhenActive="page"
-          (click)="close()"
-        >
-          <span class="tk-dot" [attr.data-dot]="item.id"></span>
-          {{ item.label }}
-        </a>
-      }
+      <div class="tk-section" [attr.data-tour]="group.tourTarget">
+        <p class="tk-group">{{ group.group }}</p>
+        @for (item of group.items; track item.id) {
+          <a
+            [routerLink]="['/tools', item.id]"
+            [attr.data-cy]="'tool-link-' + item.id"
+            routerLinkActive="current"
+            ariaCurrentWhenActive="page"
+            (click)="close()"
+          >
+            <span class="tk-dot" [attr.data-dot]="item.id"></span>
+            {{ item.label }}
+          </a>
+        }
+      </div>
     }
   </div>
 </nav>

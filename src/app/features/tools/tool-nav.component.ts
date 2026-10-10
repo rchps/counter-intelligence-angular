@@ -5,6 +5,8 @@ import { TOOL_NAV, type ToolId, type ToolNavItem } from './tool-nav';
 interface ToolNavGroup {
   group: string;
   items: ToolNavItem[];
+  /** The group's data-tour hook ("tools-sizing"), for the Tools tips (core/tour.ts). */
+  tourTarget: string;
 }
 
 // The list of tools, grouped (Quoting / Sizing / Tracking). On a wide screen it's a sidebar. Where
@@ -37,6 +39,7 @@ export class ToolNavComponent {
   protected readonly groups: ToolNavGroup[] = ['Quoting', 'Sizing', 'Tracking'].map((group) => ({
     group,
     items: TOOL_NAV.filter((item) => item.group === group),
+    tourTarget: `tools-${group.toLowerCase()}`,
   }));
 
   protected close(): void {

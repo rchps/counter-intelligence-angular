@@ -2,6 +2,8 @@
 // for where the card goes are covered by src/app/core/tour.spec.ts; these check the invite, moving
 // through the steps on the real page, putting the page back, keyboard use, and the phone layout.
 
+import { expectSpotAround } from '../support/tour';
+
 const STEP_TARGETS = ['search', 'ai', 'alternatives', 'pin', 'feedback'];
 
 function visitLineCard(path = '/lines'): void {
@@ -13,22 +15,6 @@ function visitLineCard(path = '/lines'): void {
 function expectStep(number: number): void {
   cy.getBySel('tour-count').should('have.text', `Step ${number} of ${STEP_TARGETS.length}`);
   cy.getBySel('tour-card').should('have.class', 'ready');
-}
-
-/** The ring is drawn around the step's element: the first one showing sits inside it. (Its data-tour
- *  attribute is the tour's own hook, so it's read from the page rather than with a cy.get selector.) */
-function expectSpotAround(target: string): void {
-  cy.getBySel('tour-spot').should(($spot) => {
-    const spot = $spot[0].getBoundingClientRect();
-    const candidates = $spot[0].ownerDocument.querySelectorAll(`[data-tour="${target}"]`);
-    const element = [...candidates].find((el) => el.getBoundingClientRect().width > 0);
-    expect(element, `a showing [data-tour="${target}"]`).not.to.equal(undefined);
-    const box = element!.getBoundingClientRect();
-    expect(box.top, 'top').to.be.at.least(spot.top);
-    expect(box.left, 'left').to.be.at.least(spot.left);
-    expect(box.bottom, 'bottom').to.be.at.most(spot.bottom);
-    expect(box.right, 'right').to.be.at.most(spot.right);
-  });
 }
 
 describe('Guided tour', () => {

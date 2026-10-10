@@ -102,7 +102,9 @@ lists that state's branches.
 - **Smooth, not flashy.** Pages cross-fade, and cards glide to their new places when a filter changes.
 - **A guided tour.** First-time visitors get a quiet offer of a 30-second tour through the parts
   that are easy to miss: product-type search, "Use in an AI chat", "Not a line we carry", pins and
-  feedback. Anyone can replay it from the footer.
+  feedback. Anyone can replay it from the footer. Tools shows a few one-time tips the first time it
+  opens (including that the sales tracker saves only on that computer), touch screens get one about
+  swiping between sections, and a step added to the tour later shows once, on its own, as new.
 - **Feedback from any page.** A "report a problem or suggest an idea" dialog files a GitHub issue,
   without the rep's name, that already names the page, the search, and the exact build.
 
