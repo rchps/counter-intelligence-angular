@@ -156,10 +156,10 @@ describe('Sizing tools', () => {
     cy.getBySel('poe-add').click();
     cy.getBySel('poe-device').should('have.length', 2);
     cy.focused().type('2');
+    // Known watts is a device's-max-draw choice, so that mode comes first.
+    cy.getBySel('poe-basis-device').check();
     cy.getBySel('poe-class').eq(1).select('watts');
     cy.getBySel('poe-watts').eq(1).type('10');
-    cy.getBySel('poe-total').should('have.text', '143.2 W');
-    cy.getBySel('poe-basis-device').check();
     cy.getBySel('poe-total').should('have.text', '124.0 W');
 
     // Removing one keeps focus on the list's Add button and renumbers what's left.
@@ -169,6 +169,165 @@ describe('Sizing tools', () => {
     cy.focused().should('have.attr', 'data-cy', 'poe-add');
     cy.getBySel('poe-remove').should('have.attr', 'aria-label', 'Remove device 1');
     cy.getBySel('poe-device').should('contain.text', 'Device 1');
+  });
+
+  describe('PoE budget inputs per mode (#54) and incomplete rows (#60)', () => {
+    beforeEach(() => cy.visit('/tools/poe'));
+
+    // The message box keeps its template whitespace, so compare the trimmed text.
+    function expectPoeMessage(text: string): void {
+      cy.getBySel('poe-message').should(($message) =>
+        expect($message.text().trim()).to.equal(text),
+      );
+    }
+
+    it('"What the switch reserves" offers classes only, with a read-only wattage', () => {
+      cy.getBySel('poe-class').find('option[value="watts"]').should('not.exist');
+      cy.getBySel('poe-watts').should('have.attr', 'readonly');
+      cy.getBySel('poe-watts').should('have.value', '15.4');
+    });
+
+    it('"Device\'s max draw" offers Known watts, which makes the wattage editable', () => {
+      cy.getBySel('poe-basis-device').check();
+      cy.getBySel('poe-watts').should('have.attr', 'readonly');
+      cy.getBySel('poe-class').select('watts');
+      cy.getBySel('poe-watts').should('not.have.attr', 'readonly');
+    });
+
+    it('switching back to reserves ignores a typed wattage, and keeps it for later', () => {
+      cy.getBySel('poe-basis-device').check();
+      fill('poe-quantity', '2');
+      cy.getBySel('poe-class').select('watts');
+      cy.getBySel('poe-watts').type('10');
+      cy.getBySel('poe-total').should('have.text', '20.0 W');
+
+      cy.getBySel('poe-basis-reserve').check();
+      cy.getBySel('poe-class').should('have.value', '3');
+      cy.getBySel('poe-total').should('have.text', '30.8 W');
+
+      cy.getBySel('poe-basis-device').check();
+      cy.getBySel('poe-class').should('have.value', 'watts');
+      cy.getBySel('poe-watts').should('have.value', '10');
+      cy.getBySel('poe-total').should('have.text', '20.0 W');
+    });
+
+    it('a Known watts row left without watts blocks the verdict and points at the blank input', () => {
+      fill('poe-budget', '30');
+      cy.getBySel('poe-quantity').type('1');
+      cy.getBySel('poe-basis-device').check();
+      cy.getBySel('poe-verdict').should('contain.text', 'Fits');
+
+      cy.getBySel('poe-add').click();
+      cy.focused().type('8');
+      cy.getBySel('poe-class').eq(1).select('watts');
+
+      cy.getBySel('poe-verdict').should('not.contain.text', 'Fits');
+      cy.getBySel('poe-verdict').should('not.contain.text', 'Over budget');
+      cy.getBySel('poe-total').should('have.text', '—');
+      expectPoeMessage('Device 2: enter the watts each, or pick a PoE class.');
+      cy.getBySel('poe-watts')
+        .eq(1)
+        .should('have.attr', 'aria-invalid', 'true')
+        .and('have.attr', 'aria-describedby', 'poe-msg');
+      cy.getBySel('poe-watts').eq(0).should('not.have.attr', 'aria-invalid');
+      cy.getBySel('poe-quantity').eq(1).should('not.have.attr', 'aria-invalid');
+
+      // Once the wattage is in, both rows count: 13 W + 8 x 2 W.
+      cy.getBySel('poe-watts').eq(1).type('2');
+      expectPoeMessage('');
+      cy.getBySel('poe-watts').eq(1).should('not.have.attr', 'aria-invalid');
+      cy.getBySel('poe-watts').eq(1).should('not.have.attr', 'aria-describedby');
+      cy.getBySel('poe-total').should('have.text', '29.0 W');
+      cy.getBySel('poe-ports').should('have.text', '9');
+      cy.getBySel('poe-verdict').should('contain.text', 'Fits');
+    });
+
+    it('marks only the entry the message names, then the next one once that is fixed', () => {
+      fill('poe-budget', '30');
+      cy.getBySel('poe-basis-device').check();
+      cy.getBySel('poe-quantity').type('1.5');
+      cy.getBySel('poe-add').click();
+      cy.focused().type('8');
+      cy.getBySel('poe-class').eq(1).select('watts');
+
+      expectPoeMessage('Device 1: use a whole number for the quantity.');
+      cy.getBySel('poe-quantity')
+        .eq(0)
+        .should('have.attr', 'aria-invalid', 'true')
+        .and('have.attr', 'aria-describedby', 'poe-msg');
+      cy.getBySel('poe-watts').eq(1).should('not.have.attr', 'aria-invalid');
+      cy.getBySel('poe-watts').eq(1).should('not.have.attr', 'aria-describedby');
+
+      cy.getBySel('poe-quantity').eq(0).clear();
+      cy.getBySel('poe-quantity').eq(0).type('1');
+      expectPoeMessage('Device 2: enter the watts each, or pick a PoE class.');
+      cy.getBySel('poe-quantity').eq(0).should('not.have.attr', 'aria-invalid');
+      cy.getBySel('poe-watts').eq(1).should('have.attr', 'aria-invalid', 'true');
+
+      // A bad budget is what the message is about then, so no device entry is marked.
+      cy.getBySel('poe-budget').clear();
+      cy.getBySel('poe-budget').type('abc');
+      expectPoeMessage('Use a positive number for the switch budget.');
+      cy.getBySel('poe-budget').should('have.attr', 'aria-invalid', 'true');
+      cy.getBySel('poe-watts').eq(1).should('not.have.attr', 'aria-invalid');
+    });
+
+    it('a wattage without a quantity points at the quantity', () => {
+      cy.getBySel('poe-basis-device').check();
+      cy.getBySel('poe-class').select('watts');
+      cy.getBySel('poe-watts').type('10');
+      expectPoeMessage('Device 1: enter how many there are.');
+      cy.getBySel('poe-quantity')
+        .should('have.attr', 'aria-invalid', 'true')
+        .and('have.attr', 'aria-describedby', 'poe-msg');
+    });
+
+    it('a typed 0 is an answer: 0 W still takes a port, and 0 devices needs no wattage', () => {
+      cy.getBySel('poe-basis-device').check();
+      fill('poe-budget', '30');
+      fill('poe-quantity', '3');
+      cy.getBySel('poe-class').select('watts');
+      cy.getBySel('poe-watts').type('0');
+      expectPoeMessage('');
+      cy.getBySel('poe-total').should('have.text', '0.0 W');
+      cy.getBySel('poe-ports').should('have.text', '3');
+
+      fill('poe-quantity', '0');
+      fill('poe-watts', '');
+      expectPoeMessage('');
+    });
+
+    it('a Known watts row left blank stops mattering once the switch reserves', () => {
+      cy.getBySel('poe-basis-device').check();
+      fill('poe-quantity', '2');
+      cy.getBySel('poe-class').select('watts');
+      cy.getBySel('poe-message').should(($message) =>
+        expect($message.text().trim()).to.not.equal(''),
+      );
+      cy.getBySel('poe-basis-reserve').check();
+      expectPoeMessage('');
+      cy.getBySel('poe-watts').should('not.have.attr', 'aria-describedby');
+      cy.getBySel('poe-total').should('have.text', '30.8 W');
+    });
+
+    for (const width of [390, 320]) {
+      it(`fits without wrapping or scrolling sideways at ${width}px, with an error showing`, () => {
+        cy.viewport(width, 844);
+        cy.getBySel('poe-basis-device').check();
+        fill('poe-quantity', '8');
+        cy.getBySel('poe-class').select('watts');
+        cy.getBySel('poe-message').should('be.visible');
+        cy.document().should((doc) =>
+          expect(doc.documentElement.scrollWidth).to.be.at.most(doc.documentElement.clientWidth),
+        );
+        // Each control stays inside the viewport and tall enough to tap.
+        cy.get('[data-cy=poe-class], [data-cy=poe-quantity], [data-cy=poe-watts]').each(($el) => {
+          const box = $el[0].getBoundingClientRect();
+          expect(box.right).to.be.at.most(width);
+          expect(box.height).to.be.at.least(44);
+        });
+      });
+    }
   });
 
   it('NVR storage: shows the Genetec example, drive counts, and the estimate range', () => {
