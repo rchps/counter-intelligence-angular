@@ -9,8 +9,9 @@
   - _Checks_: lint, format, unit, script and Worker tests, a Worker type-check, the API spec and its
     types, data validation, build.
   - _End-to-end tests_, with failure screenshots uploaded as an artifact.
-  - _Deploy_: `main` deploys to Cloudflare once checks and end-to-end tests pass; other branches get a
-    preview. GitHub lists both under Deployments, as the _production_ and _preview_ environments.
+  - _Deploy_: `main` deploys to Cloudflare once checks and end-to-end tests pass, as a new
+    [release](#releases); other branches get a preview. GitHub lists both under Deployments, as the
+    _production_ and _preview_ environments.
 - **GitHub Actions**, screenshots: each push to `main` records its screenshots as the next baseline
   (`screenshots-main.yml`), and each pull request gets the _Screenshot review_ check (see [Testing](testing.md#screenshot-review-on-pull-requests))
   (`screenshots.yml`).
@@ -23,13 +24,13 @@
 Each workflow starts with a _What changed_ job ([dorny/paths-filter](https://github.com/dorny/paths-filter))
 that skips the jobs a change can't affect:
 
-| Change                                                         | Checks | End-to-end | Screenshot review | Deploy (main) |
-| -------------------------------------------------------------- | ------ | ---------- | ----------------- | ------------- |
-| Docs and Markdown, editor and assistant settings               | —      | —          | —                 | —             |
-| The Worker, API spec, data scripts, unit tests, lint, format   | runs   | —          | —                 | runs          |
-| End-to-end specs                                               | runs   | runs       | —                 | runs          |
-| Screenshot specs                                               | runs   | —          | runs              | runs          |
-| The app, its data, dependencies, anything else                 | runs   | runs       | runs              | runs          |
+| Change                                                       | Checks | End-to-end | Screenshot review | Deploy (main) |
+| ------------------------------------------------------------ | ------ | ---------- | ----------------- | ------------- |
+| Docs and Markdown, editor and assistant settings             | —      | —          | —                 | —             |
+| The Worker, API spec, data scripts, unit tests, lint, format | runs   | —          | —                 | runs          |
+| End-to-end specs                                             | runs   | runs       | —                 | runs          |
+| Screenshot specs                                             | runs   | —          | runs              | runs          |
+| The app, its data, dependencies, anything else               | runs   | runs       | runs              | runs          |
 
 A job skipped this way reports success, so the required checks still pass. Skipping the whole workflow
 (`paths-ignore`) would leave them pending, and the PR couldn't merge. On a branch, the change is
@@ -37,6 +38,45 @@ everything the branch changes compared with `main`, not just the last push. The 
 _leave out_, so a new kind of file runs everything until it's added to them, and if _What changed_ fails,
 everything runs. Running CI by hand (_Run workflow_) also runs everything. Main's screenshots are still
 recorded on every push to `main`, since a PR branching from a commit without them has to take them itself.
+
+## Releases
+
+Every deploy of `main` is a release with a version (`v1.4.0`), shown in the footer and in every problem
+report. Everything about it lives in git and in the repo, and runs as one script with only git and Node
+(`scripts/release.mts`): no GitHub token, label or Release.
+
+**Adding a changeset.** A change people at the counter would notice adds a file to `.changeset/` in the
+same pull request: a bump size and one plain-language line ([.changeset/README.md](../.changeset/README.md)).
+CI warns, without failing, when a branch changes the app and adds none.
+
+```md
+---
+bump: minor
+---
+
+Tools shows a few tips the first time it opens.
+```
+
+**How a release is cut.** The deploy job, on a push to `main`:
+
+1. `npm run release -- plan`: the next version is the last release tag bumped by the biggest changeset
+   added since then (a patch if none), and the notes are their lines.
+2. The build gets that version as `APP_VERSION`, and deploys.
+3. Only once the deploy has worked, `npm run release -- tag` makes an annotated tag carrying the notes,
+   and CI pushes it. A failed deploy leaves no tag, and a re-run of a deploy already tagged makes none.
+
+`main` is protected, so CI never commits: the tags are the record. Now and then, run `npm run release`
+(try `-- --dry-run` first) on a branch. It adds a dated `CHANGELOG.md` section for each tag that isn't in
+it yet, sets `package.json`'s version to the newest, and deletes the changesets those releases used.
+Merge that like any other change; since it touches `package.json`, its own deploy is a small patch release.
+
+Builds that aren't a release show what `git describe` says: `v1.4.0-3-gc68fb5d` is three commits after
+v1.4.0, so a preview is never mistaken for production. Without tags or git, the footer leaves the version
+out. The build also writes the newest `CHANGELOG.md` sections to `public/whats-new.json`, for the app to
+show what's new without asking GitHub.
+
+**On another host**, the one host-specific step is the deploy job's: check out with full history and tags,
+run `plan` before the build and `tag` after the deploy, and push the tag. Everything else is the script.
 
 ## Feedback setup
 

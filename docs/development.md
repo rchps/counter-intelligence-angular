@@ -16,21 +16,23 @@ npm start          # http://localhost:4200
 
 ### Build-time settings
 
-`npm run build` reads two optional environment variables:
+`npm run build` reads three optional environment variables:
 
 | Variable             | What it does                                                                                                                      |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | `TURNSTILE_SITE_KEY` | The feedback dialog's bot check ([Feedback setup](ci-cd.md#feedback-setup)). Without it, the feedback button and card are hidden. |
 | `MAPS_NAME`          | Text put in front of a branch's address in its Google Maps search.                                                                |
+| `APP_VERSION`        | The version the footer shows. CI sets it for a release; otherwise it's `git describe --tags` ([Releases](ci-cd.md#releases)).     |
 
 ## Scripts
 
 | Script                                             | What it does                                                          |
 | -------------------------------------------------- | --------------------------------------------------------------------- |
 | `npm start`                                        | Dev server with live reload                                           |
-| `npm run build`                                    | Production build, stamped with the date and commit                    |
+| `npm run build`                                    | Production build, stamped with the version, date and commit           |
 | `npm test`                                         | Unit tests (Vitest) in watch mode; add `-- --watch=false` to run once |
-| `npm run test:scripts`                             | Tests for the data validator                                          |
+| `npm run test:scripts`                             | Tests for the data validator and the release script                   |
+| `npm run release`                                  | Bring `CHANGELOG.md` and the version up to date with the release tags |
 | `npm run test:worker` / `npm run typecheck:worker` | Tests / type-check for the feedback Worker                            |
 | `npm run api:types`                                | Generate the API's TypeScript types from `api/openapi.yaml`           |
 | `npm run api:check`                                | Lint the API spec and check its generated types are up to date        |

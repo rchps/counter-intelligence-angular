@@ -1,19 +1,28 @@
-// The build stamp ("2026-09-26 · c68fb5d"), so a feedback email or a screenshot of the footer can be
-// matched to the commit it came from. `npm run build` passes both values in with --define.
+// The build stamp ("v1.4.0 · 2026-09-26 · c68fb5d"), so a feedback email or a screenshot of the footer can
+// be matched to the release and commit it came from. `npm run build` passes all three in with --define:
+// the version is the release tag (`git describe`, or APP_VERSION when CI builds a release before tagging
+// it), so a build between releases reads like "v1.4.0-3-gc68fb5d" and is never mistaken for one.
 // `typeof` guards the builds that don't define the constants: reading an undefined identifier directly
 // would throw a ReferenceError instead of falling back.
 export interface BuildInfo {
   date: string;
   id: string;
+  /** Null without a release tag to describe (no tags yet, a shallow clone, or no git at all). */
+  version: string | null;
 }
 
 export const BUILD_INFO: BuildInfo | null =
   typeof BUILD_ID === 'string' && typeof BUILD_DATE === 'string'
-    ? { date: BUILD_DATE, id: BUILD_ID }
+    ? {
+        date: BUILD_DATE,
+        id: BUILD_ID,
+        version: typeof APP_VERSION === 'string' && APP_VERSION ? APP_VERSION : null,
+      }
     : null;
 
-export function buildStamp(): string {
-  return BUILD_INFO ? `${BUILD_INFO.date} · ${BUILD_INFO.id}` : 'unknown';
+export function buildStamp(info: BuildInfo | null = BUILD_INFO): string {
+  if (!info) return 'unknown';
+  return [info.version, info.date, info.id].filter(Boolean).join(' · ');
 }
 
 // The Turnstile widget's site key, for the feedback dialog's bot check. It's public (the browser needs it to

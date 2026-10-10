@@ -3,5 +3,6 @@
 // absent in any build that doesn't pass them (ng serve, tests) — read them via core/build-info.ts.
 declare const BUILD_ID: string;
 declare const BUILD_DATE: string;
+declare const APP_VERSION: string;
 declare const TURNSTILE_SITE_KEY: string;
 declare const MAPS_NAME: string;
