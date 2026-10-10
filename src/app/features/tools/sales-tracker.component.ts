@@ -11,9 +11,11 @@ import {
   localToday,
   mergeImportedMonths,
   parseMoney,
+  removeMonth,
   shortDate,
   summarize,
   toCsv,
+  updateMonthRecord,
   type DaySummary,
   type MonthRecord,
   type SalesStore,
@@ -34,6 +36,7 @@ const EMPTY_MONTH: MonthRecord = { goal: null, sales: {}, overrides: {} };
   imports: [SalesChartComponent],
   templateUrl: './sales-tracker.component.html',
   styleUrl: './sales-tracker.component.scss',
+  host: { '(window:storage)': 'onStorageChange($event)' },
 })
 export class SalesTrackerComponent {
   protected readonly inputValue = inputValue;
@@ -228,7 +231,7 @@ export class SalesTrackerComponent {
     const imported = fromCsv(await file.text());
     const monthCount = Object.keys(imported.months).length;
     input.value = ''; // so choosing the same file again still fires a change
-    this.saveStore(mergeImportedMonths(this.store(), imported));
+    this.saveStore((saved) => mergeImportedMonths(saved, imported));
     this.resetTextsForMonth(this.month());
     this.toolsMessage.set(
       monthCount
@@ -246,9 +249,8 @@ export class SalesTrackerComponent {
       return;
     }
     this.clearArmed.set(false);
-    const months = { ...this.store().months };
-    delete months[this.month()];
-    this.saveStore({ months });
+    const month = this.month();
+    this.saveStore((saved) => removeMonth(saved, month));
     this.resetTextsForMonth(this.month());
     this.toolsMessage.set('This month is cleared.');
   }
@@ -286,13 +288,22 @@ export class SalesTrackerComponent {
 
   private updateMonth(change: (data: MonthRecord) => MonthRecord): void {
     const month = this.month();
-    const current = this.store().months[month] ?? EMPTY_MONTH;
-    this.saveStore({ months: { ...this.store().months, [month]: change(current) } });
+    this.saveStore((saved) => updateMonthRecord(saved, month, change));
   }
 
-  private saveStore(next: SalesStore): void {
-    this.store.set(next);
-    const saved = this.salesStore.save(next);
+  // Another tab saved: show what it saved. (The browser fires this only in the other tabs.)
+  protected onStorageChange(event: StorageEvent): void {
+    if (!this.salesStore.isSalesChange(event)) return;
+    this.store.set(this.salesStore.load());
+    this.resetTextsForMonth(this.month());
+  }
+
+  // Applies the edit to what is saved right now, not to this tab's copy, so another tab's changes
+  // aren't written over. If both tabs edit the same entry, the later save wins and the other tab
+  // then updates through the storage event.
+  private saveStore(change: (saved: SalesStore) => SalesStore): void {
+    const { store, saved } = this.salesStore.update(this.store(), change);
+    this.store.set(store);
     this.savedIsWarning.set(!saved);
     if (!saved) {
       this.savedMessage.set(

@@ -292,3 +292,22 @@ export function mergeImportedMonths(saved: SalesStore, imported: SalesStore): Sa
   }
   return { months };
 }
+
+// The two edits below take the store as it is saved right now, not a tab's older copy of it, so each
+// changes only the one month it names and leaves every other month as it found it.
+
+// Applies `change` to one month's record (a new, empty record if the month isn't saved yet).
+export function updateMonthRecord(
+  saved: SalesStore,
+  month: string,
+  change: (data: MonthRecord) => MonthRecord,
+): SalesStore {
+  const current = saved.months[month] ?? { goal: null, sales: {}, overrides: {} };
+  return { months: { ...saved.months, [month]: change(current) } };
+}
+
+export function removeMonth(saved: SalesStore, month: string): SalesStore {
+  const months = { ...saved.months };
+  delete months[month];
+  return { months };
+}
