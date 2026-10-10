@@ -2,7 +2,7 @@ import { Location } from '@angular/common';
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { STORAGE_KEYS } from './storage-keys';
 import {
   TOUR_NOT_CARRIED_SEARCH,
@@ -33,6 +33,7 @@ const BROWSING: TourPageState = { search: 'altronix', filter: 'power', view: 'az
 
 describe('TourService', () => {
   beforeEach(() => {
+    vi.unstubAllGlobals();
     localStorage.clear();
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
@@ -43,6 +44,8 @@ describe('TourService', () => {
         ]),
       ],
     });
+    // The app's bootstrap does this: without it, the browser's Back and Forward never reach the router.
+    TestBed.inject(Router).setUpLocationChangeListener();
     // jsdom has no layout: run frames at once and make scrolling a no-op.
     vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => {
       callback(0);
@@ -50,8 +53,6 @@ describe('TourService', () => {
     });
     vi.stubGlobal('scrollTo', vi.fn());
   });
-
-  afterEach(() => vi.unstubAllGlobals());
 
   /** On the Line Card, with the fake page registered. */
   async function onLineCard(): Promise<{ tour: TourService; page: FakeLineCard }> {
@@ -147,6 +148,36 @@ describe('TourService', () => {
     expect(router.url).toBe('/lines');
     tour.end();
     await vi.waitFor(() => expect(router.url).toBe('/tools'));
+  });
+
+  it('leaves no Line Card behind in the history when it goes back', async () => {
+    const router = TestBed.inject(Router);
+    const location = TestBed.inject(Location);
+    await router.navigateByUrl('/tools');
+    const tour = TestBed.inject(TourService);
+    tour.registerPage(fakeLineCard(BROWSING));
+    await tour.start();
+    tour.end();
+    await vi.waitFor(() => expect(router.url).toBe('/tools'));
+    // Forward is the Line Card the tour visited: it went back off that entry, not on to a new one.
+    location.forward();
+    await vi.waitFor(() => expect(router.url).toBe('/lines'));
+  });
+
+  it('closes, putting nothing back, when the browser’s Back leaves the Line Card', async () => {
+    const router = TestBed.inject(Router);
+    await router.navigateByUrl('/tools');
+    const tour = TestBed.inject(TourService);
+    const page = fakeLineCard(BROWSING);
+    tour.registerPage(page);
+    await tour.start();
+    tour.next();
+    TestBed.inject(Location).back();
+    await vi.waitFor(() => expect(router.url).toBe('/tools'));
+    expect(tour.active()).toBe(false);
+    // The address bar already shows the next page: restoring the Line Card's search then would write
+    // it over that page's history entry.
+    expect(page.state.search).toBe(TOUR_SAMPLE_SEARCH);
   });
 
   it('forgets a page once it unregisters', async () => {

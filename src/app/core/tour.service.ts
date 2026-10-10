@@ -1,6 +1,8 @@
 import { Location } from '@angular/common';
 import { computed, inject, Service, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NavigationStart, Router } from '@angular/router';
+import { filter } from 'rxjs';
 import { STORAGE_KEYS } from './storage-keys';
 import { StorageService } from './storage.service';
 import { stepPageState, TOUR_STEPS, type TourPageState } from './tour';
@@ -21,8 +23,9 @@ interface Started {
   /** The Line Card's search, filter and view before the tour changed them. */
   pageState: TourPageState;
   scrollY: number;
-  /** Where the tour was started from, when that wasn't the Line Card. */
-  returnUrl: string | null;
+  /** Started from another page: the tour went to the Line Card as one new history entry, and steps
+   *  back off it at the end. */
+  cameFromElsewhere: boolean;
   /** What had focus (the button that started it), to hand focus back to. */
   opener: HTMLElement | null;
 }
@@ -57,6 +60,22 @@ export class TourService {
   /** The first-visit invite: until this browser has started or turned down the tour. */
   readonly inviteShown = computed(() => !this.offered() && !this.active());
 
+  constructor() {
+    // The browser's Back or Forward leaves the Line Card mid-tour. The tour closes rather than carrying
+    // on over the next page (whose search box would get the first step's ring). It leaves the page as
+    // it is: the address bar already shows the next page, and putting the Line Card's search back now
+    // would write it over that page's history entry.
+    this.router.events
+      .pipe(
+        filter(
+          (event): event is NavigationStart =>
+            event instanceof NavigationStart && event.navigationTrigger === 'popstate',
+        ),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => this.close());
+  }
+
   /** The Line Card registers itself while it's open. Returns the function that unregisters it. */
   registerPage(control: TourPageControl): () => void {
     this.page = control;
@@ -75,10 +94,11 @@ export class TourService {
     if (this.active()) return;
     this.markOffered();
     // The address bar, not router.url: until the app's first navigation finishes, router.url is still
-    // "/", and a tour started then from a deep link (/tools/poe) would go back to the wrong page.
+    // "/", and a tour started then from a deep link (/tools/poe) would think it's somewhere else.
     const here = this.location.path() || '/';
     const onLineCard = here.split(/[?#]/)[0] === TOUR_PATH;
-    const returnUrl = onLineCard ? null : here;
+    // A new history entry, not a replaced one: the browser's Back mid-tour then returns to the page
+    // the tour was started from, like leaving any other detour.
     if (!onLineCard) await this.router.navigateByUrl(TOUR_PATH);
     // The page registers itself as it's created, which a fresh navigation does within a frame or two.
     const page = await this.waitForPage();
@@ -86,7 +106,7 @@ export class TourService {
     this.started = {
       pageState: page.read(),
       scrollY: onLineCard ? scrollY : 0,
-      returnUrl,
+      cameFromElsewhere: !onLineCard,
       opener: onLineCard && opener instanceof HTMLElement ? opener : null,
     };
     this.goTo(0, 1);
@@ -116,14 +136,13 @@ export class TourService {
 
   /** Ends the tour from any step and puts the page back the way it was. */
   end(): void {
-    if (!this.active()) return;
-    this.stepIndex.set(null);
-    const started = this.started;
-    this.started = null;
+    const started = this.close();
     if (!started) return;
-    if (started.returnUrl) {
+    if (started.cameFromElsewhere) {
+      // Back off the Line Card's history entry, the way the browser's Back would, rather than
+      // navigating forward to the page again: that would leave the Line Card in the history behind it.
       // The app moves focus to the page on navigation, so there's nothing to hand back here.
-      void this.router.navigateByUrl(started.returnUrl);
+      this.location.back();
       return;
     }
     this.page?.show(started.pageState);
@@ -133,6 +152,16 @@ export class TourService {
       const opener = started.opener?.isConnected ? started.opener : null;
       (opener ?? document.getElementById('main-content'))?.focus({ preventScroll: true });
     });
+  }
+
+  /** Stops the tour where it is, without putting anything back. Returns how it was started, or null
+   *  if it wasn't running. */
+  private close(): Started | null {
+    if (!this.active()) return null;
+    this.stepIndex.set(null);
+    const started = this.started;
+    this.started = null;
+    return started;
   }
 
   private goTo(index: number, direction: TourDirection): void {

@@ -133,6 +133,32 @@ describe('Guided tour', () => {
     cy.location('pathname').should('eq', '/tools/poe');
   });
 
+  it('leaves the history as it was: Back after it goes to the page before', () => {
+    cy.visit('/branches');
+    cy.getBySel('nav-tools').click();
+    cy.location('pathname').should('match', /^\/tools/);
+    cy.location('pathname').then((toolsPath) => {
+      cy.getBySel('footer-tour').click();
+      expectStep(1);
+      cy.getBySel('tour-skip').click();
+      cy.location('pathname').should('eq', toolsPath);
+      cy.go('back');
+      cy.location('pathname').should('eq', '/branches');
+    });
+  });
+
+  it('closes when the browser’s Back leaves the page, instead of carrying on over the next one', () => {
+    cy.visit('/tools/poe');
+    cy.getBySel('footer-tour').click();
+    expectStep(1);
+    cy.getBySel('tour-next').click();
+    expectStep(2);
+    cy.go('back');
+    cy.location('pathname').should('eq', '/tools/poe');
+    cy.getBySel('tour').should('not.be.visible');
+    cy.get('[data-tour-active]').should('not.exist');
+  });
+
   it('docks to the bottom on a phone, clear of the element it points at', () => {
     cy.viewport(390, 844);
     visitLineCard();
