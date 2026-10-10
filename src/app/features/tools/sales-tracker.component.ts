@@ -7,6 +7,7 @@ import {
 } from '../../core/money';
 import { salesHero, salesKpis, salesMeter } from '../../core/sales-display';
 import {
+  EMPTY_MONTH,
   fromCsv,
   localToday,
   mergeImportedMonths,
@@ -26,7 +27,6 @@ import { SalesChartComponent } from './sales-chart.component';
 import { inputValue } from '../../shared/input-value';
 
 const pad = (n: number): string => String(n).padStart(2, '0');
-const EMPTY_MONTH: MonthRecord = { goal: null, sales: {}, overrides: {} };
 
 // The Sales Tracker. The math, wording and chart geometry are pure functions in core/ (sales-math,
 // sales-display, sales-chart); the chart draws itself (SalesChartComponent). This component owns the

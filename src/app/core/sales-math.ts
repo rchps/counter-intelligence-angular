@@ -214,6 +214,9 @@ export interface SalesStore {
   months: Record<string, MonthRecord>;
 }
 
+/** A month with nothing saved yet. Never mutate it: edits build a new record from it. */
+export const EMPTY_MONTH: MonthRecord = { goal: null, sales: {}, overrides: {} };
+
 // CSV: a "Month,Goal" block, a blank line, then "Date,Weekday,Selling day,Sales" rows (Excel-friendly).
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -302,7 +305,7 @@ export function updateMonthRecord(
   month: string,
   change: (data: MonthRecord) => MonthRecord,
 ): SalesStore {
-  const current = saved.months[month] ?? { goal: null, sales: {}, overrides: {} };
+  const current = saved.months[month] ?? EMPTY_MONTH;
   return { months: { ...saved.months, [month]: change(current) } };
 }
 
