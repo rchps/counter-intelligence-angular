@@ -14,6 +14,8 @@ on:
   workflow_dispatch:
 
 # A newer push to the same branch cancels the run it replaces, except on main, where every push deploys.
+# Even there, a run still waiting its turn is replaced by a newer one (GitHub keeps one pending run per
+# group), so "What changed" can't assume the run before this one was ever built: see below.
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
@@ -28,8 +30,11 @@ env:
 
 jobs:
   # Which jobs this push needs, from the files it changes. On main, that's the files changed since the
-  # previous push; on any other branch, everything it changes compared with main, so a docs-only push to a
-  # branch that also changes code still runs every test. A job skipped this way reports success, which is
+  # last revision that reached production, not since the previous push: a run waiting behind another can
+  # be replaced by a newer push, so a docs-only push compared with the previous one could hide the
+  # application change that run carried (#47). If that revision can't be found, everything runs. On any
+  # other branch, everything it changes compared with main, so a docs-only push to a branch that also
+  # changes code still runs every test. A job skipped this way reports success, which is
   # what lets a required check pass on a docs-only PR (skipping the whole workflow would leave it pending).
   # Each filter is "everything except...", so a new kind of file runs every test until it's listed here.
   changes:
@@ -38,14 +43,52 @@ jobs:
     if: github.event_name == 'push'
     runs-on: ubuntu-24.04
     timeout-minutes: 5
+    # deployments: read lists the production deployments; unlisted permissions would drop to none.
+    permissions:
+      contents: read
+      deployments: read
     outputs:
       code: ${{ steps.filter.outputs.code }}
       app: ${{ steps.filter.outputs.app }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          # On main the last deployed revision can be many pushes back, so fetch the history to diff from it.
+          # case(), not `&& 0 || 1`: 0 is falsy in expressions, so that form would always give 1.
+          fetch-depth: ${{ case(github.ref == 'refs/heads/main', 0, 1) }}
+      # The newest production deployment whose latest status is "success" is what's live. A failed or
+      # cancelled deploy never reaches that status, so the next push on main still compares with the last
+      # good deploy and picks the change up again. Empty when it can't be found (no deployment yet, an API
+      # error, or a revision no longer in the history), and the filter below is skipped: everything runs.
+      - name: Find the revision in production
+        id: deployed
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          sha=$(
+            gh api "repos/$GITHUB_REPOSITORY/deployments?environment=production&per_page=30" \
+              --jq 'sort_by(.created_at) | reverse | .[].id' |
+            while read -r id; do
+              state=$(gh api "repos/$GITHUB_REPOSITORY/deployments/$id/statuses" --jq 'sort_by(.created_at) | last | .state // empty')
+              if [ "$state" = success ]; then
+                gh api "repos/$GITHUB_REPOSITORY/deployments/$id" --jq .sha
+                break
+              fi
+            done
+          ) || sha=
+          if [ -n "$sha" ] && git cat-file -e "$sha^{commit}"; then
+            echo "Production is at $sha"
+            echo "sha=$sha" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::No deployed revision found, so every job will run."
+          fi
       - uses: dorny/paths-filter@v4
         id: filter
+        # On main, only with a deployed revision to compare against. Skipped, the outputs stay empty.
+        if: github.ref != 'refs/heads/main' || steps.deployed.outputs.sha != ''
         with:
+          base: ${{ steps.deployed.outputs.sha }}
           predicate-quantifier: some-with-excludes
           filters: |
             # Nothing a check, test, or build reads.
