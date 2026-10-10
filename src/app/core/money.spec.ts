@@ -14,4 +14,8 @@ describe('money formatting', () => {
     expect(formatSignedWholeDollars(500)).toBe('+$500');
     expect(formatSignedWholeDollars(-500)).toBe('−$500');
   });
+
+  it('formatSignedWholeDollars counts exactly $0 as plus, not minus', () => {
+    expect(formatSignedWholeDollars(0)).toBe('+$0');
+  });
 });
