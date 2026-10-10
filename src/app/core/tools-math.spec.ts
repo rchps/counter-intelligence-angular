@@ -263,3 +263,84 @@ describe('NVR dropdown type guards', () => {
     expect(T.isRaidType('constructor')).toBe(false);
   });
 });
+
+describe('readPoeRow', () => {
+  const classRow = { poeClass: 3, wattsText: '' };
+  const wattsRow = { poeClass: null, quantityText: '8' };
+
+  it('ignores a row nobody has filled in', () => {
+    expect(T.readPoeRow({ ...classRow, quantityText: '' })).toEqual({
+      device: null,
+      problem: null,
+    });
+    expect(T.readPoeRow({ ...wattsRow, quantityText: '', wattsText: '' })).toEqual({
+      device: null,
+      problem: null,
+    });
+  });
+
+  it('counts a class row once it has a quantity', () => {
+    expect(T.readPoeRow({ ...classRow, quantityText: '4' })).toEqual({
+      device: { quantity: 4, poeClass: 3 },
+      problem: null,
+    });
+  });
+
+  it('counts a known-watts row that has both quantity and watts', () => {
+    expect(T.readPoeRow({ ...wattsRow, wattsText: '12.5' })).toEqual({
+      device: { quantity: 8, watts: 12.5 },
+      problem: null,
+    });
+  });
+
+  it('blocks a known-watts row with a quantity but no watts', () => {
+    expect(T.readPoeRow({ ...wattsRow, wattsText: '' })).toEqual({
+      device: null,
+      problem: 'watts-missing',
+    });
+    expect(T.readPoeRow({ ...wattsRow, wattsText: '  ' }).problem).toBe('watts-missing');
+  });
+
+  it('blocks a known-watts row with watts but no quantity', () => {
+    expect(T.readPoeRow({ ...wattsRow, quantityText: '', wattsText: '10' }).problem).toBe(
+      'quantity-missing',
+    );
+  });
+
+  it('treats a typed 0 as an answer, not as blank', () => {
+    // 0 W is a real (if odd) device that still takes a port.
+    expect(T.readPoeRow({ ...wattsRow, wattsText: '0' })).toEqual({
+      device: { quantity: 8, watts: 0 },
+      problem: null,
+    });
+    // Zero devices needs no wattage and adds nothing.
+    expect(T.readPoeRow({ ...wattsRow, quantityText: '0', wattsText: '' })).toEqual({
+      device: null,
+      problem: null,
+    });
+  });
+
+  it('flags a quantity that is not a whole number or not a number', () => {
+    expect(T.readPoeRow({ ...classRow, quantityText: '2.5' }).problem).toBe('quantity-invalid');
+    expect(T.readPoeRow({ ...classRow, quantityText: 'x' }).problem).toBe('quantity-invalid');
+    expect(T.readPoeRow({ ...classRow, quantityText: '-1' }).problem).toBe('quantity-invalid');
+  });
+
+  it('flags bad watts only on a row that uses them', () => {
+    expect(T.readPoeRow({ ...wattsRow, wattsText: 'abc' }).problem).toBe('watts-invalid');
+    expect(T.readPoeRow({ ...classRow, quantityText: '2', wattsText: 'abc' }).problem).toBeNull();
+  });
+
+  it('does not need watts from a class row, however blank the watts are', () => {
+    expect(T.readPoeRow({ ...classRow, quantityText: '2' }).problem).toBeNull();
+  });
+});
+
+describe('poeRowMessage', () => {
+  it('names the device and what to enter', () => {
+    expect(T.poeRowMessage('watts-missing', 2)).toBe(
+      'Device 2: enter the watts each, or pick a PoE class.',
+    );
+    expect(T.poeRowMessage('quantity-missing', 1)).toContain('Device 1');
+  });
+});
