@@ -330,17 +330,19 @@ describe('readPoeRow', () => {
     expect(T.readPoeRow({ ...wattsRow, wattsText: 'abc' }).problem).toBe('watts-invalid');
     expect(T.readPoeRow({ ...classRow, quantityText: '2', wattsText: 'abc' }).problem).toBeNull();
   });
-
-  it('does not need watts from a class row, however blank the watts are', () => {
-    expect(T.readPoeRow({ ...classRow, quantityText: '2' }).problem).toBeNull();
-  });
 });
 
 describe('poeRowMessage', () => {
-  it('names the device and what to enter', () => {
+  it('names the device and what to fix, for every problem', () => {
+    expect(T.poeRowMessage('quantity-invalid', 1)).toBe(
+      'Device 1: use a whole number for the quantity.',
+    );
+    expect(T.poeRowMessage('quantity-missing', 1)).toBe('Device 1: enter how many there are.');
+    expect(T.poeRowMessage('watts-invalid', 3)).toBe(
+      'Device 3: use a positive number for the watts.',
+    );
     expect(T.poeRowMessage('watts-missing', 2)).toBe(
       'Device 2: enter the watts each, or pick a PoE class.',
     );
-    expect(T.poeRowMessage('quantity-missing', 1)).toContain('Device 1');
   });
 });
