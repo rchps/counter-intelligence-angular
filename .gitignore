@@ -41,6 +41,9 @@ testem.log
 /typings
 __screenshots__/
 
+# Claude Code agent worktrees (each is a full checkout of the repo)
+/.claude/worktrees/
+
 # System files
 .DS_Store
 Thumbs.db
