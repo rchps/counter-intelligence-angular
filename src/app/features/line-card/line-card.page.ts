@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, signal, viewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,6 +10,7 @@ import { searchStatusText, type CountNoun } from '../../core/feedback';
 import { FeedbackService } from '../../core/feedback.service';
 import { linesByName } from '../../core/saved-lines';
 import { SavedLinesService } from '../../core/saved-lines.service';
+import { TourService } from '../../core/tour.service';
 import { normalize, searchWordsOf } from '../../core/search/normalize';
 import { searchLines, type Line } from '../../core/search/match';
 import { isExactName, sortByBestMatch } from '../../core/search/rank';
@@ -26,6 +27,7 @@ import { AlternativesBoxComponent } from '../alternatives/alternatives-box.compo
 import { AzJumpBarComponent, azAnchorId } from './az-jump-bar.component';
 import { CategoryGroupComponent } from './category-group.component';
 import { EmptyStateComponent } from './empty-state.component';
+import { TourInviteComponent } from '../tour/tour-invite.component';
 import { RecentLinesComponent } from './recent-lines.component';
 
 type LineCardView = 'cat' | 'az';
@@ -56,6 +58,7 @@ interface CategoryLineGroup {
     EmptyStateComponent,
     RecentLinesComponent,
     BackToTopComponent,
+    TourInviteComponent,
     PublishHeightDirective,
   ],
   templateUrl: './line-card.page.html',
@@ -106,6 +109,17 @@ export class LineCardPage {
         },
       })),
     );
+
+    // The guided tour sets up a search for each of its steps, and puts back what was here when it ends.
+    const unregisterFromTour = inject(TourService).registerPage({
+      read: () => ({ search: this.search(), filter: this.filter(), view: this.view() }),
+      show: (state) => {
+        this.search.set(state.search);
+        this.filter.set(state.filter);
+        this.view.set(state.view);
+      },
+    });
+    inject(DestroyRef).onDestroy(unregisterFromTour);
 
     // Replaces the current history entry rather than pushing a new one on every keystroke or filter
     // click, so Back leaves the page instead of undoing one letter at a time. It rewrites the address

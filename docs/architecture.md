@@ -9,9 +9,9 @@ How the app is put together, and why.
 ```
 src/app/
   core/            Pure logic and singleton services: search, the tools' math, storage, theme,
-    search/        feedback, AI copy. Everything that can be a plain function is one.
+    search/        feedback, AI copy, the guided tour. Everything that can be a plain function is one.
   features/        One folder per page or feature: line-card, branches, tools, feedback,
-                   ai-copy, alternatives
+                   ai-copy, alternatives, tour
   layout/          The top bar, footer and feedback card around every page
   shared/          Components used by more than one page (search toolbar, filter chips, status line)
   app.routes.ts    One lazy-loaded route per section

@@ -20,7 +20,7 @@ let nextId = 0;
   selector: 'app-search-toolbar',
   styleUrl: './search-toolbar.component.scss',
   template: `
-    <div class="search" [class.has-value]="!!search()">
+    <div class="search" data-tour="search" [class.has-value]="!!search()">
       <svg
         viewBox="0 0 24 24"
         fill="none"

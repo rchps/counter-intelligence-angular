@@ -1,0 +1,56 @@
+<dialog
+  #dialog
+  class="tour"
+  data-cy="tour"
+  aria-labelledby="tour-title"
+  aria-describedby="tour-body"
+  (cancel)="onCancel($event)"
+  (close)="onClose()"
+>
+  @if (spot(); as box) {
+    <div
+      class="spot"
+      data-cy="tour-spot"
+      aria-hidden="true"
+      [class.ready]="ready()"
+      [style.top.px]="box.top"
+      [style.left.px]="box.left"
+      [style.width.px]="box.width"
+      [style.height.px]="box.height"
+    ></div>
+  }
+  <div
+    #card
+    class="card"
+    data-cy="tour-card"
+    [class.docked]="placement().docked"
+    [class.ready]="ready()"
+    [style.top.px]="cardTop()"
+    [style.left.px]="cardLeft()"
+  >
+    <div class="text" aria-live="polite" aria-atomic="true">
+      @if (tour.step(); as step) {
+        <p class="count" data-cy="tour-count">{{ countText() }}</p>
+        <h2 class="title" id="tour-title" data-cy="tour-title">{{ step.title }}</h2>
+        <p class="body" id="tour-body" data-cy="tour-body">{{ step.body }}</p>
+      }
+    </div>
+    <div class="actions">
+      <button type="button" class="skip-tour" data-cy="tour-skip" (click)="tour.end()">
+        Skip tour
+      </button>
+      @if (!isFirst()) {
+        <button type="button" class="back" data-cy="tour-back" (click)="tour.back()">Back</button>
+      }
+      <button
+        #nextButton
+        type="button"
+        class="dlg-primary next"
+        data-cy="tour-next"
+        (click)="tour.next()"
+      >
+        {{ isLast() ? 'Done' : 'Next' }}
+      </button>
+    </div>
+  </div>
+</dialog>

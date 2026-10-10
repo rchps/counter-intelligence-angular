@@ -58,6 +58,7 @@ import { matchReason, type Line } from '../../core/search/match';
       type="button"
       class="pin touch-target"
       data-cy="pin-line"
+      data-tour="pin"
       [attr.aria-label]="'Pin ' + line().name"
       [attr.aria-pressed]="pinned()"
       [title]="pinned() ? 'Unpin' : 'Pin to the top of the page'"

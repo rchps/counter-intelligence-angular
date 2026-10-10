@@ -23,36 +23,6 @@
   border-color: var(--brand);
   background: color-mix(in srgb, var(--brand) 14%, var(--surface));
 }
-// The first-visit hint: two concentric rings spread out from the button and fade, the second just behind
-// the first, twice. It starts a second after the list appears so it doesn't compete with the page
-// loading in. The rings are outlines drawn by ::before and ::after, so the button itself doesn't move.
-.ai-trigger.hint {
-  position: relative;
-}
-.ai-trigger.hint::before,
-.ai-trigger.hint::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border: 2px solid var(--brand);
-  border-radius: inherit;
-  opacity: 0;
-  pointer-events: none;
-  animation: ai-hint-ring 1.2s ease-out 1s 2;
-}
-.ai-trigger.hint::after {
-  animation-delay: 1.3s;
-}
-@keyframes ai-hint-ring {
-  from {
-    inset: -1px;
-    opacity: 0.8;
-  }
-  to {
-    inset: -16px;
-    opacity: 0;
-  }
-}
 .ai-trigger:focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 2px;

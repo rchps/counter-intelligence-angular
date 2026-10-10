@@ -100,6 +100,9 @@ lists that state's branches.
 - **Built for phones too.** The same pages, laid out for a narrow screen, with dialogs that become
   bottom sheets.
 - **Smooth, not flashy.** Pages cross-fade, and cards glide to their new places when a filter changes.
+- **A guided tour.** First-time visitors get a quiet offer of a 30-second tour through the parts
+  that are easy to miss: product-type search, "Use in an AI chat", "Not a line we carry", pins and
+  feedback. Anyone can replay it from the footer.
 - **Feedback from any page.** A "report a problem or suggest an idea" dialog files a GitHub issue,
   without the rep's name, that already names the page, the search, and the exact build.
 

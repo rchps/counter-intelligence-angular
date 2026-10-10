@@ -2,9 +2,10 @@ import { Component, computed, inject } from '@angular/core';
 import { BUILD_INFO, buildStamp } from '../core/build-info';
 import { DataService } from '../core/data.service';
 import { FeedbackService } from '../core/feedback.service';
+import { TourService } from '../core/tour.service';
 
 // The footer: the list's as-of date, the build stamp (so a screenshot or an emailed copy can be matched to its commit),
-// and the two feedback links.
+// the guided tour's replay link, and the two feedback links.
 @Component({
   selector: 'app-footer',
   styleUrl: './footer.component.scss',
@@ -21,6 +22,14 @@ import { FeedbackService } from '../core/feedback.service';
         @if (build) {
           <span data-cy="build-stamp">Build {{ build }}</span>
         }
+        <button
+          type="button"
+          class="footer-report"
+          data-cy="footer-tour"
+          (click)="tour.start($event.currentTarget)"
+        >
+          Take the tour
+        </button>
         @if (feedback.available()) {
           <button
             type="button"
@@ -46,6 +55,7 @@ import { FeedbackService } from '../core/feedback.service';
 export class FooterComponent {
   protected readonly data = inject(DataService);
   protected readonly feedback = inject(FeedbackService);
+  protected readonly tour = inject(TourService);
   protected readonly build = BUILD_INFO ? buildStamp() : null;
 
   protected readonly asOfText = computed(() => {
