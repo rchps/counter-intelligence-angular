@@ -169,6 +169,65 @@ export function poeBudget({ budgetWatts, basis, devices }: PoeBudgetInput): PoeB
   };
 }
 
+// What a person has typed into one device row. poeClass is null when the row is sized by a wattage
+// they enter (only possible when counting at the device's max draw), so the watts box is then required.
+export interface PoeRowText {
+  quantityText: string;
+  poeClass: number | null;
+  wattsText: string;
+}
+
+export type PoeRowProblem =
+  'quantity-invalid' | 'quantity-missing' | 'watts-invalid' | 'watts-missing';
+
+export interface PoeRowReading {
+  /** The device to add up, or null for a row that is empty, set to zero devices, or has a problem. */
+  device: PoeDevice | null;
+  problem: PoeRowProblem | null;
+}
+
+// A row nobody has touched is fine to ignore, but a row with something typed in must be complete: a
+// half-filled row dropped quietly would leave devices out of the total and still say "Fits". A typed
+// 0 is an answer (zero devices, or a 0 W device that still takes a port); a blank is not.
+export function readPoeRow({ quantityText, poeClass, wattsText }: PoeRowText): PoeRowReading {
+  const quantity = readPositiveNumber(quantityText);
+  const needsWatts = poeClass === null;
+  const watts = needsWatts ? readPositiveNumber(wattsText) : { value: NaN, bad: false };
+
+  if (quantity.bad || (isFinite(quantity.value) && !Number.isInteger(quantity.value))) {
+    return { device: null, problem: 'quantity-invalid' };
+  }
+  if (watts.bad) return { device: null, problem: 'watts-invalid' };
+
+  const quantityBlank = !isFinite(quantity.value);
+  const wattsBlank = needsWatts && !isFinite(watts.value);
+  if (quantityBlank) {
+    return { device: null, problem: needsWatts && !wattsBlank ? 'quantity-missing' : null };
+  }
+  if (quantity.value === 0) return { device: null, problem: null };
+  if (wattsBlank) return { device: null, problem: 'watts-missing' };
+  return {
+    device: needsWatts
+      ? { quantity: quantity.value, watts: watts.value }
+      : { quantity: quantity.value, poeClass },
+    problem: null,
+  };
+}
+
+// The sentence shown above the results for a row's problem; deviceNumber is the row's place in the list.
+export function poeRowMessage(problem: PoeRowProblem, deviceNumber: number): string {
+  switch (problem) {
+    case 'quantity-invalid':
+      return `Device ${deviceNumber}: use a whole number for the quantity.`;
+    case 'quantity-missing':
+      return `Device ${deviceNumber}: enter how many there are.`;
+    case 'watts-invalid':
+      return `Device ${deviceNumber}: use a positive number for the watts.`;
+    case 'watts-missing':
+      return `Device ${deviceNumber}: enter the watts each, or pick a PoE class.`;
+  }
+}
+
 // ---- NVR storage (formula: Genetec; decimal TB: Seagate; RAID: QNAP, Dell) ----
 const SECONDS_PER_DAY = 86400;
 
