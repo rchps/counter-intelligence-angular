@@ -8,23 +8,37 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { POE_CLASSES, poeBudget, readPositiveNumber, type PoeDevice } from '../../core/tools-math';
+import {
+  POE_CLASSES,
+  poeBudget,
+  poeRowMessage,
+  readPoeRow,
+  readPositiveNumber,
+  type PoeDevice,
+  type PoeRowProblem,
+  type PoeRowReading,
+} from '../../core/tools-math';
 import { ToolResultCardComponent } from './tool-result-card.component';
 import { inputValue } from '../../shared/input-value';
+
+const KNOWN_WATTS = 'watts';
 
 type PoeBasis = 'pse' | 'pd';
 
 interface PoeDeviceRow {
   id: number;
   quantityText: string;
-  /** A POE_CLASSES key as a string, or 'watts' for a manually-entered wattage. */
+  /** A POE_CLASSES key. Kept even while a known wattage is chosen, so switching modes loses nothing. */
   classChoice: string;
+  /** Size this row by the wattage typed in. Only honored when counting at the device's max draw. */
+  useKnownWatts: boolean;
   wattsText: string;
 }
 
 interface ParsedDevices {
   list: PoeDevice[];
-  bad: boolean;
+  /** The first row problem in list order, or null when every row is complete. */
+  firstProblem: { problem: PoeRowProblem; deviceNumber: number } | null;
 }
 
 // PoE budget sizing: whether a switch can power every device.
@@ -44,45 +58,59 @@ export class PoeBudgetToolComponent {
   protected readonly budgetText = signal('');
   protected readonly basis = signal<PoeBasis>('pse');
   protected readonly devices = signal<PoeDeviceRow[]>([
-    { id: 1, quantityText: '', classChoice: '3', wattsText: '' },
+    { id: 1, quantityText: '', classChoice: '3', useKnownWatts: false, wattsText: '' },
   ]);
   private nextId = 2;
 
-  private readonly budget = computed(() => readPositiveNumber(this.budgetText()));
+  protected readonly budget = computed(() => readPositiveNumber(this.budgetText()));
+
+  // Known watts only exists when counting at the device's max draw; when the switch reserves, the class
+  // alone sets the wattage.
+  protected usesKnownWatts(row: PoeDeviceRow): boolean {
+    return this.basis() === 'pd' && row.useKnownWatts;
+  }
+
+  private readonly readings = computed<PoeRowReading[]>(() =>
+    this.devices().map((row) =>
+      readPoeRow({
+        quantityText: row.quantityText,
+        poeClass: this.usesKnownWatts(row) ? null : Number(row.classChoice),
+        wattsText: row.wattsText,
+      }),
+    ),
+  );
 
   private readonly parsedDevices = computed<ParsedDevices>(() => {
-    let bad = this.budget().bad;
-    const list: PoeDevice[] = [];
-    for (const row of this.devices()) {
-      const quantity = readPositiveNumber(row.quantityText);
-      const wholeNumber = isFinite(quantity.value) && Number.isInteger(quantity.value);
-      const watts = readPositiveNumber(row.wattsText);
-      if (
-        quantity.bad ||
-        (isFinite(quantity.value) && !wholeNumber) ||
-        (row.classChoice === 'watts' && watts.bad)
-      ) {
-        bad = true;
-      }
-      if (!isFinite(quantity.value) || quantity.value === 0) continue;
-      if (row.classChoice === 'watts') {
-        if (isFinite(watts.value)) list.push({ quantity: quantity.value, watts: watts.value });
-      } else {
-        list.push({ quantity: quantity.value, poeClass: Number(row.classChoice) });
-      }
-    }
-    return { list, bad };
+    const readings = this.readings();
+    const list = readings.flatMap(({ device }) => (device ? [device] : []));
+    const index = readings.findIndex(({ problem }) => problem !== null);
+    const firstProblem =
+      index < 0 ? null : { problem: readings[index].problem!, deviceNumber: index + 1 };
+    return { list, firstProblem };
   });
 
-  protected readonly message = computed(() =>
-    this.parsedDevices().bad ? 'Use positive numbers only (whole numbers for quantity).' : '',
-  );
+  protected readonly message = computed(() => {
+    if (this.budget().bad) return 'Use a positive number for the switch budget.';
+    const { firstProblem } = this.parsedDevices();
+    return firstProblem ? poeRowMessage(firstProblem.problem, firstProblem.deviceNumber) : '';
+  });
+
+  // Which inputs the message is about, so they can be marked invalid and tied to it.
+  protected quantityInvalid(index: number): boolean {
+    const problem = this.readings()[index]?.problem;
+    return problem === 'quantity-invalid' || problem === 'quantity-missing';
+  }
+
+  protected wattsInvalid(index: number): boolean {
+    const problem = this.readings()[index]?.problem;
+    return problem === 'watts-invalid' || problem === 'watts-missing';
+  }
 
   protected readonly hasBudget = computed(() => isFinite(this.budget().value));
 
   protected readonly result = computed(() => {
-    const { list, bad } = this.parsedDevices();
-    if (bad || !list.length) return null;
+    const { list } = this.parsedDevices();
+    if (this.message() || !list.length) return null;
     return poeBudget({
       budgetWatts: this.hasBudget() ? this.budget().value : 0,
       basis: this.basis(),
@@ -117,7 +145,7 @@ export class PoeBudgetToolComponent {
     const id = this.nextId++;
     this.devices.update((rows) => [
       ...rows,
-      { id, quantityText: '', classChoice: '3', wattsText: '' },
+      { id, quantityText: '', classChoice: '3', useKnownWatts: false, wattsText: '' },
     ]);
     afterNextRender(
       () => this.host.nativeElement.querySelector<HTMLInputElement>(`#poe-qty-${id}`)?.focus(),
@@ -137,10 +165,22 @@ export class PoeBudgetToolComponent {
     );
   }
 
+  // The dropdown's "Known watts" entry is not a class: it turns the row's own wattage on, and leaves the
+  // class it had alone.
   protected setClassChoice(id: number, choice: string): void {
     this.devices.update((rows) =>
-      rows.map((row) => (row.id === id ? { ...row, classChoice: choice } : row)),
+      rows.map((row) =>
+        row.id !== id
+          ? row
+          : choice === KNOWN_WATTS
+            ? { ...row, useKnownWatts: true }
+            : { ...row, classChoice: choice, useKnownWatts: false },
+      ),
     );
+  }
+
+  protected selectedChoice(row: PoeDeviceRow): string {
+    return this.usesKnownWatts(row) ? KNOWN_WATTS : row.classChoice;
   }
 
   protected setWattsText(id: number, text: string): void {
@@ -151,11 +191,8 @@ export class PoeBudgetToolComponent {
 
   // With a class picked, the watts box just shows that class's number (read-only).
   protected wattsDisplay(row: PoeDeviceRow): string {
-    const known = row.classChoice === 'watts' ? undefined : POE_CLASSES[Number(row.classChoice)];
-    return known ? String(known[this.basis()]) : row.wattsText;
-  }
-
-  protected isWattsReadonly(row: PoeDeviceRow): boolean {
-    return row.classChoice !== 'watts';
+    return this.usesKnownWatts(row)
+      ? row.wattsText
+      : String(POE_CLASSES[Number(row.classChoice)][this.basis()]);
   }
 }
