@@ -39,6 +39,14 @@ describe('editDistance', () => {
     expect(editDistance('wheelcok', 'wheelock', 2)).toBe(1);
   });
 
+  // A swap is one edit only when the two letters actually traded places. Each pair shares one letter
+  // in a swap-like spot, but no swap happened, so it costs the usual two.
+  it('does not count letters as swapped unless both moved', () => {
+    expect(editDistance('ab', 'ca', 2)).toBe(2);
+    expect(editDistance('ab', 'bc', 2)).toBe(2);
+    expect(editDistance('ab', 'xy', 2)).toBe(2);
+  });
+
   it('returns maxEdits + 1 once the words are clearly too far apart', () => {
     expect(editDistance('zzqx', 'wheelock', 2)).toBe(3);
   });
