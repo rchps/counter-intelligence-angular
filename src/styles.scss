@@ -386,7 +386,14 @@ mark {
   color: var(--on-inv);
   opacity: 0.75;
 }
+// A chip with nothing to show steps back (grey text, dashed edge, faded dot) but stays readable: it's
+// still a button someone can press, so it needs WCAG's 4.5:1 text contrast, which fading the whole chip
+// to 45% fell well short of.
 .chip[data-empty='true']:not([aria-pressed='true']) {
+  color: var(--ink-2);
+  border-style: dashed;
+}
+.chip[data-empty='true']:not([aria-pressed='true'])::before {
   opacity: 0.45;
 }
 .chip[data-cat]::before {

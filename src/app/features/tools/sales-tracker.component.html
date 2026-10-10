@@ -202,15 +202,10 @@
               class="sl-toggle touch-target"
               [attr.data-cy]="'sales-toggle-' + day.date"
               [attr.aria-pressed]="day.selling"
-              [attr.aria-label]="
-                dayFullLabel(day.date) +
-                ': ' +
-                (day.selling ? 'selling day' : 'day off') +
-                '. Switch.'
-              "
+              [attr.aria-label]="toggleLabel(day)"
               (click)="toggleSellingDay(day)"
             >
-              {{ day.selling ? 'On' : 'Off' }}
+              {{ toggleText(day) }}
             </button>
           </div>
           <label class="sr-only" [for]="'sl-day-' + day.date"
