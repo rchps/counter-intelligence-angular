@@ -5,6 +5,7 @@ import { provideRouter, Router } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { STORAGE_KEYS } from './storage-keys';
 import {
+  TIP_STEPS,
   TOUR_NOT_CARRIED_SEARCH,
   TOUR_SAMPLE_SEARCH,
   TOUR_STEPS,
@@ -31,8 +32,14 @@ function fakeLineCard(initial: TourPageState): FakeLineCard {
 
 const BROWSING: TourPageState = { search: 'altronix', filter: 'power', view: 'az' };
 
+const TOOLS_TIP_IDS = TIP_STEPS.filter((step) => step.section === 'tools').map((step) => step.id);
+
 describe('TourService', () => {
+  /** Whether the stand-in screen is a touch screen (`pointer: coarse`). */
+  let touch: boolean;
+
   beforeEach(() => {
+    touch = false;
     vi.unstubAllGlobals();
     localStorage.clear();
     TestBed.resetTestingModule();
@@ -52,6 +59,9 @@ describe('TourService', () => {
       return 0;
     });
     vi.stubGlobal('scrollTo', vi.fn());
+    vi.stubGlobal('matchMedia', (query: string) => ({
+      matches: touch && query === '(pointer: coarse)',
+    }));
   });
 
   /** On the Line Card, with the fake page registered. */
@@ -165,6 +175,8 @@ describe('TourService', () => {
   });
 
   it('closes, putting nothing back, when the browser’s Back leaves the Line Card', async () => {
+    // Tools' tips showed when it first opened, before this test's service existed: none come back.
+    localStorage.setItem(STORAGE_KEYS.tourStepsSeen, JSON.stringify(TOOLS_TIP_IDS));
     const router = TestBed.inject(Router);
     await router.navigateByUrl('/tools');
     const tour = TestBed.inject(TourService);
@@ -178,6 +190,101 @@ describe('TourService', () => {
     // The address bar already shows the next page: restoring the Line Card's search then would write
     // it over that page's history entry.
     expect(page.state.search).toBe(TOUR_SAMPLE_SEARCH);
+  });
+
+  describe('tips', () => {
+    const ids = (tour: TourService): string[] => tour.steps().map((step) => step.id);
+
+    /** A browser that answered the invite and has seen `seen`. */
+    function returning(seen: readonly string[]): void {
+      localStorage.setItem(STORAGE_KEYS.tourSeen, '1');
+      localStorage.setItem(STORAGE_KEYS.tourStepsSeen, JSON.stringify(seen));
+    }
+
+    it('shows the Tools tips the first time Tools opens, and never again', async () => {
+      const tour = TestBed.inject(TourService);
+      const router = TestBed.inject(Router);
+      await router.navigateByUrl('/tools');
+      expect(tour.active()).toBe(true);
+      expect(tour.kind()).toBe('tips');
+      expect(ids(tour)).toEqual(TOOLS_TIP_IDS);
+      tour.end();
+
+      await router.navigateByUrl('/lines');
+      await router.navigateByUrl('/tools');
+      expect(tour.active()).toBe(false);
+
+      // A later visit in the same browser.
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [provideRouter([{ path: 'tools', component: EmptyPage }])],
+      });
+      const later = TestBed.inject(TourService);
+      await TestBed.inject(Router).navigateByUrl('/tools');
+      expect(later.active()).toBe(false);
+    });
+
+    it('adds the swipe tip on a touch screen only', async () => {
+      touch = true;
+      const tour = TestBed.inject(TourService);
+      await TestBed.inject(Router).navigateByUrl('/tools');
+      expect(ids(tour)).toEqual([...TOOLS_TIP_IDS, 'swipe']);
+    });
+
+    it('puts nothing over the first-visit invite, and waits for the next section that opens', async () => {
+      touch = true;
+      const { tour } = await onLineCard();
+      expect(tour.inviteShown()).toBe(true);
+      expect(tour.active()).toBe(false);
+
+      tour.dismissInvite();
+      // Not straight after "No thanks": the swipe tip waits for a section to open.
+      expect(tour.active()).toBe(false);
+      await TestBed.inject(Router).navigateByUrl('/tools');
+      expect(ids(tour)).toContain('swipe');
+    });
+
+    it('shows a tour step added since the browser last saw the tour, and only that one', async () => {
+      returning(TOUR_STEPS.map((step) => step.id).filter((id) => id !== 'alternatives'));
+      const tour = TestBed.inject(TourService);
+      const page = fakeLineCard(BROWSING);
+      tour.registerPage(page);
+      await TestBed.inject(Router).navigateByUrl('/lines');
+      await vi.waitFor(() => expect(tour.active()).toBe(true));
+      expect(tour.kind()).toBe('tips');
+      expect(ids(tour)).toEqual(['alternatives']);
+      expect(page.state.search).toBe(TOUR_NOT_CARRIED_SEARCH);
+      tour.next();
+      expect(tour.active()).toBe(false);
+      expect(page.state).toEqual(BROWSING);
+    });
+
+    it('treats the first tour’s steps as seen in a browser that answered its invite before ids were saved', async () => {
+      localStorage.setItem(STORAGE_KEYS.tourSeen, '1');
+      const tour = TestBed.inject(TourService);
+      tour.registerPage(fakeLineCard(BROWSING));
+      await TestBed.inject(Router).navigateByUrl('/lines');
+      await new Promise((resolve) => setTimeout(resolve));
+      expect(tour.active()).toBe(false);
+    });
+
+    it('counts the whole tour as seen once it’s offered', async () => {
+      TestBed.inject(TourService).dismissInvite();
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEYS.tourStepsSeen) ?? '[]');
+      expect(saved).toEqual(TOUR_STEPS.map((step) => step.id));
+    });
+
+    it('doesn’t set off tips on the way to the Line Card when the tour starts elsewhere', async () => {
+      touch = true;
+      const router = TestBed.inject(Router);
+      await router.navigateByUrl('/tools');
+      const tour = TestBed.inject(TourService);
+      tour.registerPage(fakeLineCard(BROWSING));
+      await tour.start();
+      expect(tour.kind()).toBe('tour');
+      expect(tour.steps()).toBe(TOUR_STEPS);
+      expect(tour.index()).toBe(0);
+    });
   });
 
   it('forgets a page once it unregisters', async () => {

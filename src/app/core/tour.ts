@@ -1,9 +1,12 @@
-// The guided tour (#130): its steps and the math for where its card goes, kept free of the DOM so both
-// can be unit tested. The service (tour.service.ts) runs it and the component (features/tour) draws it.
+// The guided tour (#130) and the one-time tips (#131): their steps, which of them a browser hasn't seen
+// yet, and the math for where the card goes, kept free of the DOM so all of it can be unit tested. The
+// service (tour.service.ts) runs them and the component (features/tour) draws them.
 //
 // The steps are framed around questions the counter gets, not a feature list, and only cover what a
 // first look doesn't explain (NN/g, "Onboarding Tutorials vs. Contextual Help": keep it short, show
 // only what people would otherwise miss, and let them skip it).
+
+import { SECTIONS } from '../sections';
 
 /** The Line Card's view, as the tour sets and restores it. */
 export type TourView = 'cat' | 'az';
@@ -15,14 +18,27 @@ export interface TourPageState {
   view: TourView;
 }
 
+/** Where a step runs: the key of the section (sections.ts) whose page has its element, or 'any' for an
+ *  element every section has (the top bar). */
+export type TourSection = 'lines' | 'tools' | 'any';
+
 export interface TourStep {
+  /** Saved once this browser has seen the step, which is how a step added later is told apart as new.
+   *  Never rename or reuse one: a browser that saw the old step would see it again, or miss the new. */
+  id: string;
+  section: TourSection;
   /** Matches the data-tour attribute of the element the step points at. */
   target: string;
+  /** Pointed at instead when the target isn't showing: on a narrow screen the tool list folds behind
+   *  its button. */
+  fallbackTarget?: string;
   title: string;
   body: string;
-  /** What to search for while this step shows. Empty: everything, unfiltered (pins and Recently opened
-   *  only show then). */
-  search: string;
+  /** Line Card steps: what to search for while this step shows. Empty: everything, unfiltered (pins and
+   *  Recently opened only show then). Steps elsewhere leave their page as it is. */
+  search?: string;
+  /** Only on a touch screen (`pointer: coarse`), for what only a finger can do. */
+  touchOnly?: boolean;
 }
 
 /** A product type that isn't a brand name, so the first step shows search doing more than matching names. */
@@ -32,6 +48,8 @@ export const TOUR_NOT_CARRIED_SEARCH = 'DMP';
 
 export const TOUR_STEPS: readonly TourStep[] = [
   {
+    id: 'search',
+    section: 'lines',
     target: 'search',
     title: 'Search the way customers ask',
     body:
@@ -40,6 +58,8 @@ export const TOUR_STEPS: readonly TourStep[] = [
     search: TOUR_SAMPLE_SEARCH,
   },
   {
+    id: 'ai',
+    section: 'lines',
     target: 'ai',
     title: 'Ask an AI about our lines only',
     body:
@@ -49,6 +69,8 @@ export const TOUR_STEPS: readonly TourStep[] = [
     search: TOUR_SAMPLE_SEARCH,
   },
   {
+    id: 'alternatives',
+    section: 'lines',
     target: 'alternatives',
     title: "A brand we don't carry?",
     body:
@@ -57,6 +79,8 @@ export const TOUR_STEPS: readonly TourStep[] = [
     search: TOUR_NOT_CARRIED_SEARCH,
   },
   {
+    id: 'pin',
+    section: 'lines',
     target: 'pin',
     title: 'Keep your regulars on top',
     body:
@@ -65,6 +89,8 @@ export const TOUR_STEPS: readonly TourStep[] = [
     search: '',
   },
   {
+    id: 'feedback',
+    section: 'lines',
     target: 'feedback',
     title: 'Something wrong or missing?',
     body:
@@ -74,10 +100,97 @@ export const TOUR_STEPS: readonly TourStep[] = [
   },
 ];
 
+// Tips: steps that show by themselves, once per browser, the first time their section opens (the tour
+// is only ever offered, on the Line Card). Each answers something people otherwise find out the hard
+// way.
+export const TIP_STEPS: readonly TourStep[] = [
+  {
+    id: 'tools-margin',
+    section: 'tools',
+    target: 'tools-quoting',
+    fallbackTarget: 'tools-menu',
+    title: 'Quoting? Start here',
+    body:
+      'The margin calculator: enter any two of cost, price and margin and it fills in the rest, ' +
+      'so every quote keeps the margin you meant.',
+  },
+  {
+    id: 'tools-sizing',
+    section: 'tools',
+    target: 'tools-sizing',
+    fallbackTarget: 'tools-menu',
+    title: 'Will it run?',
+    body:
+      'Will the battery make it, will the wire run work, can the switch power every camera, how ' +
+      'much drive for 30 days: the sizing tools answer these while the customer waits.',
+  },
+  {
+    id: 'tools-sales',
+    section: 'tools',
+    target: 'tools-tracking',
+    fallbackTarget: 'tools-menu',
+    title: 'Sales stay on this computer',
+    body:
+      'The sales tracker saves only in this browser, on this computer. Anyone using it can see ' +
+      'them, and clearing the browser erases them. Export CSV keeps a copy you can move.',
+  },
+  {
+    id: 'swipe',
+    section: 'any',
+    target: 'sections',
+    title: 'Swipe between sections',
+    body: 'Swipe sideways on the page to move to the next section or back, in the order shown up top.',
+    touchOnly: true,
+  },
+];
+
+/** The tour's steps as it first shipped (#130). A browser that took or turned down the tour then saved
+ *  only that it had, not which steps it saw: these are the ones it did. */
+export const FIRST_TOUR_STEP_IDS: readonly string[] = [
+  'search',
+  'ai',
+  'alternatives',
+  'pin',
+  'feedback',
+];
+
 /** The page state a step needs: its search, with no category filter and the usual view, so the element
  *  it points at is sure to be on the page. */
 export function stepPageState(step: TourStep): TourPageState {
-  return { search: step.search, filter: 'all', view: 'cat' };
+  return { search: step.search ?? '', filter: 'all', view: 'cat' };
+}
+
+/** The section (its key in sections.ts) a URL is in, or null for a page outside them. */
+export function sectionOf(url: string): string | null {
+  const path = '/' + (url.split(/[?#]/)[0].split('/')[1] ?? '');
+  return SECTIONS.find((section) => section.path === path)?.key ?? null;
+}
+
+/** The step ids this browser has seen, from what it saved (a JSON list) and whether it was offered the
+ *  tour before ids were saved. Anything unreadable counts as nothing seen. */
+export function parseSeenSteps(saved: string | null, offeredTour: boolean): Set<string> {
+  if (saved === null) return new Set(offeredTour ? FIRST_TOUR_STEP_IDS : []);
+  try {
+    const ids: unknown = JSON.parse(saved);
+    return new Set(Array.isArray(ids) ? ids.filter((id) => typeof id === 'string') : []);
+  } catch {
+    return new Set();
+  }
+}
+
+/**
+ * What to show when a section opens: its steps (tour steps on the Line Card are What's new), then those
+ * for any section, leaving out the ones already seen and, without a touch screen, the touch-only ones.
+ */
+export function unseenSteps(
+  steps: readonly TourStep[],
+  section: string,
+  seen: ReadonlySet<string>,
+  touch: boolean,
+): TourStep[] {
+  const here = steps.filter((step) => step.section === section);
+  const anywhere = steps.filter((step) => step.section === 'any');
+  return [...here, ...anywhere].filter((step) => !seen.has(step.id) && (touch || !step.touchOnly));
 }
 
 export interface Box {
@@ -147,7 +260,18 @@ export function scrollToReveal(
   return 0;
 }
 
-/** "Step 2 of 5". */
-export function stepCountText(index: number, total: number): string {
-  return `Step ${index + 1} of ${total}`;
+/** The full tour, started from its invite or the footer, or the steps a section shows on its own. */
+export type TourRunKind = 'tour' | 'tips';
+
+/** "Step 2 of 5" on the tour. On its own a tour step is new since the browser last saw the tour
+ *  ("New"), and anything else a tip ("Tip 1 of 3"); a single one gets no count. */
+export function stepCountText(
+  kind: TourRunKind,
+  step: TourStep,
+  index: number,
+  total: number,
+): string {
+  if (kind === 'tour') return `Step ${index + 1} of ${total}`;
+  const label = step.section === 'lines' ? 'New' : 'Tip';
+  return total === 1 ? label : `${label} · ${index + 1} of ${total}`;
 }

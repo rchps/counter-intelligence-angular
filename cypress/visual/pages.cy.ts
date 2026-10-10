@@ -1,7 +1,10 @@
 // How every page and state looks, in light and dark, on a desktop and a phone. Record with
 // `npm run visual:base`, then after a style change run `npm run visual`: reg-cli compares the two sets and
 // writes cypress/snapshots/report.html, with before, after, and diff for every page that changed.
+import { STORAGE_KEYS } from '../../src/app/core/storage-keys';
+import { TIP_STEPS, TOUR_STEPS } from '../../src/app/core/tour';
 import { fill } from '../support/actions';
+import { usePointer, type Pointer } from '../support/pointer';
 
 type Theme = 'light' | 'dark';
 const THEMES: Theme[] = ['light', 'dark'];
@@ -139,6 +142,30 @@ interface PageState {
   storage?: Record<string, string>;
   /** Opened as a first visit, with the guided tour's invite showing. */
   firstVisit?: boolean;
+  /** A touch screen instead of the usual mouse. */
+  pointer?: Pointer;
+}
+
+/** A tip, once it has finished setting up. */
+function tipShowing(count: string): void {
+  cy.getBySel('tour-count').should('have.text', count);
+  cy.getBySel('tour-card').should('have.class', 'ready');
+}
+
+/** Opens Tools as a browser that hasn't seen its tips, and moves on to the `number`th. */
+function toolsTip(number: number): PageState {
+  return {
+    path: '/tools/margin',
+    capture: 'viewport',
+    storage: { [STORAGE_KEYS.tourStepsSeen]: '[]' },
+    setUp: () => {
+      tipShowing('Tip · 1 of 3');
+      for (let tip = 2; tip <= number; tip++) {
+        cy.getBySel('tour-next').click();
+        tipShowing(`Tip · ${tip} of 3`);
+      }
+    },
+  };
 }
 
 const STATES: Record<string, PageState> = {
@@ -249,6 +276,30 @@ const STATES: Record<string, PageState> = {
       cy.getBySel('tour-card').should('have.class', 'ready');
     },
   },
+  'tip-tools-quoting': toolsTip(1),
+  'tip-tools-sizing': toolsTip(2),
+  'tip-tools-sales': toolsTip(3),
+  'tip-swipe': {
+    path: '/branches',
+    capture: 'viewport',
+    pointer: 'coarse',
+    storage: { [STORAGE_KEYS.tourStepsSeen]: '[]' },
+    setUp: () => tipShowing('Tip'),
+  },
+  /** A returning browser that hasn't seen one of the tour's steps (here, the pins). */
+  'tour-whats-new': {
+    path: '/lines',
+    capture: 'viewport',
+    storage: {
+      [STORAGE_KEYS.tourStepsSeen]: JSON.stringify(
+        [...TOUR_STEPS, ...TIP_STEPS].map((step) => step.id).filter((id) => id !== 'pin'),
+      ),
+    },
+    setUp: () => {
+      lineCardLoaded();
+      tipShowing('New');
+    },
+  },
   'feedback-problem': {
     path: '/lines',
     capture: 'viewport',
@@ -357,6 +408,8 @@ describe('How pages look', () => {
       for (const size of SIZES) {
         if (shard && shard !== `${theme}-${size.name}`) continue;
         it(`${name}, ${theme}, ${size.name}`, () => {
+          // Set every time: a touch screen would otherwise carry over into the tests after it.
+          usePointer(state.pointer ?? 'fine');
           if (state.path === '/tools/sales')
             openSalesTrackerOnSep10(theme, size.width, size.height);
           else open(state.path, theme, size.width, size.height, state.storage, state.firstVisit);

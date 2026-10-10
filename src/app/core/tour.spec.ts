@@ -1,14 +1,20 @@
 import { describe, expect, it } from 'vitest';
 import {
   CARD_GAP,
+  FIRST_TOUR_STEP_IDS,
+  parseSeenSteps,
   placeCard,
   SCREEN_GUTTER,
   scrollToReveal,
+  sectionOf,
   stepCountText,
   stepPageState,
+  TIP_STEPS,
   TOUR_NOT_CARRIED_SEARCH,
   TOUR_SAMPLE_SEARCH,
   TOUR_STEPS,
+  unseenSteps,
+  type TourStep,
 } from './tour';
 
 describe('TOUR_STEPS', () => {
@@ -41,7 +47,122 @@ describe('TOUR_STEPS', () => {
   });
 
   it('never uses an em dash (house style)', () => {
-    for (const step of TOUR_STEPS) expect(`${step.title} ${step.body}`).not.toContain('—');
+    for (const step of [...TOUR_STEPS, ...TIP_STEPS]) {
+      expect(`${step.title} ${step.body}`).not.toContain('—');
+    }
+  });
+
+  it('runs every step on the Line Card', () => {
+    for (const step of TOUR_STEPS) expect(step.section).toBe('lines');
+  });
+});
+
+describe('step ids', () => {
+  it('are unique across the tour and the tips, since a browser remembers them', () => {
+    const ids = [...TOUR_STEPS, ...TIP_STEPS].map((step) => step.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('still include every step the first tour shipped with', () => {
+    const ids = TOUR_STEPS.map((step) => step.id);
+    for (const id of FIRST_TOUR_STEP_IDS) expect(ids).toContain(id);
+  });
+});
+
+describe('TIP_STEPS', () => {
+  it('keeps the Tools tips short: three at most', () => {
+    expect(TIP_STEPS.filter((step) => step.section === 'tools').length).toBeLessThanOrEqual(3);
+  });
+
+  it('says the sales tracker saves only on this computer, and how to keep a copy', () => {
+    const sales = TIP_STEPS.find((step) => step.id === 'tools-sales');
+    expect(sales?.body).toMatch(/only in this browser, on this computer/);
+    expect(sales?.body).toContain('Export CSV');
+  });
+
+  it('shows the swipe tip only on a touch screen', () => {
+    expect(TIP_STEPS.find((step) => step.id === 'swipe')?.touchOnly).toBe(true);
+  });
+
+  it('points the Tools tips at the tool list’s button when the list is folded away', () => {
+    for (const step of TIP_STEPS.filter((tip) => tip.section === 'tools')) {
+      expect(step.fallbackTarget).toBe('tools-menu');
+    }
+  });
+
+  it('leaves the page’s search alone: only Line Card steps set one', () => {
+    for (const step of TIP_STEPS) expect(step.search).toBeUndefined();
+  });
+});
+
+describe('sectionOf', () => {
+  it('names the section from the first part of the path', () => {
+    expect(sectionOf('/lines')).toBe('lines');
+    expect(sectionOf('/lines?q=maglock')).toBe('lines');
+    expect(sectionOf('/tools/poe')).toBe('tools');
+    expect(sectionOf('/branches#tx')).toBe('branches');
+  });
+
+  it('is null outside the sections', () => {
+    expect(sectionOf('/')).toBeNull();
+    expect(sectionOf('/elsewhere')).toBeNull();
+  });
+});
+
+describe('parseSeenSteps', () => {
+  it('reads the saved list', () => {
+    expect(parseSeenSteps('["search","swipe"]', true)).toEqual(new Set(['search', 'swipe']));
+  });
+
+  it('counts the first tour’s steps as seen by a browser that answered its invite before lists were saved', () => {
+    expect(parseSeenSteps(null, true)).toEqual(new Set(FIRST_TOUR_STEP_IDS));
+    expect(parseSeenSteps(null, false)).toEqual(new Set());
+  });
+
+  it('counts anything unreadable as nothing seen', () => {
+    expect(parseSeenSteps('not json', true)).toEqual(new Set());
+    expect(parseSeenSteps('{"search":true}', true)).toEqual(new Set());
+    expect(parseSeenSteps('["search",3,null]', true)).toEqual(new Set(['search']));
+  });
+});
+
+describe('unseenSteps', () => {
+  const step = (id: string, section: TourStep['section'], touchOnly = false): TourStep => ({
+    id,
+    section,
+    target: id,
+    title: id,
+    body: id,
+    touchOnly,
+  });
+  const STEPS = [
+    step('tour-a', 'lines'),
+    step('tip-a', 'tools'),
+    step('tip-b', 'tools'),
+    step('touch', 'any', true),
+    step('everywhere', 'any'),
+  ];
+  const ids = (steps: TourStep[]): string[] => steps.map((each) => each.id);
+
+  it('shows a section’s own steps, then the ones for every section', () => {
+    expect(ids(unseenSteps(STEPS, 'tools', new Set(), true))).toEqual([
+      'tip-a',
+      'tip-b',
+      'touch',
+      'everywhere',
+    ]);
+    expect(ids(unseenSteps(STEPS, 'branches', new Set(), true))).toEqual(['touch', 'everywhere']);
+  });
+
+  it('leaves out what’s been seen', () => {
+    expect(ids(unseenSteps(STEPS, 'tools', new Set(['tip-a', 'everywhere']), true))).toEqual([
+      'tip-b',
+      'touch',
+    ]);
+  });
+
+  it('leaves out touch-only steps without a touch screen', () => {
+    expect(ids(unseenSteps(STEPS, 'lines', new Set(), false))).toEqual(['tour-a', 'everywhere']);
   });
 });
 
@@ -117,7 +238,20 @@ describe('scrollToReveal', () => {
 });
 
 describe('stepCountText', () => {
-  it('counts from one', () => {
-    expect(stepCountText(1, 5)).toBe('Step 2 of 5');
+  const [tourStep] = TOUR_STEPS;
+  const tip = TIP_STEPS[0];
+
+  it('counts the tour’s steps from one', () => {
+    expect(stepCountText('tour', tourStep, 1, 5)).toBe('Step 2 of 5');
+  });
+
+  it('calls a tour step shown on its own new, and anything else a tip', () => {
+    expect(stepCountText('tips', tourStep, 0, 2)).toBe('New · 1 of 2');
+    expect(stepCountText('tips', tip, 2, 3)).toBe('Tip · 3 of 3');
+  });
+
+  it('gives a single one no count', () => {
+    expect(stepCountText('tips', tourStep, 0, 1)).toBe('New');
+    expect(stepCountText('tips', tip, 0, 1)).toBe('Tip');
   });
 });

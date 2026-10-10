@@ -9,7 +9,8 @@
 .tk-toggle {
   display: none;
 }
-.tk-list {
+.tk-list,
+.tk-section {
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -21,7 +22,7 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-.tk-group:first-child {
+.tk-section:first-child .tk-group {
   margin-top: 0;
 }
 .tk-list a {
