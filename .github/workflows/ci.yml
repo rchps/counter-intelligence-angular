@@ -4,7 +4,7 @@
 # login. Screenshot comparisons have a workflow of their own (screenshots.yml).
 #
 # Each deploy of main is a release (scripts/release.mts, docs/ci-cd.md#releases): the deploy job works
-# out the next version from the changesets, builds with it, deploys, and only then tags the commit. All of
+# out the next version from the merged PR titles, builds with it, deploys, and only then tags the commit. All of
 # that is the script's; the only host-specific parts are calling it and pushing the tag.
 #
 # Cloudflare serves the site as a Worker with static assets (wrangler.jsonc). Its one script,
@@ -143,18 +143,12 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          # The history and tags: the changeset check compares with main, and the build's version comes
-          # from `git describe`.
-          fetch-depth: 0
+          fetch-depth: 0 # tags: the build's version comes from `git describe`
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      # A warning, not a failure: not every change is one the counter would notice.
-      - name: Changeset
-        if: github.ref != 'refs/heads/main'
-        run: npm run release -- check origin/main
       - run: npm run lint
       - run: npm run format:check
       - run: npm test -- --watch=false
@@ -271,8 +265,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          # Every tag and the history between: the next version counts the changesets added since the
-          # last release tag. Checked out after this job's turn in the deploy queue, so a release tagged
+          # Every tag and the history between: the next version reads main's commits since the last
+          # release tag. Checked out after this job's turn in the deploy queue, so a release tagged
           # by the deploy before it is already here.
           fetch-depth: 0
       - uses: actions/setup-node@v7

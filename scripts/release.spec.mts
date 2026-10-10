@@ -2,56 +2,86 @@ import { describe, expect, it } from 'vitest';
 import {
   addToChangelog,
   biggestBump,
+  bumpOf,
   CHANGELOG_TITLE,
   changelogReleases,
-  isAppFile,
+  effectiveSubject,
   nextVersion,
   NO_NOTES,
   notesOfTagMessage,
-  parseChangeset,
+  parseTitle,
   releaseNotes,
   tagMessage,
+  titleProblem,
   versionOfTag,
-  type Changeset,
+  type Commit,
 } from './release.mts';
 
-const changeset = (file: string, bump: Changeset['bump'], note = file): Changeset => ({
-  file,
-  bump,
-  note,
-});
+const commit = (subject: string, body = ''): Commit => ({ subject, body });
 
-describe('parseChangeset', () => {
-  it('reads the bump and the line for the counter', () => {
-    const text = '---\nbump: minor\n---\nTools shows a few tips\nthe first time it opens.\n';
-    expect(parseChangeset('.changeset/tips.md', text)).toEqual({
-      file: '.changeset/tips.md',
-      bump: 'minor',
-      note: 'Tools shows a few tips the first time it opens.',
+describe('parseTitle', () => {
+  it('reads type, scope and description, without the PR number a squash adds', () => {
+    expect(parseTitle('feat(line-card): a Back to top button (#108)')).toEqual({
+      type: 'feat',
+      scope: 'line-card',
+      breaking: false,
+      description: 'a Back to top button',
     });
   });
 
-  it('accepts Windows line endings', () => {
-    expect(parseChangeset('a.md', '---\r\nbump: patch\r\n---\r\nFixed.\r\n').bump).toBe('patch');
+  it('takes a title with no scope, and a breaking one', () => {
+    expect(parseTitle('fix: a typo')?.scope).toBeNull();
+    expect(parseTitle('feat(tools)!: new margin rules')?.breaking).toBe(true);
   });
 
-  it('names the file when the bump is missing or misspelled', () => {
-    expect(() => parseChangeset('a.md', 'Fixed.')).toThrow(/a\.md/);
-    expect(() => parseChangeset('b.md', '---\nbump: minro\n---\nFixed.')).toThrow(/b\.md.*minro/);
+  it('keeps issue numbers that are part of the description', () => {
+    expect(parseTitle('fix(poe): incomplete rows (#54, #60) (#137)')?.description).toBe(
+      'incomplete rows (#54, #60)',
+    );
   });
 
-  it('wants a note', () => {
-    expect(() => parseChangeset('c.md', '---\nbump: patch\n---\n')).toThrow(/c\.md/);
+  it('is null for a title without a type', () => {
+    expect(parseTitle('Line Card: a Back to top button')).toBeNull();
+    expect(parseTitle('feat:no space')).toBeNull();
+  });
+});
+
+describe('titleProblem', () => {
+  it('accepts the known types', () => {
+    expect(titleProblem('feat(tools): tips')).toBeNull();
+    expect(titleProblem('docs: releases')).toBeNull();
+  });
+
+  it('explains what’s wrong otherwise', () => {
+    expect(titleProblem('Tools: tips')).toMatch(/Start the title with a type/);
+    expect(titleProblem('feature: tips')).toMatch(/"feature" isn't a type/);
+  });
+});
+
+describe('bumpOf', () => {
+  it('is major for a ! or a BREAKING CHANGE footer, minor for feat, patch for the rest', () => {
+    expect(bumpOf(commit('feat!: new rules'))).toBe('major');
+    expect(bumpOf(commit('fix: x', 'Details.\n\nBREAKING CHANGE: saved sales move'))).toBe('major');
+    expect(bumpOf(commit('feat(tools): tips'))).toBe('minor');
+    expect(bumpOf(commit('fix: typo'))).toBe('patch');
+    expect(bumpOf(commit('docs: readme'))).toBe('patch');
+    expect(bumpOf(commit('Something without a type'))).toBe('patch');
+  });
+
+  it('reads a merge commit by its PR title', () => {
+    const merge = commit('Merge pull request #12 from rchps/feat/tips', 'feat(tools): tips\n');
+    expect(effectiveSubject(merge)).toBe('feat(tools): tips');
+    expect(bumpOf(merge)).toBe('minor');
   });
 });
 
 describe('biggestBump', () => {
-  it('takes the biggest asked for', () => {
-    expect(biggestBump([changeset('a', 'patch'), changeset('b', 'minor')])).toBe('minor');
-    expect(biggestBump([changeset('a', 'major'), changeset('b', 'minor')])).toBe('major');
+  it('takes the biggest among the commits', () => {
+    expect(biggestBump([commit('fix: a'), commit('feat: b')])).toBe('minor');
+    expect(biggestBump([commit('feat!: a'), commit('feat: b')])).toBe('major');
   });
 
-  it('is a patch with nothing asked for: every deploy is a release', () => {
+  it('is a patch with nothing in it: every deploy is a release', () => {
     expect(biggestBump([])).toBe('patch');
   });
 });
@@ -82,13 +112,28 @@ describe('versionOfTag', () => {
 });
 
 describe('release notes', () => {
-  it('lists each changeset’s note, in file order', () => {
-    expect(
-      releaseNotes([changeset('b.md', 'patch', 'B'), changeset('a.md', 'minor', 'A')]),
-    ).toEqual(['A', 'B']);
+  it('lists the feat, fix and perf titles, oldest first, capitalised', () => {
+    // As git log gives them: newest first.
+    const commits = [
+      commit('fix(poe): a wrong total (#140)'),
+      commit('docs: releases (#139)'),
+      commit('feat(tools): tips the first time Tools opens (#138)'),
+    ];
+    expect(releaseNotes(commits)).toEqual(['Tips the first time Tools opens', 'A wrong total']);
   });
 
-  it('still says something with no changesets', () => {
+  it('keeps anything breaking, whatever its type', () => {
+    expect(releaseNotes([commit('refactor!: saved data moves')])).toEqual(['Saved data moves']);
+  });
+
+  it('keeps a title without a type as it is, since there’s no telling', () => {
+    expect(releaseNotes([commit('Update readme screenshots (#139)')])).toEqual([
+      'Update readme screenshots',
+    ]);
+  });
+
+  it('still says something with nothing to tell', () => {
+    expect(releaseNotes([commit('ci: faster')])).toEqual([NO_NOTES]);
     expect(releaseNotes([])).toEqual([NO_NOTES]);
   });
 
@@ -128,15 +173,5 @@ describe('addToChangelog', () => {
 
   it('reads back what it wrote, for the app’s What’s new', () => {
     expect(changelogReleases(addToChangelog(null, [v1, v11]))).toEqual([v11, v1]);
-  });
-});
-
-describe('isAppFile', () => {
-  it('counts the app and its data, not tests, scripts or docs', () => {
-    expect(isAppFile('src/app/core/tour.ts')).toBe(true);
-    expect(isAppFile('public/data/lines.json')).toBe(true);
-    expect(isAppFile('src/app/core/tour.spec.ts')).toBe(false);
-    expect(isAppFile('scripts/release.mts')).toBe(false);
-    expect(isAppFile('docs/ci-cd.md')).toBe(false);
   });
 });

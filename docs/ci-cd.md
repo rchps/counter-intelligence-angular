@@ -15,6 +15,8 @@
 - **GitHub Actions**, screenshots: each push to `main` records its screenshots as the next baseline
   (`screenshots-main.yml`), and each pull request gets the _Screenshot review_ check (see [Testing](testing.md#screenshot-review-on-pull-requests))
   (`screenshots.yml`).
+- **GitHub Actions**, PR title (`pr-title.yml`): titles follow Conventional Commits, since releases are
+  read from them ([Releases](#releases)).
 - **GitHub Actions**, linked issue (`linked-issue.yml`): a pull request can only merge once it closes an
   issue, so every change shows up on the project board with its PR. Dependabot's PRs and PRs labelled
   `no-issue` are exempt.
@@ -42,41 +44,50 @@ recorded on every push to `main`, since a PR branching from a commit without the
 ## Releases
 
 Every deploy of `main` is a release with a version (`v1.4.0`), shown in the footer and in every problem
-report. Everything about it lives in git and in the repo, and runs as one script with only git and Node
+report. Everything about it lives in git, and runs as one script with only git and Node
 (`scripts/release.mts`): no GitHub token, label or Release.
 
-**Adding a changeset.** A change people at the counter would notice adds a file to `.changeset/` in the
-same pull request: a bump size and one plain-language line ([.changeset/README.md](../.changeset/README.md)).
-CI warns, without failing, when a branch changes the app and adds none.
+**Pull request titles.** PRs are squash-merged, so each title becomes one commit on `main`, and titles
+follow [Conventional Commits](https://www.conventionalcommits.org/): `type(scope): description`, written
+for the counter.
 
-```md
----
-bump: minor
----
+| Title                                                                         | Release | In the notes |
+| ----------------------------------------------------------------------------- | ------- | ------------ |
+| `feat(tools): tips the first time Tools opens`                                | minor   | yes          |
+| `fix(poe): a wrong total`, `perf: ...`                                        | patch   | yes          |
+| `feat(sales)!: ...`, or a `BREAKING CHANGE:` line in the description          | major   | yes          |
+| `docs:`, `test:`, `ci:`, `refactor:`, `build:`, `chore:`, `style:`, `revert:` | patch   | no           |
 
-Tools shows a few tips the first time it opens.
-```
+The _PR title_ check (`pr-title.yml`) checks the title on every pull request; try one locally with
+`npm run release -- check-title "feat(tools): ..."`. A release with nothing for the notes says "Small
+fixes and upkeep."
 
 **How a release is cut.** The deploy job, on a push to `main`:
 
-1. `npm run release -- plan`: the next version is the last release tag bumped by the biggest changeset
-   added since then (a patch if none), and the notes are their lines.
+1. `npm run release -- plan`: the next version is the last release tag bumped by the biggest change
+   merged since then, and the notes are those titles. The first release, with no tag before it, is
+   `package.json`'s version as it stands.
 2. The build gets that version as `APP_VERSION`, and deploys.
 3. Only once the deploy has worked, `npm run release -- tag` makes an annotated tag carrying the notes,
    and CI pushes it. A failed deploy leaves no tag, and a re-run of a deploy already tagged makes none.
 
 `main` is protected, so CI never commits: the tags are the record. Now and then, run `npm run release`
 (try `-- --dry-run` first) on a branch. It adds a dated `CHANGELOG.md` section for each tag that isn't in
-it yet, sets `package.json`'s version to the newest, and deletes the changesets those releases used.
-Merge that like any other change; since it touches `package.json`, its own deploy is a small patch release.
+it yet and sets `package.json`'s version to the newest. Merge that like any other change (`chore: ...`);
+its own deploy is a small patch release.
 
 Builds that aren't a release show what `git describe` says: `v1.4.0-3-gc68fb5d` is three commits after
 v1.4.0, so a preview is never mistaken for production. Without tags or git, the footer leaves the version
 out. The build also writes the newest `CHANGELOG.md` sections to `public/whats-new.json`, for the app to
 show what's new without asking GitHub.
 
+**Repository settings this relies on**: squash merging only, with the PR title as the commit title
+(Settings > General > Pull Requests). With "default to commit or PR title", a one-commit PR lands under
+its commit's message instead. Add _PR title_ to `main`'s required checks to enforce it.
+
 **On another host**, the one host-specific step is the deploy job's: check out with full history and tags,
-run `plan` before the build and `tag` after the deploy, and push the tag. Everything else is the script.
+run `plan` before the build and `tag` after the deploy, and push the tag. The title check is a plain
+`node scripts/release.mts check-title` with the title in `PR_TITLE`. Everything else is the script.
 
 ## Feedback setup
 

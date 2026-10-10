@@ -1,0 +1,37 @@
+# Pull request titles follow Conventional Commits (`feat(tools): ...`, `fix: ...`, `docs: ...`): PRs are
+# squash-merged, so the title becomes the commit on main, and each release's version and notes are read
+# from those (scripts/release.mts, docs/ci-cd.md#releases). Dependabot's PRs are exempt: its titles
+# aren't ours to choose, and they're patch releases either way.
+name: PR title
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  contents: read
+
+# Editing the title several times in a row only needs the last check.
+concurrency:
+  group: pr-title-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  pr-title:
+    name: PR title
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    # A skipped job reports success, so Dependabot's PRs still pass if this becomes a required check.
+    if: github.event.pull_request.user.login != 'dependabot[bot]'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: scripts
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+      - name: Check the title
+        env:
+          # Through the environment, never pasted into the script, so a title can't run code.
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: node scripts/release.mts check-title

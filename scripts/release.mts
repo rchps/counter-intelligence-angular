@@ -1,23 +1,23 @@
-// Versioned releases (#129), from git and files in the repo alone: no GitHub token, API or setting, so
-// moving CI to another host means changing the one workflow step that calls this.
+// Versioned releases (#129), from git alone: no GitHub token, API or setting, so moving CI to another
+// host means changing the one workflow step that calls this.
 //
-// - A change that matters to the counter adds a changeset: .changeset/<any-name>.md with a bump size
-//   (patch, minor or major) and one plain-language line (.changeset/README.md).
-// - Each deploy of main is a release. CI asks `plan` for the next version (the biggest bump among the
-//   changesets added since the last release tag, or a patch if there are none), builds with it, deploys,
-//   and only then runs `tag`: an annotated tag (v1.4.0) whose message is the release notes. A failed
-//   deploy leaves no tag. main is protected, so CI never commits; the tag is the record of the release.
+// - Pull request titles follow Conventional Commits (conventionalcommits.org): `feat(tools): ...`,
+//   `fix(line-card): ...`, `docs: ...`. PRs are squash-merged, so each title becomes one commit on main,
+//   and that's what this reads. `check-title` checks a title before it gets there.
+// - Each deploy of main is a release. CI asks `plan` for the next version: the last release tag bumped
+//   by the biggest change since it (a `!` or BREAKING CHANGE: major, feat: minor, anything else: patch),
+//   with the feat/fix/perf titles as its notes. It builds with that version, deploys, and only then runs
+//   `tag`: an annotated tag (v1.4.0) whose message is the notes. A failed deploy leaves no tag. main is
+//   protected, so CI never commits; the tag is the record of the release.
 // - Now and then, `npm run release` (no command) brings the repo up to date with the tags: a dated
-//   CHANGELOG.md section per release not in it yet, package.json's version set to the newest, and the
-//   changesets those releases used deleted. Commit that on a branch and merge it like any other change.
-//   `--dry-run` shows what it would do and changes nothing.
-// - `check` warns when a branch changes the app without adding a changeset; `whats-new <file>` writes the
-//   newest CHANGELOG.md sections as JSON for the app to show (the build runs it).
+//   CHANGELOG.md section per release not in it yet, and package.json's version set to the newest. Commit
+//   that on a branch and merge it like any other change. `--dry-run` shows what it would do.
+// - `whats-new <file>` writes the newest CHANGELOG.md sections as JSON for the app (the build runs it).
 //
-// Run with `node scripts/release.mts [plan | tag | check | whats-new <file>] [--dry-run]`.
+// Run with `node scripts/release.mts [plan | tag | check-title [title] | whats-new <file>] [--dry-run]`.
 
 import { execFileSync } from 'node:child_process';
-import { existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -25,10 +25,34 @@ export type Bump = 'patch' | 'minor' | 'major';
 
 const BUMPS: readonly Bump[] = ['patch', 'minor', 'major'];
 
-export interface Changeset {
-  file: string;
-  bump: Bump;
-  note: string;
+/** The Conventional Commits types a title may use. Only feat, fix and perf make the release notes:
+ *  the rest are changes the counter wouldn't notice. */
+export const TITLE_TYPES = [
+  'feat',
+  'fix',
+  'perf',
+  'refactor',
+  'docs',
+  'test',
+  'ci',
+  'build',
+  'chore',
+  'style',
+  'revert',
+] as const;
+const NOTED_TYPES: readonly string[] = ['feat', 'fix', 'perf'];
+
+export interface Commit {
+  subject: string;
+  body: string;
+}
+
+export interface Title {
+  type: string;
+  scope: string | null;
+  breaking: boolean;
+  /** Without the PR number GitHub adds when it squashes: "a Back to top button". */
+  description: string;
 }
 
 export interface Release {
@@ -39,8 +63,10 @@ export interface Release {
   notes: string[];
 }
 
-/** What a release with no changesets says: every deploy is a release, even one with nothing to tell. */
+/** What a release says with nothing the counter would notice in it: every deploy is a release. */
 export const NO_NOTES = 'Small fixes and upkeep.';
+/** The first release's note: before it, history has no titles to read. */
+export const FIRST_RELEASE_NOTE = 'The first numbered release.';
 export const CHANGELOG_TITLE = '# Changelog';
 /** How many releases the app's What's new data holds. */
 export const WHATS_NEW_RELEASES = 5;
@@ -48,35 +74,79 @@ export const WHATS_NEW_RELEASES = 5;
 // ---- Pure parts (unit tested in release.spec.mts) ----
 
 /**
- * Reads a changeset file:
- *
- *     ---
- *     bump: minor
- *     ---
- *     Tools shows a few tips the first time it opens.
- *
- * Throws, naming the file, when it isn't in that shape: a release shouldn't go out with a typo in it.
+ * Reads a Conventional Commits title, `type(scope)!: description`, or null when it isn't one. A
+ * trailing PR number from a squash merge, " (#123)", is left out of the description.
  */
-export function parseChangeset(file: string, text: string): Changeset {
-  const match = /^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/.exec(text.trim() + '\n');
-  if (!match) throw new Error(`${file}: expected a "---" block with bump: patch|minor|major`);
-  const bump = /^bump:\s*(\S+)\s*$/m.exec(match[1])?.[1];
-  if (!isBump(bump)) throw new Error(`${file}: bump must be patch, minor or major, not "${bump}"`);
-  const note = match[2].trim().replace(/\s+/g, ' ');
-  if (!note) throw new Error(`${file}: add one line saying what changed, for the counter`);
-  return { file, bump, note };
+export function parseTitle(subject: string): Title | null {
+  const match = /^([a-z]+)(?:\(([^)\s]+)\))?(!)?: (\S.*)$/.exec(subject.trim());
+  if (!match) return null;
+  const [, type, scope, bang, rest] = match;
+  return {
+    type,
+    scope: scope ?? null,
+    breaking: !!bang,
+    description: rest.replace(/ \(#\d+\)$/, '').trim(),
+  };
 }
 
-function isBump(value: unknown): value is Bump {
-  return BUMPS.includes(value as Bump);
+/** Why a PR title won't do, or null when it will. */
+export function titleProblem(title: string): string | null {
+  const parsed = parseTitle(title);
+  const example = 'feat(tools): tips the first time Tools opens';
+  if (!parsed) return `Start the title with a type, like "${example}".`;
+  if (!(TITLE_TYPES as readonly string[]).includes(parsed.type)) {
+    return `"${parsed.type}" isn't a type. Use one of: ${TITLE_TYPES.join(', ')}.`;
+  }
+  return null;
 }
 
-/** The biggest bump asked for. Nothing asked: a patch, since every deploy is a release. */
-export function biggestBump(changesets: readonly Changeset[]): Bump {
-  return changesets.reduce<Bump>(
-    (biggest, { bump }) => (BUMPS.indexOf(bump) > BUMPS.indexOf(biggest) ? bump : biggest),
-    'patch',
-  );
+/**
+ * A commit on main as it reads for a release. A merge commit ("Merge pull request #12 from ...") is read
+ * by its PR title, which GitHub puts on the first line of its body.
+ */
+export function effectiveSubject(commit: Commit): string {
+  if (/^Merge pull request #\d+ /.test(commit.subject)) {
+    return (
+      commit.body
+        .split('\n')
+        .find((line) => line.trim())
+        ?.trim() ?? commit.subject
+    );
+  }
+  return commit.subject;
+}
+
+/** A `!` or a BREAKING CHANGE footer: major. feat: minor. Anything else, or no type at all: patch. */
+export function bumpOf(commit: Commit): Bump {
+  const title = parseTitle(effectiveSubject(commit));
+  if (title?.breaking || /^BREAKING[ -]CHANGE:/m.test(commit.body)) return 'major';
+  return title?.type === 'feat' ? 'minor' : 'patch';
+}
+
+/** The biggest bump among the commits. None at all: a patch, since every deploy is a release. */
+export function biggestBump(commits: readonly Commit[]): Bump {
+  return commits
+    .map(bumpOf)
+    .reduce<Bump>((big, bump) => (BUMPS.indexOf(bump) > BUMPS.indexOf(big) ? bump : big), 'patch');
+}
+
+/**
+ * The release's notes, oldest change first: each feat, fix and perf title, and anything breaking. A
+ * subject without a type is kept as it is, since there's no telling whether the counter would notice.
+ */
+export function releaseNotes(commits: readonly Commit[]): string[] {
+  const notes = [...commits].reverse().flatMap((commit) => {
+    const subject = effectiveSubject(commit);
+    const title = parseTitle(subject);
+    if (!title) return [subject.replace(/ \(#\d+\)$/, '')];
+    const noted = NOTED_TYPES.includes(title.type) || bumpOf(commit) === 'major';
+    return noted ? [capitalize(title.description)] : [];
+  });
+  return notes.length ? notes : [NO_NOTES];
+}
+
+function capitalize(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
 /** "1.4.2" bumped: patch 1.4.3, minor 1.5.0, major 2.0.0. */
@@ -92,12 +162,6 @@ export function nextVersion(current: string, bump: Bump): string {
 /** "v1.4.0" → "1.4.0"; anything else (a non-release tag) → null. */
 export function versionOfTag(tag: string): string | null {
   return /^v(\d+\.\d+\.\d+)$/.exec(tag)?.[1] ?? null;
-}
-
-/** The release's notes, one per changeset, in the order the files sort. */
-export function releaseNotes(changesets: readonly Changeset[]): string[] {
-  const notes = [...changesets].sort((a, b) => a.file.localeCompare(b.file)).map((c) => c.note);
-  return notes.length ? notes : [NO_NOTES];
 }
 
 /** The release tag's message: its name, then the notes as a list (read back by notesOfTagMessage). */
@@ -151,16 +215,9 @@ export function compareVersions(a: string, b: string): number {
   return 0;
 }
 
-/** Whether a path is part of the app people use, so changing it deserves a changeset. Tests don't. */
-export function isAppFile(path: string): boolean {
-  if (!path.startsWith('src/') && !path.startsWith('public/')) return false;
-  return !/\.spec\.ts$/.test(path);
-}
-
 // ---- Git and files ----
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const CHANGESET_DIR = '.changeset';
 
 function git(...args: string[]): string {
   return execFileSync('git', args, { cwd: ROOT, encoding: 'utf-8' }).trim();
@@ -191,31 +248,17 @@ function packageVersion(): string {
     .version;
 }
 
-function changesetFilesNow(): string[] {
-  const dir = join(ROOT, CHANGESET_DIR);
-  if (!existsSync(dir)) return [];
-  return readdirSync(dir)
-    .filter((name) => name.endsWith('.md') && name !== 'README.md')
-    .map((name) => `${CHANGESET_DIR}/${name}`);
-}
-
-function changesetFilesAt(ref: string): Set<string> {
-  const listing = gitOrNull('ls-tree', '--name-only', `${ref}:${CHANGESET_DIR}`) ?? '';
-  return new Set(
-    listing
-      .split('\n')
-      .filter(Boolean)
-      .map((name) => `${CHANGESET_DIR}/${name}`),
-  );
-}
-
-/** The changesets added since the last release: the ones the next release is made of. */
-function pendingChangesets(): Changeset[] {
-  const tag = lastReleaseTag();
-  const released = tag ? changesetFilesAt(tag) : new Set<string>();
-  return changesetFilesNow()
-    .filter((file) => !released.has(file))
-    .map((file) => parseChangeset(file, readFileSync(join(ROOT, file), 'utf-8')));
+/** main's own commits since `tag`, newest first: one per merged PR, not the commits inside them. */
+function commitsSince(tag: string): Commit[] {
+  const log = git('log', '--first-parent', '--format=%s%x00%b%x1e', `${tag}..HEAD`);
+  return log
+    .split('\x1e')
+    .map((record) => record.replace(/^\n/, ''))
+    .filter(Boolean)
+    .map((record) => {
+      const [subject, body = ''] = record.split('\0');
+      return { subject, body };
+    });
 }
 
 interface Plan {
@@ -232,11 +275,12 @@ function plan(): Plan {
     return { version: versionOfTag(tagged)!, notes: notesOfTagMessage(message), tagged: true };
   }
   const last = lastReleaseTag();
-  const current = (last && versionOfTag(last)) ?? packageVersion();
-  const changesets = pendingChangesets();
+  // The first release is package.json's version as it stands.
+  if (!last) return { version: packageVersion(), notes: [FIRST_RELEASE_NOTE], tagged: false };
+  const commits = commitsSince(last);
   return {
-    version: nextVersion(current, biggestBump(changesets)),
-    notes: releaseNotes(changesets),
+    version: nextVersion(versionOfTag(last)!, biggestBump(commits)),
+    notes: releaseNotes(commits),
     tagged: false,
   };
 }
@@ -262,7 +306,7 @@ function taggedReleases(): Release[] {
 
 function runPlan(): void {
   const { version, notes, tagged } = plan();
-  // KEY=value lines, which CI appends to its step outputs.
+  // KEY=value lines, which CI appends to its step outputs. The notes go to stderr, for the log.
   console.log(`version=v${version}`);
   console.log(`tagged=${tagged}`);
   console.error(
@@ -285,23 +329,14 @@ function runTag(dryRun: boolean): void {
   console.log(`Tagged HEAD v${version}. Push it with: git push origin v${version}`);
 }
 
-function runCheck(base: string): void {
-  const changed = (gitOrNull('diff', '--name-only', '--diff-filter=AMDR', `${base}...HEAD`) ?? '')
-    .split('\n')
-    .filter(Boolean);
-  const appChanged = changed.some(isAppFile);
-  const added = changed.some(
-    (file) => file.startsWith(`${CHANGESET_DIR}/`) && file !== `${CHANGESET_DIR}/README.md`,
-  );
-  pendingChangesets(); // fails the check on a malformed changeset
-  if (!appChanged || added) {
-    console.log(appChanged ? 'The app changed, with a changeset.' : 'The app is unchanged.');
+function runCheckTitle(title: string): void {
+  const problem = titleProblem(title);
+  if (!problem) {
+    console.log(`"${title}" is a ${bumpOf({ subject: title, body: '' })} change.`);
     return;
   }
-  const text =
-    'This branch changes the app but adds no changeset, so its release will say only ' +
-    `"${NO_NOTES}" Add one if the counter would notice (.changeset/README.md).`;
-  console.log(process.env['GITHUB_ACTIONS'] ? `::warning::${text}` : `Note: ${text}`);
+  console.log(process.env['GITHUB_ACTIONS'] ? `::error::${problem}` : problem);
+  process.exit(1);
 }
 
 function runWhatsNew(out: string): void {
@@ -323,8 +358,6 @@ function runRelease(dryRun: boolean): void {
   const changelogPath = join(ROOT, 'CHANGELOG.md');
   const before = existsSync(changelogPath) ? readFileSync(changelogPath, 'utf-8') : null;
   const after = addToChangelog(before, releases);
-  const released = changesetFilesAt(`v${newest}`);
-  const used = changesetFilesNow().filter((file) => released.has(file));
   const packagePath = join(ROOT, 'package.json');
   const pkg = readFileSync(packagePath, 'utf-8');
   const newPkg = pkg.replace(/"version": "[^"]*"/, `"version": "${newest}"`);
@@ -332,7 +365,6 @@ function runRelease(dryRun: boolean): void {
   const changes = [
     ...(after !== before ? ['CHANGELOG.md: add the releases it was missing'] : []),
     ...(newPkg !== pkg ? [`package.json: version ${newest}`] : []),
-    ...used.map((file) => `delete ${file} (released)`),
   ];
   if (!changes.length) {
     console.log(`Up to date with v${newest}.`);
@@ -343,8 +375,7 @@ function runRelease(dryRun: boolean): void {
   if (dryRun) return;
   writeFileSync(changelogPath, after);
   writeFileSync(packagePath, newPkg);
-  used.forEach((file) => rmSync(join(ROOT, file)));
-  console.log('\nCommit these on a branch and merge them like any other change.');
+  console.log('\nCommit these on a branch ("chore: changelog to vX") and merge it like any other.');
 }
 
 function main(): void {
@@ -353,12 +384,13 @@ function main(): void {
   const [command, value] = args.filter((arg) => !arg.startsWith('--'));
   if (command === 'plan') runPlan();
   else if (command === 'tag') runTag(dryRun);
-  else if (command === 'check') runCheck(value ?? 'origin/main');
+  // CI passes the title through PR_TITLE, never on the command line, so a title can't run code.
+  else if (command === 'check-title') runCheckTitle(value ?? process.env['PR_TITLE'] ?? '');
   else if (command === 'whats-new' && value) runWhatsNew(value);
   else if (command === undefined) runRelease(dryRun);
   else {
     console.error(
-      'Usage: node scripts/release.mts [plan | tag | check [base] | whats-new <file>] [--dry-run]',
+      'Usage: node scripts/release.mts [plan | tag | check-title [title] | whats-new <file>] [--dry-run]',
     );
     process.exit(2);
   }
