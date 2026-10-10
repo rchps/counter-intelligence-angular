@@ -178,4 +178,53 @@ describe('Sales Tracker', () => {
       .should('match', /^✓ Goal hit\./);
     cy.getBySel('confetti').should('not.exist');
   });
+
+  describe('clearing a month', () => {
+    const CLEAR_LABEL = 'Click again to clear this month';
+
+    beforeEach(() => {
+      visitTrackerOnSep10();
+      enterTheFirstWeekAndAHalf();
+      // October has its own sales, so a clear that lands in the wrong month shows up as lost data.
+      cy.getBySel('sales-next-month').click();
+      fill('sales-day-2026-10-01', '4000');
+      cy.getBySel('sales-prev-month').click();
+      cy.getBySel('sales-month').should('have.value', '2026-09');
+    });
+
+    it('a clear armed in September does not clear October when the arrows change the month', () => {
+      cy.getBySel('sales-clear').click();
+      cy.getBySel('sales-clear').invoke('text').invoke('trim').should('equal', CLEAR_LABEL);
+
+      // No label check between the switch and the click: the bug only shows inside the 4-second window,
+      // and a retrying assertion here would wait the window out before the click.
+      cy.getBySel('sales-next-month').click();
+      cy.getBySel('sales-month').should('have.value', '2026-10');
+
+      cy.getBySel('sales-clear').click();
+      cy.getBySel('sales-day-2026-10-01').should('have.value', '4000');
+      cy.getBySel('sales-clear').invoke('text').invoke('trim').should('equal', CLEAR_LABEL);
+    });
+
+    it('a clear armed in September does not clear October when the month input changes', () => {
+      cy.getBySel('sales-clear').click();
+
+      // Same as the arrows test: no label check before the click, so it lands inside the 4-second window.
+      cy.getBySel('sales-month').invoke('val', '2026-10').trigger('change');
+      cy.getBySel('sales-month').should('have.value', '2026-10');
+
+      cy.getBySel('sales-clear').click();
+      cy.getBySel('sales-day-2026-10-01').should('have.value', '4000');
+      cy.getBySel('sales-clear').invoke('text').invoke('trim').should('equal', CLEAR_LABEL);
+    });
+
+    it('two clicks in the same month clear that month, and leave the next one alone', () => {
+      cy.getBySel('sales-clear').click();
+      cy.getBySel('sales-clear').click();
+      cy.getBySel('sales-day-2026-09-04').should('have.value', '');
+
+      cy.getBySel('sales-next-month').click();
+      cy.getBySel('sales-day-2026-10-01').should('have.value', '4000');
+    });
+  });
 });
