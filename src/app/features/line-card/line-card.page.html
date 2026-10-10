@@ -4,7 +4,7 @@
     <h1 data-cy="page-heading">
       Every line we carry. <span class="accent">Searchable, linked, and current.</span>
     </h1>
-    <p class="sub">
+    <p class="sub" data-cy="line-card-intro">
       {{ subText() }} <span class="shortcut-hint">{{ shortcutHint }}</span>
     </p>
     <app-tour-invite />
@@ -107,7 +107,10 @@
     <app-alternatives-box [brands]="alternatives()" (pick)="pickAlternative($event)" />
   }
   @if (data.loadFailed()) {
-    <app-load-error what="the line card" (retry)="data.retry()" />
+    <app-load-error what="the line card" [retrying]="data.isLoading()" (retry)="data.retry()" />
+  } @else if (data.isLoading() && data.lines().length === 0) {
+    <!-- The first load: not "No manufacturers match", which would invite a missing-line report. -->
+    <div class="empty" role="status" data-cy="data-loading"><h2>Loading the line card…</h2></div>
   } @else if (shown().length === 0) {
     <!-- A "Not a line we carry" box already explains an empty search, so it replaces the empty state. -->
     @if (!alternatives().length) {

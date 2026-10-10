@@ -48,6 +48,52 @@ describe('Data load errors', () => {
     }
   }
 
+  it('Line Card: says it is loading on the first load, not "No manufacturers match"', () => {
+    // A slow first load, so the moment before the list arrives can be seen.
+    cy.intercept('GET', '**/data/lines.json', (req) => {
+      req.continue((res) => res.setDelay(1500));
+    });
+    cy.visit('/lines');
+    cy.getBySel('data-loading').should('have.attr', 'role', 'status');
+    cy.getBySel('data-loading').should('contain.text', 'Loading the line card');
+    cy.getBySel('report-missing-line').should('not.exist');
+    cy.getBySel('line-card-intro').should('not.contain.text', 'manufacturers across');
+
+    cy.getBySel('group-heading').should('have.length.greaterThan', 1);
+    cy.getBySel('data-loading').should('not.exist');
+    cy.getBySel('line-card-intro')
+      .invoke('text')
+      .should('match', /\d+ manufacturers across \d+ categories/);
+  });
+
+  it('Line Card: gives no count while it failed, and Retry says it is retrying', () => {
+    let failing = true;
+    cy.intercept('GET', '**/data/lines.json', (req) => {
+      if (failing) req.reply({ statusCode: 500 });
+      // A slow retry, so the moment between clicking Retry and the list arriving can be seen.
+      else req.continue((res) => res.setDelay(1500));
+    });
+    cy.visit('/lines');
+    cy.getBySel('load-error').should('be.visible');
+    cy.getBySel('line-card-intro').should('not.contain.text', 'manufacturers across');
+    cy.getBySel('search-input')
+      .invoke('attr', 'placeholder')
+      .should('not.match', /\b0 manufacturers/);
+
+    cy.then(() => {
+      failing = false;
+    });
+    cy.getBySel('load-retry').click();
+    cy.getBySel('load-retry')
+      .should('contain.text', 'Retrying…')
+      .and('have.attr', 'aria-disabled', 'true');
+    cy.getBySel('load-retry').should('have.attr', 'aria-label', 'Retrying the line card');
+    cy.focused().should('have.attr', 'data-cy', 'load-retry');
+
+    cy.getBySel('group-heading').should('have.length.greaterThan', 1);
+    cy.getBySel('load-error').should('not.exist');
+  });
+
   it('Line Card: alternatives.json failing leaves search working', () => {
     failFile('alternatives.json', 'a server error');
     cy.visit('/lines');
