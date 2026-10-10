@@ -190,16 +190,19 @@ describe('Sales Tracker', () => {
       fill('sales-day-2026-10-01', '4000');
       cy.getBySel('sales-prev-month').click();
       cy.getBySel('sales-month').should('have.value', '2026-09');
+      // The clear disarms itself after 4 seconds. Frozen from here on (not from the visit: the page needs
+      // its timers to start), it can't, however slow the run: still armed after a month change is the bug.
+      cy.clock().then((clock) => clock.restore());
+      cy.clock(new Date(2026, 8, 10, 10), ['Date', 'setTimeout', 'clearTimeout']);
     });
 
     it('a clear armed in September does not clear October when the arrows change the month', () => {
       cy.getBySel('sales-clear').click();
       cy.getBySel('sales-clear').invoke('text').invoke('trim').should('equal', CLEAR_LABEL);
 
-      // No label check between the switch and the click: the bug only shows inside the 4-second window,
-      // and a retrying assertion here would wait the window out before the click.
       cy.getBySel('sales-next-month').click();
       cy.getBySel('sales-month').should('have.value', '2026-10');
+      cy.getBySel('sales-clear').invoke('text').invoke('trim').should('not.equal', CLEAR_LABEL);
 
       cy.getBySel('sales-clear').click();
       cy.getBySel('sales-day-2026-10-01').should('have.value', '4000');
@@ -209,9 +212,9 @@ describe('Sales Tracker', () => {
     it('a clear armed in September does not clear October when the month input changes', () => {
       cy.getBySel('sales-clear').click();
 
-      // Same as the arrows test: no label check before the click, so it lands inside the 4-second window.
       cy.getBySel('sales-month').invoke('val', '2026-10').trigger('change');
       cy.getBySel('sales-month').should('have.value', '2026-10');
+      cy.getBySel('sales-clear').invoke('text').invoke('trim').should('not.equal', CLEAR_LABEL);
 
       cy.getBySel('sales-clear').click();
       cy.getBySel('sales-day-2026-10-01').should('have.value', '4000');
