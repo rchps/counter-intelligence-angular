@@ -17,6 +17,7 @@ import { isExactName, sortByBestMatch } from '../../core/search/rank';
 import { didYouMean } from '../../core/search/typos';
 import { BackToTopComponent } from '../../shared/back-to-top.component';
 import { FilterChipsComponent, type FilterChip } from '../../shared/filter-chips.component';
+import { LoadErrorComponent } from '../../shared/load-error.component';
 import { FilterSelectComponent } from '../../shared/filter-select.component';
 import { PublishHeightDirective } from '../../shared/publish-height.directive';
 import { SearchStatusComponent } from '../../shared/search-status.component';
@@ -47,6 +48,7 @@ interface CategoryLineGroup {
 @Component({
   selector: 'app-line-card-page',
   imports: [
+    LoadErrorComponent,
     AiCopyComponent,
     AlternativesBoxComponent,
     SearchToolbarComponent,

@@ -106,7 +106,9 @@
   @if (alternatives().length) {
     <app-alternatives-box [brands]="alternatives()" (pick)="pickAlternative($event)" />
   }
-  @if (shown().length === 0) {
+  @if (data.loadFailed()) {
+    <app-load-error what="the line card" (retry)="data.retry()" />
+  } @else if (shown().length === 0) {
     <!-- A "Not a line we carry" box already explains an empty search, so it replaces the empty state. -->
     @if (!alternatives().length) {
       <app-line-card-empty-state
