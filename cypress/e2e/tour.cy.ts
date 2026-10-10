@@ -178,4 +178,23 @@ describe('Guided tour', () => {
     }
     cy.getBySel('tour').should('not.be.visible');
   });
+
+  it('keeps every button label on one line on a small phone', () => {
+    cy.viewport(320, 640);
+    visitLineCard();
+    cy.getBySel('tour-invite-start').click();
+    expectStep(1);
+    cy.getBySel('tour-next').click();
+    expectStep(2);
+    // The buttons keep a 44px touch target, so a wrapped label doesn't change their height: count the
+    // lines the label's text is laid out on instead.
+    for (const control of ['tour-skip', 'tour-back', 'tour-next']) {
+      cy.getBySel(control).should(($button) => {
+        const range = $button[0].ownerDocument.createRange();
+        range.selectNodeContents($button[0]);
+        const lines = new Set([...range.getClientRects()].map((rect) => Math.round(rect.top)));
+        expect(lines.size, `${control}'s label lines`).to.equal(1);
+      });
+    }
+  });
 });

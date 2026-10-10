@@ -95,8 +95,12 @@
   align-items: center;
   gap: 8px;
 }
+// On phones .dlg-primary grows to fill the row (styles.scss). These keep their own width and stay on one
+// line, so Next takes the room that's left instead of squeezing "Skip tour" onto two.
 .skip-tour,
 .back {
+  flex-shrink: 0;
+  white-space: nowrap;
   min-height: 44px;
   border-radius: 12px;
   font: 500 14px/1 var(--font);
