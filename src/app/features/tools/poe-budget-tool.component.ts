@@ -95,15 +95,23 @@ export class PoeBudgetToolComponent {
     return firstProblem ? poeRowMessage(firstProblem.problem, firstProblem.deviceNumber) : '';
   });
 
-  // Which inputs the message is about, so they can be marked invalid and tied to it.
+  // The row the message names, if it names one. Only that row's input is marked invalid and tied to the
+  // message, so a screen reader never reads one device's problem out on another device's field, and
+  // "Fix the highlighted entry" points at one entry. The rest are marked in turn as each is fixed.
+  private readonly namedRowProblem = computed(() =>
+    this.budget().bad ? null : this.parsedDevices().firstProblem,
+  );
+
   protected quantityInvalid(index: number): boolean {
-    const problem = this.readings()[index]?.problem;
-    return problem === 'quantity-invalid' || problem === 'quantity-missing';
+    const named = this.namedRowProblem();
+    if (named?.deviceNumber !== index + 1) return false;
+    return named.problem === 'quantity-invalid' || named.problem === 'quantity-missing';
   }
 
   protected wattsInvalid(index: number): boolean {
-    const problem = this.readings()[index]?.problem;
-    return problem === 'watts-invalid' || problem === 'watts-missing';
+    const named = this.namedRowProblem();
+    if (named?.deviceNumber !== index + 1) return false;
+    return named.problem === 'watts-invalid' || named.problem === 'watts-missing';
   }
 
   protected readonly hasBudget = computed(() => isFinite(this.budget().value));
@@ -169,13 +177,11 @@ export class PoeBudgetToolComponent {
   // class it had alone.
   protected setClassChoice(id: number, choice: string): void {
     this.devices.update((rows) =>
-      rows.map((row) =>
-        row.id !== id
-          ? row
-          : choice === KNOWN_WATTS
-            ? { ...row, useKnownWatts: true }
-            : { ...row, classChoice: choice, useKnownWatts: false },
-      ),
+      rows.map((row) => {
+        if (row.id !== id) return row;
+        if (choice === KNOWN_WATTS) return { ...row, useKnownWatts: true };
+        return { ...row, classChoice: choice, useKnownWatts: false };
+      }),
     );
   }
 

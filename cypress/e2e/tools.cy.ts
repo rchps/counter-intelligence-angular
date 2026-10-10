@@ -242,6 +242,36 @@ describe('Sizing tools', () => {
       cy.getBySel('poe-verdict').should('contain.text', 'Fits');
     });
 
+    it('marks only the entry the message names, then the next one once that is fixed', () => {
+      fill('poe-budget', '30');
+      cy.getBySel('poe-basis-device').check();
+      cy.getBySel('poe-quantity').type('1.5');
+      cy.getBySel('poe-add').click();
+      cy.focused().type('8');
+      cy.getBySel('poe-class').eq(1).select('watts');
+
+      expectPoeMessage('Device 1: use a whole number for the quantity.');
+      cy.getBySel('poe-quantity')
+        .eq(0)
+        .should('have.attr', 'aria-invalid', 'true')
+        .and('have.attr', 'aria-describedby', 'poe-msg');
+      cy.getBySel('poe-watts').eq(1).should('not.have.attr', 'aria-invalid');
+      cy.getBySel('poe-watts').eq(1).should('not.have.attr', 'aria-describedby');
+
+      cy.getBySel('poe-quantity').eq(0).clear();
+      cy.getBySel('poe-quantity').eq(0).type('1');
+      expectPoeMessage('Device 2: enter the watts each, or pick a PoE class.');
+      cy.getBySel('poe-quantity').eq(0).should('not.have.attr', 'aria-invalid');
+      cy.getBySel('poe-watts').eq(1).should('have.attr', 'aria-invalid', 'true');
+
+      // A bad budget is what the message is about then, so no device entry is marked.
+      cy.getBySel('poe-budget').clear();
+      cy.getBySel('poe-budget').type('abc');
+      expectPoeMessage('Use a positive number for the switch budget.');
+      cy.getBySel('poe-budget').should('have.attr', 'aria-invalid', 'true');
+      cy.getBySel('poe-watts').eq(1).should('not.have.attr', 'aria-invalid');
+    });
+
     it('a wattage without a quantity points at the quantity', () => {
       cy.getBySel('poe-basis-device').check();
       cy.getBySel('poe-class').select('watts');
