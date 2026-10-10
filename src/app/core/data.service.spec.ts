@@ -86,4 +86,80 @@ describe('DataService', () => {
     httpMock.expectOne('data/terms.json').flush({ terms: [] });
     httpMock.expectOne('data/alternatives.json').flush({ brands: [] });
   });
+
+  describe('when a request fails', () => {
+    const linesBody = {
+      asOf: '2026-09-25',
+      logoBase: 'logos/',
+      cats: { access: 'Access Control' },
+      lines: [{ name: 'Altronix', url: '', cats: ['access'], logo: 'altronix.png' }],
+      branches: [{ st: 'WA', city: 'Spokane', addr: '1 Main St', phone: '(509) 555-0100' }],
+    };
+    const termsBody = { terms: [{ label: 'Maglocks', syn: [], lines: ['Altronix'] }] };
+
+    let service: DataService;
+
+    beforeEach(() => {
+      service = TestBed.inject(DataService);
+      TestBed.tick(); // triggers the httpResources' initial requests
+    });
+
+    it('reads as empty, without throwing, when lines.json fails', async () => {
+      httpMock.expectOne('data/lines.json').flush('', { status: 500, statusText: 'Server Error' });
+      httpMock.expectOne('data/terms.json').flush(termsBody);
+      httpMock.expectOne('data/alternatives.json').flush({ brands: [] });
+      await TestBed.inject(ApplicationRef).whenStable();
+
+      expect(service.loadFailed()).toBe(true);
+      expect(service.branchesFailed()).toBe(true);
+      expect(service.lines()).toEqual([]);
+      expect(service.branches()).toEqual([]);
+      expect(service.categories()).toEqual({});
+      expect(service.asOf()).toBe('');
+      expect(service.knownWords().size).toBe(0);
+    });
+
+    it('fails the line list but not the branches when only terms.json fails', async () => {
+      httpMock.expectOne('data/lines.json').flush(linesBody);
+      httpMock.expectOne('data/terms.json').error(new ProgressEvent('error'));
+      httpMock.expectOne('data/alternatives.json').flush({ brands: [] });
+      await TestBed.inject(ApplicationRef).whenStable();
+
+      expect(service.loadFailed()).toBe(true);
+      expect(service.branchesFailed()).toBe(false);
+      expect(service.lines()).toEqual([]);
+      expect(service.branches().map((b) => b.city)).toEqual(['Spokane']);
+    });
+
+    it('keeps core search data when only alternatives.json fails', async () => {
+      httpMock.expectOne('data/lines.json').flush(linesBody);
+      httpMock.expectOne('data/terms.json').flush(termsBody);
+      httpMock
+        .expectOne('data/alternatives.json')
+        .flush('', { status: 500, statusText: 'Server Error' });
+      await TestBed.inject(ApplicationRef).whenStable();
+
+      expect(service.loadFailed()).toBe(false);
+      expect(service.alternatives()).toEqual([]);
+      expect(service.lines().map((l) => l.name)).toEqual(['Altronix']);
+      expect(service.knownWords().get('altronix')).toBe(1);
+    });
+
+    it('recovers after retry() succeeds', async () => {
+      httpMock.expectOne('data/lines.json').flush('', { status: 500, statusText: 'Server Error' });
+      httpMock.expectOne('data/terms.json').flush(termsBody);
+      httpMock.expectOne('data/alternatives.json').flush({ brands: [] });
+      await TestBed.inject(ApplicationRef).whenStable();
+      expect(service.loadFailed()).toBe(true);
+
+      service.retry();
+      TestBed.tick();
+      // Only the failed request is repeated.
+      httpMock.expectOne('data/lines.json').flush(linesBody);
+      await TestBed.inject(ApplicationRef).whenStable();
+
+      expect(service.loadFailed()).toBe(false);
+      expect(service.lines().map((l) => l.name)).toEqual(['Altronix']);
+    });
+  });
 });

@@ -69,7 +69,10 @@ export class SalesTrackerComponent {
   protected readonly savedIsWarning = signal(!this.salesStore.isAvailable());
 
   protected readonly toolsMessage = signal('');
-  protected readonly clearArmed = signal(false);
+  // The month the clear was armed for. Armed for September, it can't clear October: clearArmed is
+  // only true while the month on screen is the armed one, and any month change disarms it outright.
+  private readonly clearArmedFor = signal<string | null>(null);
+  protected readonly clearArmed = computed(() => this.clearArmedFor() === this.month());
   private clearTimer: ReturnType<typeof setTimeout> | undefined;
   protected readonly showDayTable = signal(false);
 
@@ -120,13 +123,16 @@ export class SalesTrackerComponent {
   // ---- Month and setup ----
 
   protected onMonthInputChange(value: string): void {
-    if (/^\d{4}-\d{2}$/.test(value)) this.month.set(value);
+    if (!/^\d{4}-\d{2}$/.test(value)) return;
+    this.month.set(value);
+    this.disarmClear();
   }
 
   protected shiftMonth(by: number): void {
     const [year, monthNumber] = this.month().split('-').map(Number);
     const moved = new Date(year, monthNumber - 1 + by, 1);
     this.month.set(`${moved.getFullYear()}-${pad(moved.getMonth() + 1)}`);
+    this.disarmClear();
   }
 
   protected onGoalInput(value: string): void {
@@ -244,15 +250,21 @@ export class SalesTrackerComponent {
   protected onClearClick(): void {
     clearTimeout(this.clearTimer);
     if (!this.clearArmed()) {
-      this.clearArmed.set(true);
-      this.clearTimer = setTimeout(() => this.clearArmed.set(false), 4000);
+      this.clearArmedFor.set(this.month());
+      this.clearTimer = setTimeout(() => this.clearArmedFor.set(null), 4000);
       return;
     }
-    this.clearArmed.set(false);
+    this.clearArmedFor.set(null);
     const month = this.month();
     this.saveStore((saved) => removeMonth(saved, month));
     this.resetTextsForMonth(this.month());
     this.toolsMessage.set('This month is cleared.');
+  }
+
+  // Cancels an armed clear and its timer, so a stale timer can't fire later and disarm a new arming.
+  private disarmClear(): void {
+    clearTimeout(this.clearTimer);
+    this.clearArmedFor.set(null);
   }
 
   // ---- Saving ----

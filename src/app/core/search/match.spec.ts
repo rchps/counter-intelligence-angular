@@ -178,14 +178,30 @@ describe('branchMatches', () => {
     phone: '(509) 555-0100',
   };
 
+  const prepared = {
+    ...branch,
+    searchText: 'spokane wa washington 123 main st spokane wa 99212',
+    phoneDigits: '5095550100',
+  };
+
   it('matches a word at the start of any word in the address text', () => {
-    const prepared = {
-      ...branch,
-      searchText: 'spokane wa washington 123 main st spokane wa 99212',
-      phoneDigits: '5095550100',
-    };
     expect(branchMatches(prepared, ['spo'], '')).toBe(true);
     expect(branchMatches(prepared, ['pokane'], '')).toBe(false); // not at a word start
+  });
+
+  it('needs every word to match, not just one', () => {
+    expect(branchMatches(prepared, ['spokane', 'main'], '')).toBe(true);
+    expect(branchMatches(prepared, ['spokane', 'zzz'], '')).toBe(false);
+  });
+
+  it('matches an all-digit word against the phone number', () => {
+    expect(branchMatches(prepared, ['spokane', '0100'], '')).toBe(true);
+  });
+
+  // e.g. "call 509": the words don't match, but 3+ typed digits found in the phone number do.
+  it('matches by the typed digits alone once there are at least 3', () => {
+    expect(branchMatches(prepared, ['call'], '509')).toBe(true);
+    expect(branchMatches(prepared, ['call'], '50')).toBe(false);
   });
 });
 

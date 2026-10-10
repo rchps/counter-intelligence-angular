@@ -17,6 +17,7 @@ import { isExactName, sortByBestMatch } from '../../core/search/rank';
 import { didYouMean } from '../../core/search/typos';
 import { BackToTopComponent } from '../../shared/back-to-top.component';
 import { FilterChipsComponent, type FilterChip } from '../../shared/filter-chips.component';
+import { LoadErrorComponent } from '../../shared/load-error.component';
 import { FilterSelectComponent } from '../../shared/filter-select.component';
 import { PublishHeightDirective } from '../../shared/publish-height.directive';
 import { SearchStatusComponent } from '../../shared/search-status.component';
@@ -47,6 +48,7 @@ interface CategoryLineGroup {
 @Component({
   selector: 'app-line-card-page',
   imports: [
+    LoadErrorComponent,
     AiCopyComponent,
     AlternativesBoxComponent,
     SearchToolbarComponent,
@@ -229,14 +231,17 @@ export class LineCardPage {
   protected readonly subText = computed(() => {
     const total = this.data.lines().length;
     const categoryCount = Object.keys(this.data.categories()).length;
-    return `${total} manufacturers across ${categoryCount} categories. Search by brand, product family, or product type.`;
+    // Until the list loads (or when it didn't), there's no count to give: "0 manufacturers" would be wrong.
+    const counts = total ? `${total} manufacturers across ${categoryCount} categories. ` : '';
+    return `${counts}Search by brand, product family, or product type.`;
   });
   private readonly isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
   protected readonly shortcutHint = `Press ${this.isMac ? '⌘K' : 'Ctrl K'} or / from anywhere.`;
-  protected readonly placeholderWide = computed(
-    () =>
-      `Search ${this.data.lines().length} manufacturers, brands, or products (e.g. Wheelock, maglock, Cat6)`,
-  );
+  protected readonly placeholderWide = computed(() => {
+    // No count until the list loads, as in subText.
+    const total = this.data.lines().length;
+    return `Search ${total ? `${total} ` : ''}manufacturers, brands, or products (e.g. Wheelock, maglock, Cat6)`;
+  });
 
   protected readonly alternatives = computed(() =>
     brandsForSearch({

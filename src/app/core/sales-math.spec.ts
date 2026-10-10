@@ -82,6 +82,41 @@ describe('sales-math (September 2026 hand-worked example)', () => {
     expect(week2.difference).toBeCloseTo(-5000, 6);
   });
 
+  it('Chart: sold adds up day by day; pace only grows on selling days', () => {
+    const point = (date: string) => summary.series.find((p) => p.date === date)!;
+    expect(point('2026-09-01')).toMatchObject({ sold: 1500, pace: 2000 });
+    expect(point('2026-09-04')).toMatchObject({ sold: 9000, pace: 8000 });
+    expect(point('2026-09-05')).toMatchObject({ sold: 9000, pace: 8000 }); // Saturday
+    expect(point('2026-09-30')).toMatchObject({ sold: 14000, pace: 44000 });
+  });
+
+  it('Chart: the actual line runs through today when the last sale is before it', () => {
+    const point = (date: string) => summary.series.find((p) => p.date === date)!;
+    expect(point('2026-09-10').showActual).toBe(true);
+    expect(point('2026-09-11').showActual).toBe(false);
+  });
+
+  it('Chart: the actual line runs through the last sale when it is after today', () => {
+    const early = summarize({ month: '2026-09', goal: 44000, sales: SALES, today: '2026-09-03' });
+    const point = (date: string) => early.series.find((p) => p.date === date)!;
+    expect(point('2026-09-09').showActual).toBe(true);
+    expect(point('2026-09-10').showActual).toBe(false);
+  });
+
+  it('Goal not met: $14,000 of $44,000', () => {
+    expect(summary.goalMet).toBe(false);
+  });
+
+  it('Goal met once sold reaches it exactly', () => {
+    const met = summarize({ month: '2026-09', goal: 14000, sales: SALES, today: '2026-09-10' });
+    expect(met.goalMet).toBe(true);
+  });
+
+  it('Goal never counts as met when no goal is set', () => {
+    const noGoal = summarize({ month: '2026-09', goal: 0, sales: SALES, today: '2026-09-10' });
+    expect(noGoal.goalMet).toBe(false);
+  });
+
   it('Labor Day off: 21 selling days, $42,000 -> $2,000', () => {
     const laborDay = summarize({
       month: '2026-09',
