@@ -60,7 +60,8 @@ for the counter.
 
 The _PR title_ check (`pr-title.yml`) checks the title on every pull request; try one locally with
 `npm run release -- check-title "feat(tools): ..."`. A release with nothing for the notes says "Small
-fixes and upkeep."
+fixes and upkeep." While the version is 0.x, the first major change (`!`) is what makes it 1.0.0, so
+save the `!` for the release that should be 1.0.
 
 **How a release is cut.** The deploy job, on a push to `main`:
 
