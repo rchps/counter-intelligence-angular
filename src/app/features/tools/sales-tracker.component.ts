@@ -205,6 +205,17 @@ export class SalesTrackerComponent {
     return shortDate(date);
   }
 
+  /** The selling-day switch's visible text. */
+  protected toggleText(day: DaySummary): string {
+    return day.selling ? 'On' : 'Off';
+  }
+
+  /** "Fri, Sep 4 selling day: On". It ends with the visible text, so someone using voice control can say
+   *  what they see ("click On"), as WCAG 2.5.3 (Label in Name) asks; aria-pressed carries the state too. */
+  protected toggleLabel(day: DaySummary): string {
+    return `${this.dayFullLabel(day.date)} selling day: ${this.toggleText(day)}`;
+  }
+
   protected hitText(day: DaySummary): string {
     const baseline = this.summary().baseline;
     if (day.sales === null || !day.selling || !baseline) return '';
