@@ -7,7 +7,7 @@
     </span>
   </div>
 
-  <nav class="nav" aria-label="Sections">
+  <nav class="nav" aria-label="Sections" data-tour="sections">
     @for (section of sections; track section.key) {
       <a
         [routerLink]="section.path"

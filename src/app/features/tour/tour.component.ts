@@ -16,6 +16,7 @@ import {
   stepCountText,
   type Box,
   type CardPlacement,
+  type TourStep,
 } from '../../core/tour';
 import { TourService } from '../../core/tour.service';
 
@@ -43,11 +44,18 @@ function visibleTarget(name: string): HTMLElement | null {
   return null;
 }
 
-// The guided tour itself: a modal <dialog> over the whole screen that dims the page except for the
-// element the step is about, with a card beside it (a bottom sheet on phones). Modal so focus stays in
-// it and Esc ends it (WAI-ARIA APG dialog pattern); the step's text is a polite live region, so moving
-// to the next step is announced while focus stays on Next. The highlighted element is never under the
-// card (WCAG 2.4.11): the page scrolls it clear first.
+/** The element a step points at: its target, or its fallback when the target isn't showing. */
+function stepTarget(step: TourStep): HTMLElement | null {
+  return (
+    visibleTarget(step.target) ?? (step.fallbackTarget ? visibleTarget(step.fallbackTarget) : null)
+  );
+}
+
+// The guided tour and the one-time tips: a modal <dialog> over the whole screen that dims the page
+// except for the element the step is about, with a card beside it (a bottom sheet on phones). Modal so
+// focus stays in it and Esc ends it (WAI-ARIA APG dialog pattern); the step's text is a polite live
+// region, so moving to the next step is announced while focus stays on Next. The highlighted element is
+// never under the card (WCAG 2.4.11): the page scrolls it clear first.
 @Component({
   selector: 'app-tour',
   templateUrl: './tour.component.html',
@@ -72,11 +80,21 @@ export class TourComponent {
   protected readonly cardLeft = computed(() =>
     this.placement().docked ? null : this.placement().left,
   );
-  protected readonly countText = computed(() =>
-    stepCountText(this.tour.index() ?? 0, this.tour.steps.length),
-  );
+  protected readonly countText = computed(() => {
+    const step = this.tour.step();
+    return step
+      ? stepCountText(this.tour.kind(), step, this.tour.index() ?? 0, this.tour.steps().length)
+      : '';
+  });
   protected readonly isFirst = computed(() => this.tour.index() === 0);
-  protected readonly isLast = computed(() => this.tour.index() === this.tour.steps.length - 1);
+  protected readonly isLast = computed(() => this.tour.index() === this.tour.steps().length - 1);
+  /** A single tip's Done already closes it: a Skip next to it would do the same. */
+  protected readonly skippable = computed(
+    () => this.tour.kind() === 'tour' || this.tour.steps().length > 1,
+  );
+  protected readonly skipText = computed(() =>
+    this.tour.kind() === 'tour' ? 'Skip tour' : 'Skip tips',
+  );
 
   /** Bumped by every step, so a step still being set up stops if another has taken over. */
   private presenting = 0;
@@ -143,14 +161,14 @@ export class TourComponent {
     if (!dialog.open) dialog.showModal();
     this.opened = true;
 
-    // Every step's element is near the top of the Line Card, where the sticky bars are showing too.
+    // Every step's element is near the top of its page, where the sticky bars are showing too.
     scrollTo({ top: 0, behavior: 'instant' });
     await wait(SETTLE_MS);
-    let target = visibleTarget(step.target);
+    let target = stepTarget(step);
     for (let waited = SETTLE_MS; !target && waited < FIND_TIMEOUT_MS; waited += 16) {
       await nextFrame();
       if (token !== this.presenting) return;
-      target = visibleTarget(step.target);
+      target = stepTarget(step);
     }
     if (token !== this.presenting) return;
     if (!target) {
@@ -181,7 +199,7 @@ export class TourComponent {
   /** Puts the ring around the step's element and the card beside it, from where they are right now. */
   private layout(): void {
     const step = this.tour.step();
-    const target = step ? visibleTarget(step.target) : null;
+    const target = step ? stepTarget(step) : null;
     if (!target) return;
     this.markActive(target);
     const box = target.getBoundingClientRect();

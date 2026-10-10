@@ -1,28 +1,9 @@
 // Small controls on a touch screen (#91): each answers taps across at least 44×44px there, while a mouse
-// keeps the desktop size. Cypress's browser has a mouse, so a touch screen is emulated through Chrome's
-// DevTools protocol. Emulation.setTouchEmulationEnabled is what turns on `pointer: coarse` (and `hover:
-// none`); Emulation.setEmulatedMedia ignores a `pointer` feature. That protocol is Electron's and
-// Chrome's, not Firefox's, so the spec runs in those only.
+// keeps the desktop size. The touch screen is emulated (support/pointer.ts), in Electron and Chrome only.
+import { usePointer } from '../support/pointer';
 
 /** Half of the 44px a fingertip needs, less half a pixel so the points land just inside that square. */
 const REACH = 21.5;
-
-type Pointer = 'fine' | 'coarse';
-
-/** Switches between a mouse and a touch screen. The setting outlasts a test (though not its spec file),
- *  so every test sets the one it wants. */
-function usePointer(pointer: Pointer): void {
-  const touch = pointer === 'coarse';
-  cy.wrap(
-    Cypress.automation('remote:debugger:protocol', {
-      command: 'Emulation.setTouchEmulationEnabled',
-      params: touch ? { enabled: true, maxTouchPoints: 1 } : { enabled: false },
-    }),
-  );
-  cy.window().should((win) =>
-    expect(win.matchMedia('(pointer: coarse)').matches, 'pointer: coarse').to.equal(touch),
-  );
-}
 
 /** Whether a tap at (x, y) in the page's viewport lands on `el` (or on something inside it). */
 function tapLandsOn(el: HTMLElement, x: number, y: number): boolean {
