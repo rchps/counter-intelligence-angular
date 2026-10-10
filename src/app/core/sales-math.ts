@@ -214,6 +214,9 @@ export interface SalesStore {
   months: Record<string, MonthRecord>;
 }
 
+/** A month with nothing saved yet. Never mutate it: edits build a new record from it. */
+export const EMPTY_MONTH: MonthRecord = { goal: null, sales: {}, overrides: {} };
+
 // CSV: a "Month,Goal" block, a blank line, then "Date,Weekday,Selling day,Sales" rows (Excel-friendly).
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -290,5 +293,24 @@ export function mergeImportedMonths(saved: SalesStore, imported: SalesStore): Sa
       overrides: { ...existing.overrides, ...incoming.overrides },
     };
   }
+  return { months };
+}
+
+// The two edits below take the store as it is saved right now, not a tab's older copy of it, so each
+// changes only the one month it names and leaves every other month as it found it.
+
+// Applies `change` to one month's record (a new, empty record if the month isn't saved yet).
+export function updateMonthRecord(
+  saved: SalesStore,
+  month: string,
+  change: (data: MonthRecord) => MonthRecord,
+): SalesStore {
+  const current = saved.months[month] ?? EMPTY_MONTH;
+  return { months: { ...saved.months, [month]: change(current) } };
+}
+
+export function removeMonth(saved: SalesStore, month: string): SalesStore {
+  const months = { ...saved.months };
+  delete months[month];
   return { months };
 }

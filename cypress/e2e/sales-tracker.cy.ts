@@ -13,6 +13,7 @@ const SALES: Record<string, string> = {
   '2026-09-08': '2200',
   '2026-09-09': '1800',
 };
+const SALES_KEY = 'counter-intelligence:sales:v1';
 const EXPORTED_CSV = 'cypress/downloads/sales-tracker-2026-09-10.csv';
 
 /** Opens the tracker on Thu Sep 10, 2026, 10am. Only Date is faked, so timers and animation frames
@@ -121,6 +122,101 @@ describe('Sales Tracker', () => {
     cy.getBySel('sales-next-month').click();
     cy.getBySel('sales-month').should('have.value', '2026-10');
     cy.getBySel('sales-today-box').should('not.exist');
+  });
+
+  // A second open tab. Cypress has one window, so "the other tab" writes the saved sales directly and,
+  // like a real browser (which fires `storage` only in the OTHER tabs), tells this tab afterwards.
+  // `notify: false` is the moment before that event arrives, when this tab's copy is still out of date.
+  describe('with the tracker open in another tab', () => {
+    type Months = Record<string, { goal: number | null; sales: Record<string, number> }>;
+
+    function otherTabSaves(change: (months: Months) => void, notify = true): void {
+      cy.window().then((win) => {
+        const store = JSON.parse(win.localStorage.getItem(SALES_KEY) ?? '{"months":{}}');
+        change(store.months);
+        win.localStorage.setItem(SALES_KEY, JSON.stringify(store));
+        if (notify) win.dispatchEvent(new win.StorageEvent('storage', { key: SALES_KEY }));
+      });
+    }
+
+    function savedMonths(): Cypress.Chainable<Months> {
+      return cy
+        .window()
+        .then((win) => JSON.parse(win.localStorage.getItem(SALES_KEY) ?? '{}').months as Months);
+    }
+
+    const october = (months: Months) => {
+      months['2026-10'] = { goal: null, sales: { '2026-10-01': 1000 } };
+    };
+
+    beforeEach(() => {
+      visitTrackerOnSep10();
+    });
+
+    it("keeps the other tab's month when this tab edits a different month", () => {
+      otherTabSaves(october, false);
+      fill('sales-day-2026-09-04', '2500');
+      cy.reload();
+      cy.getBySel('sales-day-2026-09-04').should('have.value', '2500');
+      savedMonths().should('have.keys', ['2026-09', '2026-10']);
+    });
+
+    it("keeps the other tab's days when this tab edits another day of the same month", () => {
+      otherTabSaves((months) => {
+        months['2026-09'] = { goal: null, sales: { '2026-09-01': 1500 } };
+      }, false);
+      fill('sales-day-2026-09-02', '900');
+      cy.reload();
+      cy.getBySel('sales-day-2026-09-01').should('have.value', '1500');
+      cy.getBySel('sales-day-2026-09-02').should('have.value', '900');
+    });
+
+    it('lets the last write win when both tabs edit the same day', () => {
+      fill('sales-day-2026-09-04', '100');
+      otherTabSaves((months) => {
+        months['2026-09'].sales['2026-09-04'] = 200;
+      }, false);
+      fill('sales-day-2026-09-04', '300');
+      cy.reload();
+      cy.getBySel('sales-day-2026-09-04').should('have.value', '300');
+    });
+
+    it("shows the other tab's save without a reload", () => {
+      fill('sales-day-2026-09-04', '100');
+      otherTabSaves((months) => {
+        months['2026-09'].sales['2026-09-04'] = 200;
+      });
+      cy.getBySel('sales-day-2026-09-04').should('have.value', '200');
+      cy.getBySel('sales-next-month').click();
+      otherTabSaves(october);
+      cy.getBySel('sales-day-2026-10-01').should('have.value', '1000');
+    });
+
+    it("clears this month without erasing the other tab's months", () => {
+      fill('sales-day-2026-09-04', '100');
+      otherTabSaves(october, false);
+      cy.getBySel('sales-clear').click();
+      cy.getBySel('sales-clear').click();
+      cy.reload();
+      cy.getBySel('sales-day-2026-09-04').should('have.value', '');
+      savedMonths().should('have.keys', ['2026-10']);
+    });
+
+    it("imports into what is saved now, keeping the other tab's months", () => {
+      otherTabSaves(october, false);
+      cy.getBySel('sales-import-file').selectFile(
+        {
+          contents: Cypress.Buffer.from(
+            'Month,Goal\n2026-09,44000\n\nDate,Weekday,Selling day,Sales\n',
+          ),
+          fileName: 'sales.csv',
+        },
+        { force: true },
+      );
+      cy.getBySel('sales-tools-message').should('have.text', 'Imported 1 month.');
+      cy.reload();
+      savedMonths().should('have.keys', ['2026-09', '2026-10']);
+    });
   });
 
   it('never puts sales numbers in a problem report', () => {

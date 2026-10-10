@@ -2,9 +2,13 @@ import {
   fromCsv,
   mergeImportedMonths,
   parseMoney,
+  removeMonth,
   shortDate,
   summarize,
   toCsv,
+  updateMonthRecord,
+  type MonthRecord,
+  type SalesStore,
 } from './sales-math';
 
 // A hand-worked month. September 2026 starts on a Tuesday and has 22
@@ -200,5 +204,54 @@ describe('mergeImportedMonths', () => {
       sales: {},
       overrides: { '2026-10-12': false },
     });
+  });
+});
+
+// Edits are applied to the store as saved right now. These stand in for "tab B already saved October
+// and tab A, which still holds an older copy, now edits September".
+describe('updateMonthRecord and removeMonth', () => {
+  const saved: SalesStore = {
+    months: {
+      '2026-09': { goal: 44000, sales: { '2026-09-01': 1500 }, overrides: {} },
+      '2026-10': { goal: 40000, sales: { '2026-10-01': 1000 }, overrides: {} },
+    },
+  };
+
+  it('changes only the month it names', () => {
+    const next = updateMonthRecord(saved, '2026-09', (data) => ({
+      ...data,
+      sales: { ...data.sales, '2026-09-28': 2500 },
+    }));
+    expect(next.months['2026-09'].sales).toEqual({ '2026-09-01': 1500, '2026-09-28': 2500 });
+    expect(next.months['2026-10']).toBe(saved.months['2026-10']);
+  });
+
+  it('keeps the other days in the same month', () => {
+    const next = updateMonthRecord(saved, '2026-09', (data) => ({
+      ...data,
+      sales: { ...data.sales, '2026-09-02': 900 },
+    }));
+    expect(next.months['2026-09'].sales).toEqual({ '2026-09-01': 1500, '2026-09-02': 900 });
+  });
+
+  it('lets the later write win for the same day', () => {
+    const edit = (value: number) => (data: MonthRecord) => ({
+      ...data,
+      sales: { ...data.sales, '2026-09-01': value },
+    });
+    const first = updateMonthRecord(saved, '2026-09', edit(100));
+    const next = updateMonthRecord(first, '2026-09', edit(200));
+    expect(next.months['2026-09'].sales['2026-09-01']).toBe(200);
+  });
+
+  it('starts an empty record for a month that is not saved yet', () => {
+    const next = updateMonthRecord({ months: {} }, '2026-11', (data) => ({ ...data, goal: 10 }));
+    expect(next.months['2026-11']).toEqual({ goal: 10, sales: {}, overrides: {} });
+  });
+
+  it('removes one month and leaves the rest', () => {
+    const next = removeMonth(saved, '2026-09');
+    expect(Object.keys(next.months)).toEqual(['2026-10']);
+    expect(saved.months['2026-09']).toBeDefined();
   });
 });
