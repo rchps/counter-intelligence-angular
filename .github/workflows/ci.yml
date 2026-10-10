@@ -3,6 +3,10 @@
 # Cloudflare Access decides who can see it. Any other branch gets a preview of its own, behind the same
 # login. Screenshot comparisons have a workflow of their own (screenshots.yml).
 #
+# Each deploy of main is a release (scripts/release.mts, docs/ci-cd.md#releases): the deploy job works
+# out the next version from the merged PR titles, builds with it, deploys, and only then tags the commit. All of
+# that is the script's; the only host-specific parts are calling it and pushing the tag.
+#
 # Cloudflare serves the site as a Worker with static assets (wrangler.jsonc). Its one script,
 # worker/index.ts, files feedback as GitHub issues; its secrets are set in Cloudflare, never here
 # (docs/ci-cd.md). The build carries the maps name, so it's never uploaded as a GitHub artifact: on a
@@ -138,6 +142,8 @@ jobs:
       CYPRESS_INSTALL_BINARY: '0' # this job doesn't open a browser, so skip the Cypress download
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # tags: the build's version comes from `git describe`
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
@@ -196,6 +202,8 @@ jobs:
       CYPRESS_INSTALL_BINARY: '0'
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # tags, so the version reads like v1.4.0-3-gc68fb5d: a preview, not a release
       # Cloudflare's rules for the alias: lowercase letters, numbers, and dashes, starting with a letter,
       # and at most 63 characters together with "-<worker name>" (it's one part of a hostname).
       - name: Name the preview after the branch
@@ -241,6 +249,9 @@ jobs:
       && (needs.e2e.result == 'success' || needs.e2e.result == 'skipped') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    # contents: write pushes the release tag (not commits: main is protected, and needs none).
+    permissions:
+      contents: write
     # Records each deploy as a GitHub deployment, listed with the previews and linking to the live site.
     environment:
       name: production
@@ -253,17 +264,27 @@ jobs:
       CYPRESS_INSTALL_BINARY: '0'
     steps:
       - uses: actions/checkout@v7
+        with:
+          # Every tag and the history between: the next version reads main's commits since the last
+          # release tag. Checked out after this job's turn in the deploy queue, so a release tagged
+          # by the deploy before it is already here.
+          fetch-depth: 0
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      - name: Plan the release
+        id: release
+        run: npm run --silent release -- plan >> "$GITHUB_OUTPUT"
       # Without the site key the build still succeeds, just with the feedback button hidden, so stop here
       # instead of shipping that by accident.
       - name: Build
         env:
           TURNSTILE_SITE_KEY: ${{ vars.TURNSTILE_SITE_KEY }}
           MAPS_NAME: ${{ secrets.MAPS_NAME }}
+          # The version this deploy releases, not yet tagged (that waits for the deploy to succeed).
+          APP_VERSION: ${{ steps.release.outputs.version }}
         run: |
           if [ -z "$TURNSTILE_SITE_KEY" ]; then
             echo "::error::The TURNSTILE_SITE_KEY variable isn't set (repo Settings > Secrets and variables > Actions > Variables)."
@@ -276,3 +297,13 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           wranglerVersion: '4.141.0'
           command: deploy
+      # Only after a deploy that worked, so every tag is a release that went live. A re-run of a deploy
+      # that was already tagged finds the tag on this commit and makes no new one.
+      - name: Tag the release
+        if: steps.release.outputs.tagged != 'true'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          npm run release -- tag
+          git push origin "${{ steps.release.outputs.version }}"
+          echo "Released ${{ steps.release.outputs.version }}" >> "$GITHUB_STEP_SUMMARY"
