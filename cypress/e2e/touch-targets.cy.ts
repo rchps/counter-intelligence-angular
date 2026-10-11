@@ -15,6 +15,8 @@ interface Control {
   name: string;
   path: string;
   get: () => Cypress.Chainable<JQuery<HTMLElement>>;
+  /** Shows the control first, when it lives in a dialog. */
+  open?: () => void;
   /** Grows for real on a touch screen, instead of getting an invisible tap box (see its stylesheet). */
   grows: boolean;
   /** Already 44×44 on a phone, mouse or not, so there's no smaller desktop size there to compare with. */
@@ -55,6 +57,13 @@ const CONTROLS: Control[] = [
     get: () => cy.getBySelLike('sales-toggle-').first(),
     grows: true,
   },
+  {
+    name: 'the feedback dialog’s × (its only Close button)',
+    path: '/lines',
+    open: () => cy.getBySel('topbar-feedback').click(),
+    get: () => cy.getBySel('feedback-close'),
+    grows: false,
+  },
 ];
 
 const SCREENS = [
@@ -88,6 +97,7 @@ describe('Tap targets', { browser: { family: 'chromium' } }, () => {
       for (const control of CONTROLS) {
         it(`${control.name}: a mouse taps just the control, a touch screen gets 44×44`, () => {
           cy.visit(control.path);
+          control.open?.();
           // Into the middle of the screen, clear of the sticky bars. Scrolled by hand, since this is
           // about where taps land, not a click.
           control.get().then(($control) => $control[0].scrollIntoView({ block: 'center' }));
