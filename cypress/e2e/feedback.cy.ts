@@ -51,6 +51,19 @@ describe('Feedback', () => {
     cy.getBySel('feedback-send').should('have.attr', 'aria-describedby', 'report-public');
   });
 
+  it('shows what else is attached, open again each time the dialog opens', () => {
+    cy.getBySel('search-input').type('altronix');
+    cy.getBySel('feedback-card-report').click();
+    cy.getBySel('feedback-included').should('have.attr', 'open');
+    cy.getBySel('feedback-page-details').should('be.visible').and('contain.text', '"altronix"');
+
+    cy.getBySel('feedback-included').find('summary').click();
+    cy.getBySel('feedback-included').should('not.have.attr', 'open');
+    cy.getBySel('feedback-close').click();
+    cy.getBySel('feedback-card-report').click();
+    cy.getBySel('feedback-included').should('have.attr', 'open');
+  });
+
   it('sends a problem report with the page details, asking for a kind first', () => {
     cy.getBySel('search-input').type('altronix');
     cy.getBySel('search-status').should('contain.text', 'altronix');

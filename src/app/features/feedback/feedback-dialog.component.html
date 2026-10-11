@@ -183,7 +183,8 @@
       </div>
     }
 
-    <details class="report-context">
+    <!-- Open each time the dialog opens, so what's attached (search text included) is seen before Send. -->
+    <details class="report-context" data-cy="feedback-included" [open]="open()">
       <summary>Also included, so it can be checked</summary>
       <pre data-cy="feedback-page-details">{{ pageText() }}</pre>
     </details>
