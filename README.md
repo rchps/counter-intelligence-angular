@@ -34,7 +34,7 @@ calculator, on a desktop or a phone.
 - **Six quoting and sizing tools** whose math cites its sources: NFPA 72 for battery standby, NEC
   Chapter 9 for voltage drop, IEEE 802.3af/at/bt for PoE budgets.
 - **Almost no backend.** Static JSON data, a static site, and build-time configuration. The one bit of
-  server code files feedback as GitHub issues, anonymously, behind a Turnstile bot check.
+  server code files feedback as GitHub issues, anonymously, for people signed in through Cloudflare Access.
 - **Tested at three levels,** and every pull request is compared pixel by pixel against `main` in light and dark
   mode, on desktop and phone.
 - **Accessible by default:** WCAG AA as the target, native dialogs, ARIA patterns where HTML falls

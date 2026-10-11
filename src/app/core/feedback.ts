@@ -171,9 +171,6 @@ export function searchStatusText({
 /** Sending, and the ways it can go. */
 export const SEND_COPY = {
   sending: 'Sending…',
-  checking: 'One moment, checking this browser first. Try Send again in a few seconds.',
-  blocked:
-    "This browser couldn't be checked, so it can't send. Reload the page, or turn off a blocker for it.",
   failed: "It didn't go through. Try again in a minute.",
 };
 

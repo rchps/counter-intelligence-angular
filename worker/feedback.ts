@@ -9,9 +9,9 @@ export type { FeedbackSubmission };
 export type FeedbackKind = FeedbackSubmission['kind'];
 
 // The dialog's boxes are 500 characters each, so a real report is far under these. They stop anyone
-// posting straight to the endpoint from filing something huge. 2048 is Turnstile's own token maximum.
-// The spec's maxLength for each (feedback.spec.ts checks they match: generated types can't carry them).
-export const LIMITS = { title: 256, body: 4000, turnstileToken: 2048 };
+// posting straight to the endpoint from filing something huge. The spec's maxLength for each
+// (feedback.spec.ts checks they match: generated types can't carry them).
+export const LIMITS = { title: 256, body: 4000 };
 
 // GitHub's default labels, so they exist in any repo without setting them up.
 const LABELS: Record<FeedbackKind, string> = { problem: 'bug', idea: 'enhancement' };
@@ -23,11 +23,10 @@ function isText(value: unknown, max: number): value is string {
 /** The request body, or null when it isn't exactly what the dialog sends. */
 export function parseSubmission(value: unknown): FeedbackSubmission | null {
   if (typeof value !== 'object' || value === null) return null;
-  const { kind, title, body, turnstileToken } = value as Record<string, unknown>;
+  const { kind, title, body } = value as Record<string, unknown>;
   if (kind !== 'problem' && kind !== 'idea') return null;
   if (!isText(title, LIMITS.title) || !isText(body, LIMITS.body)) return null;
-  if (!isText(turnstileToken, LIMITS.turnstileToken)) return null;
-  return { kind, title: title.trim(), body: body.trim(), turnstileToken };
+  return { kind, title: title.trim(), body: body.trim() };
 }
 
 export interface GitHubIssueRequest {

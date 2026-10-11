@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
-import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
+import { exportJWK, generateKeyPair, SignJWT, type CryptoKey } from 'jose';
+import { beforeAll, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { parse } from 'yaml';
 import { githubIssueRequest, LIMITS, parseSubmission, type FeedbackSubmission } from './feedback';
 import { handleFeedback, type Env } from './index';
@@ -15,7 +16,6 @@ const SUBMISSION: FeedbackSubmission = {
   kind: 'problem',
   title: 'Counter Intelligence: Wrong or broken link (Altronix)',
   body: "What's wrong: Wrong or broken link\nManufacturer: Altronix",
-  turnstileToken: 'XXXX.DUMMY.TOKEN.XXXX',
 };
 
 describe('the API spec', () => {
@@ -27,7 +27,15 @@ describe('the API spec', () => {
     const { properties } = spec.components.schemas.FeedbackSubmission;
     expect(properties['title']?.maxLength).toBe(LIMITS.title);
     expect(properties['body']?.maxLength).toBe(LIMITS.body);
-    expect(properties['turnstileToken']?.maxLength).toBe(LIMITS.turnstileToken);
+  });
+});
+
+describe('wrangler.jsonc', () => {
+  // Empty Access settings make the Worker turn every report away, so they can't reach a deploy.
+  it('names the Access login the Worker checks', () => {
+    const config = readFileSync(new URL('../wrangler.jsonc', import.meta.url), 'utf8');
+    expect(config).toMatch(/"ACCESS_TEAM_DOMAIN": "https:\/\/[a-z0-9-]+\.cloudflareaccess\.com"/);
+    expect(config).toMatch(/"ACCESS_AUD": "[^"]+"/);
   });
 });
 
@@ -42,7 +50,6 @@ describe('parseSubmission', () => {
     expect(parseSubmission({ ...SUBMISSION, kind: 'spam' })).toBeNull();
     expect(parseSubmission({ ...SUBMISSION, title: '   ' })).toBeNull();
     expect(parseSubmission({ ...SUBMISSION, body: 42 })).toBeNull();
-    expect(parseSubmission({ ...SUBMISSION, turnstileToken: undefined })).toBeNull();
   });
 
   it('turns away oversized fields', () => {
@@ -75,74 +82,119 @@ describe('githubIssueRequest', () => {
 });
 
 describe('handleFeedback', () => {
+  const TEAM = 'https://counter.cloudflareaccess.com';
+  const AUD = 'access-app-aud';
   const env: Env = {
     ASSETS: { fetch: () => Promise.resolve(new Response()) },
     GITHUB_REPO: 'owner/repo',
+    ACCESS_TEAM_DOMAIN: TEAM,
+    ACCESS_AUD: AUD,
     GITHUB_TOKEN: 'secret-token',
-    TURNSTILE_SECRET_KEY: 'turnstile-secret',
   };
+  // Stands in for the team's Access signing key; its public half is served from the certs address.
+  let accessKey: CryptoKey;
+  let certs: { keys: object[] };
   let fetchMock: Mock<typeof fetch>;
+  let githubStatus: number;
 
-  function post(body: unknown): Request {
+  beforeAll(async () => {
+    const { privateKey, publicKey } = await generateKeyPair('RS256');
+    accessKey = privateKey;
+    certs = { keys: [{ ...(await exportJWK(publicKey)), kid: 'access-key', alg: 'RS256' }] };
+  });
+
+  /** An Access token as Access would sign it; each claim can be changed to make a bad one. */
+  function accessToken(
+    claims: { iss?: string; aud?: string; key?: CryptoKey } = {},
+  ): Promise<string> {
+    return new SignJWT({ email: 'rep@example.com' })
+      .setProtectedHeader({ alg: 'RS256', kid: 'access-key' })
+      .setIssuer(claims.iss ?? TEAM)
+      .setAudience(claims.aud ?? AUD)
+      .setIssuedAt()
+      .setExpirationTime('1h')
+      .sign(claims.key ?? accessKey);
+  }
+
+  function post(body: unknown, token?: string): Request {
+    const headers: Record<string, string> = {
+      'Cf-Access-Authenticated-User-Email': 'rep@example.com',
+    };
+    if (token) headers['Cf-Access-Jwt-Assertion'] = token;
     return new Request('https://example.com/api/feedback', {
       method: 'POST',
-      headers: { 'Cf-Access-Authenticated-User-Email': 'rep@example.com' },
+      headers,
       body: typeof body === 'string' ? body : JSON.stringify(body),
     });
   }
 
-  /** Turnstile answers first, then GitHub. */
-  function respond(turnstileSuccess: boolean, githubStatus = 201): void {
-    fetchMock
-      .mockResolvedValueOnce(Response.json({ success: turnstileSuccess }))
-      .mockResolvedValueOnce(new Response('{}', { status: githubStatus }));
+  function githubCalls(): unknown[][] {
+    return fetchMock.mock.calls.filter(([url]) =>
+      String(url).startsWith('https://api.github.com/'),
+    );
   }
 
   beforeEach(() => {
     vi.unstubAllGlobals();
     vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     vi.spyOn(console, 'error').mockImplementation(() => undefined);
-    fetchMock = vi.fn<typeof fetch>();
+    githubStatus = 201;
+    fetchMock = vi.fn<typeof fetch>((input) =>
+      Promise.resolve(
+        String(input) === `${TEAM}/cdn-cgi/access/certs`
+          ? Response.json(certs)
+          : new Response('{}', { status: githubStatus }),
+      ),
+    );
     vi.stubGlobal('fetch', fetchMock);
   });
 
-  it('checks the Turnstile token, then files the issue', async () => {
-    respond(true);
-    const response = await handleFeedback(post(SUBMISSION), env);
+  it('checks the Access token, then files the issue', async () => {
+    const response = await handleFeedback(post(SUBMISSION, await accessToken()), env);
     expect(response.status).toBe(201);
-
-    const [siteverifyUrl, siteverifyInit] = fetchMock.mock.calls[0];
-    expect(siteverifyUrl).toBe('https://challenges.cloudflare.com/turnstile/v0/siteverify');
-    expect(JSON.parse(siteverifyInit?.body as string)).toEqual({
-      secret: 'turnstile-secret',
-      response: SUBMISSION.turnstileToken,
-    });
-    expect(fetchMock.mock.calls[1][0]).toBe('https://api.github.com/repos/owner/repo/issues');
+    expect(githubCalls().map(([url]) => url)).toEqual([
+      'https://api.github.com/repos/owner/repo/issues',
+    ]);
   });
 
-  it("never passes on who sent it (Access's email header)", async () => {
-    respond(true);
-    await handleFeedback(post(SUBMISSION), env);
-    expect(JSON.stringify(fetchMock.mock.calls)).not.toContain('rep@example.com');
+  it("never passes on who sent it (Access's email header and token)", async () => {
+    await handleFeedback(post(SUBMISSION, await accessToken()), env);
+    expect(JSON.stringify(githubCalls())).not.toContain('rep@example.com');
   });
 
-  it("doesn't reach GitHub when Turnstile says no", async () => {
-    respond(false);
-    const response = await handleFeedback(post(SUBMISSION), env);
-    expect(response.status).toBe(403);
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+  it("doesn't reach GitHub without a valid Access token", async () => {
+    const { privateKey: otherKey } = await generateKeyPair('RS256');
+    const tokens = [
+      undefined,
+      'not-a-token',
+      await accessToken({ key: otherKey }),
+      await accessToken({ aud: 'another-app' }),
+      await accessToken({ iss: 'https://other.cloudflareaccess.com' }),
+    ];
+    for (const token of tokens) {
+      expect((await handleFeedback(post(SUBMISSION, token), env)).status).toBe(403);
+    }
+    expect(githubCalls()).toHaveLength(0);
   });
 
-  it('turns away a bad body or method without calling anything', async () => {
-    expect((await handleFeedback(post('not json'), env)).status).toBe(400);
-    expect((await handleFeedback(post({ kind: 'problem' }), env)).status).toBe(400);
-    const get = new Request('https://example.com/api/feedback');
-    expect((await handleFeedback(get, env)).status).toBe(405);
+  it('stays closed when the Access settings are missing', async () => {
+    const token = await accessToken();
+    const noAud = { ...env, ACCESS_AUD: '' };
+    expect((await handleFeedback(post(SUBMISSION, token), noAud)).status).toBe(403);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
+  it('turns away a bad body or method without reaching GitHub', async () => {
+    const token = await accessToken();
+    expect((await handleFeedback(post('not json', token), env)).status).toBe(400);
+    expect((await handleFeedback(post({ kind: 'problem' }, token), env)).status).toBe(400);
+    const get = new Request('https://example.com/api/feedback');
+    expect((await handleFeedback(get, env)).status).toBe(405);
+    expect(githubCalls()).toHaveLength(0);
+  });
+
   it('reports a GitHub failure as a bad gateway', async () => {
-    respond(true, 401);
-    expect((await handleFeedback(post(SUBMISSION), env)).status).toBe(502);
+    githubStatus = 401;
+    expect((await handleFeedback(post(SUBMISSION, await accessToken()), env)).status).toBe(502);
   });
 });

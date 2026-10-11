@@ -52,10 +52,7 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true,
-              "define": {
-                "TURNSTILE_SITE_KEY": "'1x00000000000000000000AA'"
-              }
+              "sourceMap": true
             },
             "e2e": {
               "optimization": false,
@@ -63,8 +60,7 @@
               "sourceMap": true,
               "define": {
                 "BUILD_ID": "'0000000'",
-                "BUILD_DATE": "'2026-01-01'",
-                "TURNSTILE_SITE_KEY": "'1x00000000000000000000AA'"
+                "BUILD_DATE": "'2026-01-01'"
               }
             }
           },

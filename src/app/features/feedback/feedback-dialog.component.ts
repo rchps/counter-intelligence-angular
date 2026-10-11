@@ -31,17 +31,16 @@ import {
 import { FeedbackSender } from '../../core/feedback-sender.service';
 import { FeedbackService, type FeedbackRequest } from '../../core/feedback.service';
 import { inputValue } from '../../shared/input-value';
-import { TurnstileComponent } from './turnstile.component';
 
 type SendStatus = 'idle' | 'sending' | 'sent';
 
 // One native <dialog> with two modes. "Something's wrong" asks what first (closed choices, then optional
 // manufacturer and note); "I have an idea" asks what you were trying to do first, since the task behind
 // a request is the stronger signal (NN/g). Either way Send posts the report, which the site's Worker
-// files as a GitHub issue once the Turnstile check has passed.
+// files as a GitHub issue.
 @Component({
   selector: 'app-feedback-dialog',
-  imports: [NgTemplateOutlet, TurnstileComponent],
+  imports: [NgTemplateOutlet],
   templateUrl: './feedback-dialog.component.html',
   styleUrl: './feedback-dialog.component.scss',
 })
@@ -52,7 +51,6 @@ export class FeedbackDialogComponent {
   private readonly data = inject(DataService);
   private readonly injector = inject(Injector);
   private readonly dialog = viewChild.required<ElementRef<HTMLDialogElement>>('dialog');
-  private readonly turnstile = viewChild(TurnstileComponent);
 
   protected readonly kinds = PROBLEM_KINDS;
   protected readonly howOften = HOW_OFTEN;
@@ -70,9 +68,7 @@ export class FeedbackDialogComponent {
   protected readonly often = signal<string | null>(null);
   protected readonly done = signal('');
   protected readonly status = signal<SendStatus>('idle');
-  /** The bot check is drawn only while the dialog is open, so its script loads only when needed. */
   protected readonly open = signal(false);
-  protected readonly siteKey = this.feedback.siteKey;
 
   private opener: HTMLElement | null = null;
 
@@ -182,24 +178,15 @@ export class FeedbackDialogComponent {
         ?.focus();
       return;
     }
-    const turnstile = this.turnstile();
-    const turnstileToken = turnstile?.token();
-    if (!turnstileToken) {
-      this.done.set(turnstile?.failed() ? SEND_COPY.blocked : SEND_COPY.checking);
-      return;
-    }
-
     this.status.set('sending');
     this.done.set(SEND_COPY.sending);
     try {
-      await this.sender.send({ kind: this.mode(), ...report, turnstileToken });
+      await this.sender.send({ kind: this.mode(), ...report });
       this.status.set('sent');
       this.done.set(this.copy().thanks);
     } catch {
       this.status.set('idle');
       this.done.set(SEND_COPY.failed);
-    } finally {
-      turnstile?.reset(); // each token passes once
     }
   }
 

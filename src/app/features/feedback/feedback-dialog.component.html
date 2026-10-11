@@ -199,9 +199,6 @@
       <summary>Also included, so it can be checked</summary>
       <pre data-cy="feedback-page-details">{{ pageText() }}</pre>
     </details>
-    @if (open()) {
-      <app-turnstile [siteKey]="siteKey()" action="feedback" />
-    }
   </div>
   <div class="dlg-foot">
     <button

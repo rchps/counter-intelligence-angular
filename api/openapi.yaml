@@ -21,9 +21,9 @@ paths:
       operationId: sendFeedback
       summary: File a report as a GitHub issue
       description: >-
-        Checks the Turnstile answer with Cloudflare, then posts the report as an issue under the
-        site's own GitHub account, so the sender stays anonymous. Nothing about who sent it is passed
-        on, including the email Access adds to the request.
+        Checks that the request came through Cloudflare Access, then posts the report as an issue
+        under the site's own GitHub account, so the sender stays anonymous. Nothing about who sent it
+        is passed on, including the email Access adds to the request.
       requestBody:
         required: true
         content:
@@ -36,7 +36,7 @@ paths:
         '400':
           description: The body isn't JSON, or isn't a submission.
         '403':
-          description: The Turnstile answer didn't pass (a bot, or a token that's used or expired).
+          description: The request has no valid Access token (it didn't come through the Access login).
         '405':
           description: Only POST is allowed.
           headers:
@@ -55,14 +55,15 @@ components:
       name: CF_Authorization
       description: >-
         Set by Cloudflare Access at sign-in, and checked by Access before the Worker sees the
-        request.
+        request. Access then adds a signed token (the Cf-Access-Jwt-Assertion header), which the
+        Worker checks too.
   schemas:
     FeedbackSubmission:
       type: object
       description: >-
         A report from the feedback dialog. The Worker trims the title and body, and each text field
         must have something besides spaces (the pattern).
-      required: [kind, title, body, turnstileToken]
+      required: [kind, title, body]
       properties:
         kind:
           type: string
@@ -76,8 +77,3 @@ components:
           type: string
           pattern: \S
           maxLength: 4000
-        turnstileToken:
-          type: string
-          pattern: \S
-          maxLength: 2048
-          description: The Turnstile widget's answer. Single-use, valid for 5 minutes.

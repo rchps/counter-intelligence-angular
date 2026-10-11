@@ -14,10 +14,6 @@ export type FeedbackSubmission = {
     kind: 'problem' | 'idea';
     title: string;
     body: string;
-    /**
-     * The Turnstile widget's answer. Single-use, valid for 5 minutes.
-     */
-    turnstileToken: string;
 };
 
 export type SendFeedbackData = {
@@ -33,7 +29,7 @@ export type SendFeedbackErrors = {
      */
     400: unknown;
     /**
-     * The Turnstile answer didn't pass (a bot, or a token that's used or expired).
+     * The request has no valid Access token (it didn't come through the Access login).
      */
     403: unknown;
     /**
