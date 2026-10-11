@@ -87,13 +87,15 @@ export const MODE_COPY: Record<FeedbackMode, ModeCopy> = {
 /** Where the Worker files reports. Keep in step with GITHUB_REPO in wrangler.jsonc. */
 export const ISSUES_URL = 'https://github.com/rchps/counter-intelligence-angular/issues';
 
-/** Shown beside Send in both modes: everything typed here becomes a public web page. */
+/** Shown at the top in both modes: what's sent becomes a public GitHub issue. */
 export const PUBLIC_NOTICE = {
-  heading: 'Anyone on the internet can read this',
+  heading: 'Your feedback will be public',
   body:
-    "What you send becomes a public issue on GitHub. Your name isn't attached, but everything you type " +
-    'is. Leave out customer names, prices, account numbers, and anything else private.',
-  link: 'See the public issue list',
+    "Your report will be posted to a public GitHub issue tracker. Your name won't be attached, but " +
+    'others can see what you submit.',
+  reminder:
+    'Please leave out customer information, pricing, account numbers, or anything confidential.',
+  link: 'View public issues',
 };
 
 export function problemKind(key: string | null | undefined): ProblemKind | null {

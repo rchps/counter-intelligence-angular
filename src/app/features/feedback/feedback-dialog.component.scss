@@ -99,37 +99,40 @@ app-turnstile {
   display: block;
 }
 
-// The one thing people must know before typing: reports become public GitHub issues. It sits at the top,
-// in view as the dialog opens on any screen, and Send names it as its description for screen readers.
+// What people should know before typing: reports become public GitHub issues. Informational, not a
+// warning, so it borrows the neutral box of "Also included" below. It sits at the top, in view as the
+// dialog opens on any screen, and Send names it as its description for screen readers.
 .fb-public {
   display: flex;
   gap: 10px;
   margin: -4px 0 18px;
   padding: 12px 14px;
-  border: 1px solid color-mix(in srgb, var(--amber-ink) 35%, transparent);
+  border: 1px solid var(--line);
   border-radius: 12px;
-  background: var(--amber-soft);
-  color: var(--ink);
+  background: var(--surface-2);
+  color: var(--ink-2);
   font-size: 14px;
   line-height: 1.45;
 }
 .fb-public svg {
   flex: 0 0 auto;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   margin-top: 1px;
-  color: var(--amber-ink);
 }
 .fb-public p {
   margin: 0;
 }
-.fb-public-heading {
-  margin-bottom: 2px;
-  color: var(--amber-ink);
+.fb-public p + p {
+  margin-top: 6px;
+}
+.fb-public .fb-public-heading {
+  margin-bottom: -4px;
+  color: var(--ink);
   font-weight: 600;
 }
 .fb-public a {
-  color: inherit;
+  color: var(--ink);
   font-weight: 500;
   text-decoration: underline;
 }

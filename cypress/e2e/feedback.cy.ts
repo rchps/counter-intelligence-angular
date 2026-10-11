@@ -35,16 +35,18 @@ describe('Feedback', () => {
     cy.getBySel('footer-idea').should('be.visible');
   });
 
-  it('warns, in both modes and on Send itself, that reports are public', () => {
+  it('says, in both modes and on Send itself, that reports are public', () => {
     cy.getBySel('feedback-card-report').click();
     for (const mode of ['problem', 'idea']) {
       cy.getBySel(`feedback-mode-${mode}`).check();
       cy.getBySel('feedback-public-notice')
         .should('be.visible')
-        .and('contain.text', 'Anyone on the internet can read this');
+        .and('contain.text', 'Your feedback will be public')
+        .and('contain.text', 'leave out customer information');
     }
     cy.getBySel('feedback-issues-link')
-      .should('have.attr', 'href', 'https://github.com/rchps/counter-intelligence-angular/issues')
+      .should('contain.text', 'View public issues')
+      .and('have.attr', 'href', 'https://github.com/rchps/counter-intelligence-angular/issues')
       .and('have.attr', 'target', '_blank');
     cy.getBySel('feedback-send').should('have.attr', 'aria-describedby', 'report-public');
   });
