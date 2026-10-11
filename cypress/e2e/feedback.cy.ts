@@ -133,6 +133,35 @@ describe('Feedback', () => {
     cy.focused().should('have.attr', 'data-cy', 'feedback-card-report');
   });
 
+  it('keeps what was typed when closed, until it is sent', () => {
+    cy.getBySel('feedback-card-report').click();
+    cy.getBySel('feedback-kind-link').check();
+    cy.getBySel('feedback-line').type('Altronix');
+    cy.getBySel('feedback-details').type('Goes to a 404 page');
+    cy.getBySel('feedback-mode-idea').check();
+    cy.getBySel('idea-task').type('Quote a job');
+    cy.getBySel('feedback-close').click();
+
+    // Another entry point picks the side, but doesn't replace a problem already being described.
+    cy.getBySel('feedback-card-report').click();
+    cy.getBySel('feedback-kind-link').should('be.checked');
+    cy.getBySel('feedback-line').should('have.value', 'Altronix');
+    cy.getBySel('feedback-details').should('have.value', 'Goes to a 404 page');
+    cy.focused().should('have.attr', 'data-cy', 'feedback-details');
+    cy.getBySel('feedback-close').click();
+    cy.getBySel('feedback-card-idea').click();
+    cy.getBySel('idea-task').should('have.value', 'Quote a job');
+
+    send();
+    cy.getBySel('feedback-done').should('contain.text', 'Thanks');
+    cy.getBySel('feedback-close').click();
+    cy.getBySel('feedback-card-report').click();
+    cy.getBySel('feedback-kind-link').should('not.be.checked');
+    cy.getBySel('feedback-details').should('have.value', '');
+    cy.getBySel('feedback-mode-idea').check();
+    cy.getBySel('idea-task').should('have.value', '');
+  });
+
   it('starts from what the page knows: a missing line from an empty search, calculators on Tools', () => {
     cy.getBySel('search-input').type('acme widgets');
     cy.getBySel('report-missing-line').click();
