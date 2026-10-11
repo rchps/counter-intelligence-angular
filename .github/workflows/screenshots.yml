@@ -225,7 +225,7 @@ jobs:
         env:
           CYPRESS_INSTALL_BINARY: '0' # only reg-cli is needed here, not the browser-driving app
       - if: env.DONE != 'true'
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           pattern: screenshots-*
           path: ${{ env.SNAPSHOTS }}
