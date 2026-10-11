@@ -37,17 +37,6 @@
 .fb-mode input[value='idea'] + span svg {
   color: var(--amber-ink);
 }
-// The title and mode switch sit above the scrolling fields (the dialog is a flex column: this, the body,
-// the foot), so they never scroll away, and nor does Close.
-.fb-top {
-  flex: 0 0 auto;
-  padding: 22px 24px 14px;
-  border-bottom: 1px solid var(--line);
-}
-.fb-top + .dlg-body {
-  padding-top: 8px;
-  overscroll-behavior: contain; // a swipe past the end doesn't carry on into the page behind
-}
 .fb-mode {
   margin: 14px 0 0;
 }
@@ -146,31 +135,4 @@ app-turnstile {
   color: var(--ink);
   font-weight: 500;
   text-decoration: underline;
-}
-
-// On a phone it's a full-screen page rather than a sheet over one: title and switch on top, fields
-// scrolling in between, Send at the bottom. dvh follows the browser's bars as they slide in and out.
-@media (max-width: 640px) {
-  .report-dialog {
-    height: 100dvh;
-    max-height: none;
-    margin: 0;
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
-  }
-  .report-dialog .fb-accent {
-    border-radius: 0;
-  }
-  .fb-top {
-    padding: 16px 16px 12px;
-  }
-  .fb-top + .dlg-body {
-    flex: 1 1 auto;
-    min-height: 0;
-    padding-inline: 16px;
-  }
-  .report-dialog .dlg-foot {
-    padding-inline: 16px;
-  }
 }

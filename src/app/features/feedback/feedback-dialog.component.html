@@ -11,8 +11,7 @@
   (close)="onClose()"
 >
   <div class="fb-accent" aria-hidden="true"></div>
-  <!-- The title, Close, and the mode switch stay put while the fields scroll under them. -->
-  <div class="fb-top">
+  <div class="dlg-body">
     <div class="dlg-head">
       <h2 class="dlg-title" id="report-title">
         <span class="fb-icon">
@@ -24,15 +23,7 @@
         </span>
         <span id="report-heading" data-cy="feedback-heading">{{ copy().title }}</span>
       </h2>
-      <button
-        type="button"
-        class="dlg-close touch-target"
-        data-cy="feedback-close"
-        aria-label="Close"
-        (click)="close()"
-      >
-        ×
-      </button>
+      <button type="button" class="dlg-close" aria-label="Close" (click)="close()">×</button>
     </div>
 
     <fieldset class="dlg-field fb-mode">
@@ -62,8 +53,6 @@
         </label>
       </div>
     </fieldset>
-  </div>
-  <div class="dlg-body">
     <p class="dlg-lede">{{ copy().lede }}</p>
     <div class="fb-public" id="report-public" data-cy="feedback-public-notice">
       <svg
@@ -216,6 +205,9 @@
       {{ sendLabel() }}
     </button>
     <p class="dlg-done" data-cy="feedback-done" role="status" aria-live="polite">{{ done() }}</p>
+    <button type="button" class="dlg-cancel" data-cy="feedback-close" (click)="close()">
+      Close
+    </button>
   </div>
 </dialog>
 
