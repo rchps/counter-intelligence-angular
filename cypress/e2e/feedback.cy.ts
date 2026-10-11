@@ -35,6 +35,20 @@ describe('Feedback', () => {
     cy.getBySel('footer-idea').should('be.visible');
   });
 
+  it('warns, in both modes and on Send itself, that reports are public', () => {
+    cy.getBySel('feedback-card-report').click();
+    for (const mode of ['problem', 'idea']) {
+      cy.getBySel(`feedback-mode-${mode}`).check();
+      cy.getBySel('feedback-public-notice')
+        .should('be.visible')
+        .and('contain.text', 'Anyone on the internet can read this');
+    }
+    cy.getBySel('feedback-issues-link')
+      .should('have.attr', 'href', 'https://github.com/rchps/counter-intelligence-angular/issues')
+      .and('have.attr', 'target', '_blank');
+    cy.getBySel('feedback-send').should('have.attr', 'aria-describedby', 'report-public');
+  });
+
   it('sends a problem report with the page details, asking for a kind first', () => {
     cy.getBySel('search-input').type('altronix');
     cy.getBySel('search-status').should('contain.text', 'altronix');
