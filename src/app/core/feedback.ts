@@ -70,20 +70,32 @@ export interface ModeCopy {
 export const MODE_COPY: Record<FeedbackMode, ModeCopy> = {
   problem: {
     title: 'Report a problem',
-    lede:
-      "Pick what's wrong and add a note. Takes about a minute. It's posted publicly on the project's " +
-      'GitHub, without your name, so leave out anything private.',
+    lede: "Pick what's wrong and add a note. Takes about a minute.",
     thanks: 'Sent. Thanks, you just made this better for the whole counter.',
     nudge: "Pick what's wrong first.",
   },
   idea: {
     title: 'Suggest an idea',
     lede:
-      "Start with what you were trying to do. The job matters more than the feature, and it's how good ideas " +
-      "get built right. It's posted publicly on the project's GitHub, without your name.",
+      "Start with what you were trying to do. The job matters more than the feature, and it's how good " +
+      'ideas get built right.',
     thanks: 'Sent. Thanks, the best ideas come from the counter.',
     nudge: 'Tell us what you were trying to do first.',
   },
+};
+
+/** Where the Worker files reports. Keep in step with GITHUB_REPO in wrangler.jsonc. */
+export const ISSUES_URL = 'https://github.com/rchps/counter-intelligence-angular/issues';
+
+/** Shown at the top in both modes: what's sent becomes a public GitHub issue. */
+export const PUBLIC_NOTICE = {
+  heading: 'Your feedback will be public',
+  body:
+    "Your report will be posted to a public GitHub issue tracker. Your name won't be attached, but " +
+    'others can see what you submit.',
+  reminder:
+    'Please leave out customer information, pricing, account numbers, or anything confidential.',
+  link: 'View public issues',
 };
 
 export function problemKind(key: string | null | undefined): ProblemKind | null {

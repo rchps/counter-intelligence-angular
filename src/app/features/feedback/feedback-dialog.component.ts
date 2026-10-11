@@ -16,11 +16,13 @@ import {
   countText,
   HOW_OFTEN,
   ideaReport,
+  ISSUES_URL,
   MODE_COPY,
   NO_KIND_HINT,
   PROBLEM_KINDS,
   problemKind,
   problemReport,
+  PUBLIC_NOTICE,
   SEND_COPY,
   TEXT_LIMIT,
   type FeedbackMode,
@@ -56,6 +58,8 @@ export class FeedbackDialogComponent {
   protected readonly howOften = HOW_OFTEN;
   protected readonly textLimit = TEXT_LIMIT;
   protected readonly countText = countText;
+  protected readonly publicNotice = PUBLIC_NOTICE;
+  protected readonly issuesUrl = ISSUES_URL;
 
   protected readonly mode = signal<FeedbackMode>('problem');
   protected readonly kind = signal<ProblemKindKey | null>(null);

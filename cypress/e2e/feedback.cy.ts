@@ -35,6 +35,35 @@ describe('Feedback', () => {
     cy.getBySel('footer-idea').should('be.visible');
   });
 
+  it('says, in both modes and on Send itself, that reports are public', () => {
+    cy.getBySel('feedback-card-report').click();
+    for (const mode of ['problem', 'idea']) {
+      cy.getBySel(`feedback-mode-${mode}`).check();
+      cy.getBySel('feedback-public-notice')
+        .should('be.visible')
+        .and('contain.text', 'Your feedback will be public')
+        .and('contain.text', 'leave out customer information');
+    }
+    cy.getBySel('feedback-issues-link')
+      .should('contain.text', 'View public issues')
+      .and('have.attr', 'href', 'https://github.com/rchps/counter-intelligence-angular/issues')
+      .and('have.attr', 'target', '_blank');
+    cy.getBySel('feedback-send').should('have.attr', 'aria-describedby', 'report-public');
+  });
+
+  it('shows what else is attached, open again each time the dialog opens', () => {
+    cy.getBySel('search-input').type('altronix');
+    cy.getBySel('feedback-card-report').click();
+    cy.getBySel('feedback-included').should('have.attr', 'open');
+    cy.getBySel('feedback-page-details').should('be.visible').and('contain.text', '"altronix"');
+
+    cy.getBySel('feedback-included').find('summary').click();
+    cy.getBySel('feedback-included').should('not.have.attr', 'open');
+    cy.getBySel('feedback-close').click();
+    cy.getBySel('feedback-card-report').click();
+    cy.getBySel('feedback-included').should('have.attr', 'open');
+  });
+
   it('sends a problem report with the page details, asking for a kind first', () => {
     cy.getBySel('search-input').type('altronix');
     cy.getBySel('search-status').should('contain.text', 'altronix');
