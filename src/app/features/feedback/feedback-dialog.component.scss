@@ -105,11 +105,6 @@
   word-break: break-word;
 }
 
-// The bot check takes no room unless Cloudflare asks the person to click.
-app-turnstile {
-  display: block;
-}
-
 // What people should know before typing: reports become public GitHub issues. Informational, not a
 // warning, so it borrows the neutral box of "Also included" below. It sits at the top, in view as the
 // dialog opens on any screen, and Send names it as its description for screen readers.

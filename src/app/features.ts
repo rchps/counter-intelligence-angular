@@ -5,4 +5,6 @@ export const FEATURES = {
   alternatives: true,
   /** "Use in an AI chat": copy the Line Card as plain text for an AI chat. */
   aiCopy: true,
+  /** "Report a problem" / "Suggest an idea": the feedback dialog, filed as GitHub issues by the Worker. */
+  feedback: true,
 } as const;

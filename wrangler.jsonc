@@ -15,10 +15,13 @@
     // Any path that isn't a file gets index.html, so Angular's router can handle /branches, /tools, etc.
     "not_found_handling": "single-page-application",
   },
-  // Where feedback is filed. The GitHub token and the Turnstile secret are Worker secrets, not listed
-  // here (docs/ci-cd.md).
+  // Where feedback is filed, and the Access login the Worker checks before filing anything (both shown
+  // in the Worker's Access settings; neither is secret). The GitHub token is a Worker secret, not listed
+  // here (docs/ci-cd.md). Empty Access values turn every report away.
   "vars": {
     "GITHUB_REPO": "rchps/counter-intelligence-angular",
+    "ACCESS_TEAM_DOMAIN": "",
+    "ACCESS_AUD": "",
   },
   // Serve main on the workers.dev address, and each branch CI uploads on a preview URL of its own
   // (<branch>-counter-intelligence.<subdomain>.workers.dev). Access covers both: the Worker is protected

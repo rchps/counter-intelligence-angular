@@ -1,14 +1,13 @@
 // "Report a problem" / "Suggest an idea", driven in a real browser against `ng serve`. The exact
 // title and body wording is covered by src/app/core/feedback.spec.ts, and the Worker that files the
 // issue by worker/feedback.spec.ts; these check the entry points, the dialog's behavior, and that what's
-// posted carries what was entered. /api/feedback is answered here (ng serve has no Worker), and the
-// Turnstile check by cypress/support/e2e.ts.
+// posted carries what was entered. /api/feedback is answered here (ng serve has no Worker, and no Access
+// login in front of it).
 
 interface Submission {
   kind: string;
   title: string;
   body: string;
-  turnstileToken: string;
 }
 
 /** Presses Send and returns what the page posted. */
@@ -76,22 +75,15 @@ describe('Feedback', () => {
     cy.getBySel('feedback-send').click();
     cy.getBySel('feedback-done').should('contain.text', "Pick what's wrong first");
 
-    // A link problem asks which manufacturer, and the report carries all of it, with the bot check's
-    // token and nothing else.
+    // A link problem asks which manufacturer, and the report carries all of it and nothing else.
     cy.getBySel('feedback-kind-link').check();
     cy.getBySel('feedback-line').type('Altronix');
     cy.getBySel('feedback-details').type('Goes to a 404 page');
     cy.getBySel('feedback-details-count').should('have.text', '18 / 500');
     cy.getBySel('feedback-send').should('have.attr', 'aria-disabled', 'false');
     send().then((submission) => {
-      expect(Object.keys(submission).sort()).to.deep.equal([
-        'body',
-        'kind',
-        'title',
-        'turnstileToken',
-      ]);
+      expect(Object.keys(submission).sort()).to.deep.equal(['body', 'kind', 'title']);
       expect(submission.kind).to.equal('problem');
-      expect(submission.turnstileToken).to.equal('XXXX.DUMMY.TOKEN.XXXX');
       expect(submission.title).to.equal('Counter Intelligence: Wrong or broken link (Altronix)');
       expect(submission.body).to.match(
         /^What's wrong: Wrong or broken link\nManufacturer: Altronix\nDetails: Goes to a 404 page/,

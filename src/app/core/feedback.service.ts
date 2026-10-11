@@ -1,5 +1,6 @@
 import { computed, DestroyRef, inject, Service, signal, type Signal } from '@angular/core';
-import { buildStamp, FEEDBACK_SITE_KEY } from './build-info';
+import { buildStamp } from './build-info';
+import { FEATURES } from '../features';
 import { pageDetailLines, type ProblemKindKey, type SearchPageDetails } from './feedback';
 
 /** What the page on screen tells the feedback dialog about itself. */
@@ -23,9 +24,8 @@ export interface FeedbackRequest {
 // instead of the dialog reading it back out of the DOM.
 @Service()
 export class FeedbackService {
-  /** No TURNSTILE_SITE_KEY at build time = no entry points anywhere (core/build-info.ts). */
-  readonly siteKey = signal(FEEDBACK_SITE_KEY).asReadonly();
-  readonly available = computed(() => !!this.siteKey());
+  /** Switched off in features.ts = no entry points anywhere. */
+  readonly available = signal(FEATURES.feedback).asReadonly();
 
   private readonly pageContextSource = signal<Signal<FeedbackPageContext> | null>(null);
   readonly pageContext = computed<FeedbackPageContext>(

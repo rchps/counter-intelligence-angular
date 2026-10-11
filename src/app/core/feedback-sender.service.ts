@@ -6,8 +6,8 @@ import type { FeedbackSubmission } from '../../../api/generated';
 /** What POST /api/feedback takes, generated from the API spec (api/openapi.yaml). */
 export type { FeedbackSubmission };
 
-// Posts a report to the site's own Worker, which files it as a GitHub issue. Only the report and the
-// Turnstile answer are sent; the GitHub token never leaves the Worker.
+// Posts a report to the site's own Worker, which files it as a GitHub issue. Only the report is sent (the
+// browser adds the Access login cookie); the GitHub token never leaves the Worker.
 @Service()
 export class FeedbackSender {
   private readonly http = inject(HttpClient);

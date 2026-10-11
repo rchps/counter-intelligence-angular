@@ -84,18 +84,18 @@ cypress/           e2e/ (behavior), visual/ (screenshots), fixtures/, support/
 
 - **One small piece of server code.** The site is static files served by a Cloudflare Worker, behind
   Cloudflare Access. Every branch other than `main` gets its own preview URL behind the same login. The
-  Worker's only script (`worker/`) takes feedback: it checks a Turnstile token and files the report as a
-  GitHub issue under the site's own account, so the GitHub token never reaches the browser and the sender
-  stays anonymous.
+  Worker's only script (`worker/`) takes feedback: it checks the Access login's signed token and files the
+  report as a GitHub issue under the site's own account, so the GitHub token never reaches the browser and
+  the sender stays anonymous.
 - **The API is written down first.** `api/openapi.yaml` (OpenAPI 3.1) says what each endpoint takes and
   answers. `npm run api:types` generates TypeScript types from it into `api/generated/` (Hey API), and
   both the Worker and the app use them, so a spec change that either side doesn't follow fails to
   compile. Types are gone at runtime, so the Worker still checks every request itself, and the lengths
   the spec allows (which the types can't carry) are checked against the Worker's by a test. To change the
   API: edit the spec, run `npm run api:types`, then update the code the compiler points at.
-- **Build-time configuration.** The Turnstile site key and the name used in map searches are passed in
-  with `ng build --define`, along with a build stamp (date and commit) shown in the footer, so any
-  screenshot or report can be traced to the exact commit.
+- **Build-time configuration.** The name used in map searches is passed in with `ng build --define`,
+  along with a build stamp (date and commit) shown in the footer, so any screenshot or report can be
+  traced to the exact commit.
 - **Feature switches** in `features.ts` remove an optional feature everywhere at once.
 
 ## Accessibility

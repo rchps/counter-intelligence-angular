@@ -92,24 +92,25 @@ run `plan` before the build and `tag` after the deploy, and push the tag. The ti
 
 ## Feedback setup
 
-The feedback dialog posts to `/api/feedback`, where the Worker (`worker/index.ts`) checks a Cloudflare
-Turnstile token and then files the report as a GitHub issue. The issue is posted by the token's account,
-so the person who sent it stays anonymous. Four settings make this work, and none of them live in the repo:
+The feedback dialog posts to `/api/feedback`, where the Worker (`worker/index.ts`) checks that the
+request came through the Cloudflare Access login and then files the report as a GitHub issue. Only
+signed-in people can reach the site, so there's no separate bot check. The issue is posted by the GitHub
+token's account, so the person who sent it stays anonymous. Four settings make this work:
 
-| Setting                | Where it goes                                          | What it is                                                                                                                                                            |
-| ---------------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `TURNSTILE_SITE_KEY`   | GitHub: Settings > Secrets and variables > _Variables_ | The Turnstile widget's public key, built into the page. Without it the build hides feedback, and `main` refuses to deploy.                                            |
-| `TURNSTILE_SECRET_KEY` | Cloudflare: Worker secret                              | The widget's secret key, for checking tokens.                                                                                                                         |
-| `GITHUB_TOKEN`         | Cloudflare: Worker secret                              | A fine-grained personal access token for this repo only, with _Issues: Read and write_. Labels (`bug`, `enhancement`) stick only if its account can push to the repo. |
-| `GITHUB_REPO`          | `wrangler.jsonc` (`vars`)                              | Which repo gets the issues.                                                                                                                                           |
+| Setting              | Where it goes             | What it is                                                                                                                                                            |
+| -------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ACCESS_TEAM_DOMAIN` | `wrangler.jsonc` (`vars`) | `https://<team name>.cloudflareaccess.com` (Zero Trust > Settings shows the team name).                                                                               |
+| `ACCESS_AUD`         | `wrangler.jsonc` (`vars`) | The Access application's audience tag: Zero Trust > Access > Applications, _Configure_ on the Worker's app, then _Additional settings_.                               |
+| `GITHUB_TOKEN`       | Cloudflare: Worker secret | A fine-grained personal access token for this repo only, with _Issues: Read and write_. Labels (`bug`, `enhancement`) stick only if its account can push to the repo. |
+| `GITHUB_REPO`        | `wrangler.jsonc` (`vars`) | Which repo gets the issues.                                                                                                                                           |
 
-The Turnstile widget is made in the Cloudflare dashboard ([dash.cloudflare.com/?to=/:account/turnstile](https://dash.cloudflare.com/?to=/:account/turnstile),
-Add widget) with the hostname `counter-intelligence-angular.workers.dev`, which also covers every branch
-preview under it. Worker secrets are set in the dashboard (the Worker's Settings > Variables and Secrets)
-and stay across deploys. The dashboard only offers them once the deployed Worker has its script, so on a
-first setup, deploy `main` before adding them. Previews share them, so a report sent from a preview is a
-real issue.
+The two Access values aren't secret: every signed-in browser already holds a token naming them. The
+Worker turns every report away while either is empty, and a Worker test fails, so `main` can't deploy
+that by accident. The audience tag only changes if the Access application is deleted and made again.
 
-To try the whole path locally, build, put the two secrets in a `.dev.vars` file (git-ignored), and run
-`npx wrangler dev`. Cloudflare's test keys (`1x00000000000000000000AA` for the site,
-`1x0000000000000000000000000000000AA` for the secret) always pass.
+Worker secrets are set in the dashboard (the Worker's Settings > Variables and Secrets) and stay across
+deploys. The dashboard only offers them once the deployed Worker has its script, so on a first setup,
+deploy `main` before adding them. Previews share them, so a report sent from a preview is a real issue.
+
+`npx wrangler dev` has no Access login in front of it, so its `/api/feedback` answers 403. The Worker's
+tests (`npm run test:worker`) sign their own tokens to cover the check.

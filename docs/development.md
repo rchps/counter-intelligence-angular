@@ -16,13 +16,12 @@ npm start          # http://localhost:4200
 
 ### Build-time settings
 
-`npm run build` reads three optional environment variables:
+`npm run build` reads two optional environment variables:
 
-| Variable             | What it does                                                                                                                      |
-| -------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `TURNSTILE_SITE_KEY` | The feedback dialog's bot check ([Feedback setup](ci-cd.md#feedback-setup)). Without it, the feedback button and card are hidden. |
-| `MAPS_NAME`          | Text put in front of a branch's address in its Google Maps search.                                                                |
-| `APP_VERSION`        | The version the footer shows. CI sets it for a release; otherwise it's `git describe --tags` ([Releases](ci-cd.md#releases)).     |
+| Variable      | What it does                                                                                                                  |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `MAPS_NAME`   | Text put in front of a branch's address in its Google Maps search.                                                            |
+| `APP_VERSION` | The version the footer shows. CI sets it for a release; otherwise it's `git describe --tags` ([Releases](ci-cd.md#releases)). |
 
 ## Scripts
 
