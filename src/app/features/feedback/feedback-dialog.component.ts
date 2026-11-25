@@ -120,19 +120,18 @@ export class FeedbackDialogComponent {
     });
   }
 
-  // Reset every field, start in the requested mode/problem, then focus where the
-  // next decision is.
+  // Start in the requested mode, then focus where the next decision is. What was typed is kept until
+  // it's sent: closing by accident, or to look something up, must not lose a half-written report. A
+  // problem already being described keeps its kind and manufacturer over the entry point's preset.
   private openFor(request: FeedbackRequest): void {
+    if (this.status() === 'sent') this.clearDraft();
     const mode: FeedbackMode = request.kind === 'idea' ? 'idea' : 'problem';
     this.mode.set(mode);
-    this.kind.set(request.kind === 'idea' ? null : request.kind);
-    this.line.set(request.line);
-    this.details.set('');
-    this.task.set('');
-    this.wish.set('');
-    this.often.set(null);
+    if (mode === 'problem' && !this.details()) {
+      this.kind.set(request.kind === 'idea' ? null : request.kind);
+      this.line.set(request.line);
+    }
     this.done.set('');
-    this.status.set('idle');
     this.open.set(true);
     this.opener = request.opener ?? (document.activeElement as HTMLElement | null);
 
@@ -151,6 +150,16 @@ export class FeedbackDialogComponent {
       },
       { injector: this.injector },
     );
+  }
+
+  private clearDraft(): void {
+    this.kind.set(null);
+    this.line.set('');
+    this.details.set('');
+    this.task.set('');
+    this.wish.set('');
+    this.often.set(null);
+    this.status.set('idle');
   }
 
   protected close(): void {
